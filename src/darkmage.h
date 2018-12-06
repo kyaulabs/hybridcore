@@ -1,0 +1,2 @@
+#define PASSWD_MINLEN 7
+#define PASSWD_MAXLEN 15

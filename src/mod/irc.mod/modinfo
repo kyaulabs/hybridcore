@@ -1,0 +1,5 @@
+DESC:This module controls the bots interaction on IRC. It allows the bot
+DESC:to join channels, etc.
+DESC:
+DESC:Normally you will want to ENABLE this module.
+DEPENDS:server channels

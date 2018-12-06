@@ -1,0 +1,30 @@
+%{help=set max-dloads}%{+n}
+###  %bset max-dloads%b <#>
+   This specifies the maximum number of downloads (dcc gets) a user
+   can have going at once. To effectively disable this, set it to
+   99. The default value is 3. When a user reaches this limit, they
+   will be unable to 'get' any more files from the file area until
+   either the current transfers complete, or any pending transfers
+   eventually timeout.
+%{help=set dcc-block}%{+n}
+###  %bset dcc-block%b <#>
+   This specifies the block size to use in DCC file transfers. The
+   ircII client defaults to 512, but admits that it may be too small.
+   1024 is the most common setting.
+
+   You can set this to 0, which turns on "turbo dcc". In turbo dcc
+   mode, the bot will dump transfers as fast as possible, only
+   stopping to count acks after it's finished.  This can dramatically
+   improve the speed of file transfers, and is recommended.
+%{help=set copy-to-tmp}%{+n}
+###  %bset copy-to-tmp%b <0/1>
+   Enable this setting if you want to copy files to a temporary location
+   before sending or receiving them. This might be useful for file
+   stability, but if your directories are NFS mounted, it's a pain.
+   Setting this to 1 is not advised for big files or if you're low on
+   disk space.
+%{help=set xfer-timeout}%{+n}
+###  %bset xfer-timeout%b <#>
+   This is the number of seconds to wait before a dcc send or get is
+   considered to have timed out. If no traffic occurs on the transfer
+   in the given time, it closes.

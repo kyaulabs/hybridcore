@@ -1,0 +1,5 @@
+DESC:The transfer module provides DCC SEND/GET support and bot userfile
+DESC:transfer support (not sharing).
+DESC:
+DESC:If you enabled the filesys and/or share modules, you will want to
+DESC:ENABLE this module too.
