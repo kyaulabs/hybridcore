@@ -691,15 +691,15 @@ int readuserfile(char *file, struct userrec **ret)
   struct stat buffer;
   if (stat (file, &buffer) == 0) {
     decrypt_file(file);
-    putlog(LOG_MISC, "*", "readuserfile: decypted '%s'", file);
+    putlog(LOG_MISC, "*", "-- readuserfile(): decypted '%s'", file);
     f = fopen(".tmp2", "r");
-    putlog(LOG_MISC, "*", "readuserfile: opening '.tmp2'");
+    putlog(LOG_MISC, "*", "-- readuserfile(): opening '.tmp2'");
   } else {
     f = fopen(file, "r");
-    putlog(LOG_MISC, "*", "readuserfile: opening '%s'", file);
+    putlog(LOG_MISC, "*", "-- readuserfile(): opening '%s'", file);
   }
   if (f == NULL) {
-    putlog(LOG_MISC, "*", "readuserfile: open file failed, returning");
+    putlog(LOG_MISC, "*", "-- readuserfile(): open file failed, returning");
     return 0;
   }
   noshare = noxtra = 1;
@@ -972,9 +972,9 @@ int readuserfile(char *file, struct userrec **ret)
       }
   }
   fclose(f);
-  /* decrypt line */
+  /* purge decrypted file */
   putlog(LOG_MISC, "*", "-- readuserfile(): removing '.tmp2'");
-  //unlink(".tmp2");
+  unlink(".tmp2");
   (*ret) = bu;
   if (ignored[0]) {
     putlog(LOG_MISC, "*", "%s %s", USERF_IGNBANS, ignored);

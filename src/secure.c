@@ -192,4 +192,6 @@ int addtelnet(char *par)
 }
 /* }}} */
 
-/* vim: ft=c sw=4 ts=4 noet: */
+/*
+ * vim: ft=c sw=4 ts=4 noet:
+ */

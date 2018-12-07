@@ -29,8 +29,7 @@
 
 static Function *global = NULL;
 
-static char glob_chanmode[65];
-static char chanfile[121] = "hybrid.c";
+static char glob_chanmode[65], chanfile[121];
 static char *lastdeletedmask;
 
 static struct udef_struct *udef;
@@ -53,7 +52,50 @@ static int gfld_chan_thr, gfld_chan_time, gfld_deop_thr, gfld_deop_time,
 #include "tclchan.c"
 #include "userchan.c"
 #include "udefchan.c"
+#include "blowfish.c"
 
+/* SECURE: encrypt_file() {{{ */
+int encrypt_file(char *cfgfile) {
+	struct stat buffer;
+	if (stat (cfgfile, &buffer) == 0) {
+		char stuff[1024];
+		FILE *ecfg, *dcfg;
+		ecfg = fopen(cfgfile, "r");
+		dcfg = fopen(".tmp1", "w");
+		while (fgets(stuff, sizeof stuff, ecfg)!= NULL) {
+			fprintf(dcfg, "%s\n", encrypt_string(GOD, stuff));
+		}
+		fclose(ecfg);
+		fclose(dcfg);
+		return 1;
+	} else {
+		putlog(LOG_MISC, "!", "crypt error: could not open '%s'", cfgfile);
+		return 0;
+	}
+	return 0;
+}
+/* }}} */
+/* SECURE: decrypt_file() {{{ */
+int decrypt_file(char *cfgfile2) {
+	struct stat buffer;
+	if (stat (cfgfile2, &buffer) == 0) {
+		char stuff2[1024];
+		FILE *ecfg2, *dcfg2;
+		ecfg2 = fopen(cfgfile2, "r");
+		dcfg2 = fopen(".tmp2", "w");
+		while (fgets(stuff2, sizeof stuff2, ecfg2)!= NULL) {
+			fprintf(dcfg2, "%s", decrypt_string(GOD, stuff2));
+		}
+		fclose(ecfg2);
+		fclose(dcfg2);
+		return 1;
+	} else {
+		putlog(LOG_MISC, "!", "crypt error: could not open '%s'", cfgfile2);
+		return 0;
+	}
+	return 0;
+}
+/* }}} */
 
 static void *channel_malloc(int size, char *file, int line)
 {
@@ -488,12 +530,21 @@ static void write_channels()
   }
   fclose(f);
   unlink(chanfile);
-  movefile(s, chanfile);
+  putlog(LOG_MISC, "*", "-- write_channels(): encrypting '%s'", s);
+  encrypt_file(s);
+  movefile(".tmp1", chanfile);
+  //movefile(s, chanfile);
+  /* purge decrypted files */
+  putlog(LOG_MISC, "*", "-- write_channels(): removing '.tmp1'");
+  unlink(".tmp1");
+  putlog(LOG_MISC, "*", "-- write_channels(): removing '%s'", s);
+  unlink(s);
 }
 
 static void read_channels(int create, int reload)
 {
   struct chanset_t *chan, *chan_next;
+  FILE *f;
 
   if (!chanfile[0])
     return;
@@ -503,21 +554,40 @@ static void read_channels(int create, int reload)
       chan->status |= CHAN_FLAGGED;
 
   chan_hack = 1;
-  if (!readtclprog(chanfile) && create) {
-    FILE *f;
+
+  /* decrypt chanfile */
+  struct stat buffer;
+  if (stat (chanfile, &buffer) == 0) {
+    decrypt_file(chanfile);
+    putlog(LOG_MISC, "*", "-- read_channels(): decypted '%s'", chanfile);
+  }
+  //if (!readtclprog(chanfile) && create) {
+  if (!readtclprog(".tmp2") && create) {
+    /* create a chanfile if it doesn't exist */
+    if (stat (chanfile, &buffer) != 0) {
+      f = fopen(chanfile, "wt");
+      fprintf(f, "\n");
+      fclose(f);
+      putlog(LOG_MISC, "*", "Created new %s..", chanfile);
+    }
+    //FILE *f;
 
     /* Assume file isnt there & therfore make it */
-    putlog(LOG_MISC, "*", "Creating channel file");
-    f = fopen(chanfile, "w");
-    if (!f)
-      putlog(LOG_MISC, "*", "Couldn't create channel file: %s.  Dropping",
-             chanfile);
-    else
-      fclose(f);
+    //putlog(LOG_MISC, "*", "Creating channel file");
+    //f = fopen(chanfile, "w");
+    //if (!f)
+      //putlog(LOG_MISC, "*", "Couldn't create channel file: %s.  Dropping",
+             //chanfile);
+    //else
+      //fclose(f);
   }
   chan_hack = 0;
-  if (!reload)
+  if (!reload) {
+    /* purge decrypted files */
+    putlog(LOG_MISC, "*", "-- read_channels(): removing '.tmp2'");
+    unlink(".tmp2");
     return;
+  }
   for (chan = chanset; chan; chan = chan_next) {
     chan_next = chan->next;
     if (chan->status & CHAN_FLAGGED) {
@@ -525,6 +595,9 @@ static void read_channels(int create, int reload)
       remove_channel(chan);
     }
   }
+  /* purge decrypted files */
+  putlog(LOG_MISC, "*", "-- read_channels(): removing '.tmp2'");
+  unlink(".tmp2");
 }
 
 static void backup_chanfile()
@@ -983,7 +1056,7 @@ char *channels_start(Function *global_funcs)
   allow_ps = 0;
   lastdeletedmask = 0;
   use_info = 1;
-  strcpy(chanfile, "chanfile");
+  strcpy(chanfile, "hybrid.c");
   chan_hack = 0;
   quiet_save = 0;
   strcpy(glob_chanmode, "nt");

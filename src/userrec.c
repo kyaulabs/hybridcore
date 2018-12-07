@@ -582,21 +582,20 @@ void write_userfile(int idx)
   if (!ok || !write_ignores(f, -1) || fflush(f)) {
     putlog(LOG_MISC, "*", "%s (%s)", USERF_ERRWRITE, strerror(ferror(f)));
     fclose(f);
-    /* encrypt the userfile */
-    encrypt_file(new_userfile);
-    putlog(LOG_MISC, "*", "-- write_userfile(): encrypt #1");
-    movefile(".tmp1", userfile);
-    unlink(".tmp1");
     nfree(new_userfile);
     return;
   }
   fclose(f);
   call_hook(HOOK_USERFILE);
   /* encrypt the userfile */
+  putlog(LOG_MISC, "*", "-- write_userfile(): encrypting '%s'", new_userfile);
   encrypt_file(new_userfile);
-  putlog(LOG_MISC, "*", "-- write_userfile(): encrypt #2");
   movefile(".tmp1", userfile);
+  /* purge decrypted files */
+  putlog(LOG_MISC, "*", "-- write_userfile(): removing '.tmp1'");
   unlink(".tmp1");
+  putlog(LOG_MISC, "*", "-- write_userfile(): removing '%s'", new_userfile);
+  unlink(new_userfile);
   //movefile(new_userfile, userfile);
   nfree(new_userfile);
 }
