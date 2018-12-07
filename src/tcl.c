@@ -702,7 +702,7 @@ void init_tcl(int argc, char **argv)
   }
 
   if (encoding == NULL) {
-    encoding = "iso8859-1";
+    encoding = "utf-8";
   }
 
   Tcl_SetSystemEncoding(NULL, encoding);
@@ -726,7 +726,7 @@ resetPath:
       break;
     pver[strlen(pver)] = egg_version[j];
   }
-  Tcl_PkgProvide(interp, "eggdrop", pver);
+  Tcl_PkgProvide(interp, "hybridcore", pver);
 
   /* Initialize binds and traces */
   init_bind();

@@ -827,10 +827,12 @@ const char *module_load(char *name)
   }
   check_tcl_load(name);
 
+/*
   if (exist_lang_section(name))
     putlog(LOG_MISC, "*", MOD_LOADED_WITH_LANG, name);
   else
     putlog(LOG_MISC, "*", MOD_LOADED, name);
+*/
 
   return NULL;
 }

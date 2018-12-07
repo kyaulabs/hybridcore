@@ -443,7 +443,7 @@ static void write_channels()
     return;
   }
   if (!quiet_save)
-    putlog(LOG_MISC, "*", "*-* encrypting channel file...");
+    putlog(LOG_MISC, "*", "□ encrypting channel file...");
   fprintf(f, "#Dynamic Channel File for %s (%s) -- written %s\n",
           botnetnick, ver, ctime(&now));
   for (chan = chanset; chan; chan = chan->next) {
@@ -568,7 +568,7 @@ static void read_channels(int create, int reload)
       f = fopen(chanfile, "wt");
       fprintf(f, "\n");
       fclose(f);
-      putlog(LOG_MISC, "*", "*-* created new %s..", chanfile);
+      putlog(LOG_MISC, "*", "□ created new %s..", chanfile);
     }
     //FILE *f;
 
@@ -605,7 +605,7 @@ static void backup_chanfile()
   char s[125];
 
   if (quiet_save < 2)
-    putlog(LOG_MISC, "*", "*-* backing up channel file...");
+    putlog(LOG_MISC, "*", "□ backing up channel file...");
   egg_snprintf(s, sizeof s, "%s~bak", chanfile);
   copyfile(chanfile, s);
 }

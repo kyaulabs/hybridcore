@@ -1,5 +1,5 @@
 #
-#  This is the Makefile for EGGDROP (the IRC bot)
+#  This is the Makefile for hybrid(core)
 #  You should never need to edit this.
 
 SHELL = @SHELL@
@@ -83,36 +83,36 @@ MODULE_XLIBS = @MODULE_XLIBS@
 
 modconf = $(top_srcdir)/misc/modconfig --top_srcdir=$(top_srcdir)
 
-egg_test_run = if [ '$(EGG_CROSS_COMPILING)' = 'no' ]; \
+hc_test_run = if [ '$(EGG_CROSS_COMPILING)' = 'no' ]; \
                	then EGG_LANGDIR=$(top_srcdir)/language ./$(EGGEXEC) -v; \
                	else echo 'This build is a cross-compilation, skipping test run...'; \
                fi
 
-post_config  =  echo "" && \
-		echo "You can now compile the bot, using \"make\"." && \
-		echo ""
+post_config  =  echo -e "" && \
+		echo -e "\x1b[38;5;32m□\x1b[0m run: \x1b[38;5;245mmake\x1b[0m" && \
+		echo -e ""
 
 post_iconfig =  $(modconf) update-depends && \
 		$(modconf) Makefile && \
 		(cd src/mod && $(MAKE_CONFIG) config) && \
 		$(modconf) Makefile
 
-egg_install_msg =  echo "" && \
-		   echo "Now run \"make install\" to install your bot." && \
-		   echo ""
+hc_install_msg =  echo -e "" && \
+		   echo -e "\x1b[38;5;32m□\x1b[0m run: \x1b[38;5;245mmake install\x1b[0m" && \
+		   echo -e ""
 
-ls_exe =  echo "" && \
-          echo "Eggdrop successfully compiled:" && ls -l $(EGGEXEC) && \
-          echo ""
+ls_exe =  echo -e "" && \
+          echo -e "hybrid(core) compiled:" && ls -l $(EGGEXEC) && \
+          echo -e ""
 
-ls_mods = $(ls_exe) && echo "" && \
-          echo "Modules successfully compiled:" && ls -l *.$(MOD_EXT) && \
-          echo ""
+ls_mods = $(ls_exe) && echo -e "" && \
+          echo -e "modules compiled:" && ls -l *.$(MOD_EXT) && \
+          echo -e ""
 
-show_test_run = echo "" && \
-                echo "Test run of ./eggdrop -v:" && \
-                $(egg_test_run) && \
-                echo ""
+show_test_run = echo -e "" && \
+				echo -e "\x1b[38;5;32m□\x1b[0m test: \x1b[38;5;245m./hybridcore -v\x1b[0m" && \
+                $(hc_test_run) && \
+                echo -e ""
 
 # Equal for all build types
 SMAKE_GENERAL_ARGS = 'MAKE=$(MAKE)' 'RANLIB=$(RANLIB)' 'XLIBS=$(XLIBS)' \
@@ -157,7 +157,7 @@ MAKE_DEPEND = $(MAKE) 'MAKE=$(MAKE)' 'CC=$(CC)'
 
 all: @DEFAULT_MAKE@
 
-eggclean:
+hcclean:
 	@rm -f $(EGGEXEC) *.$(MOD_EXT) *.stamp core DEBUG *~
 	@cd doc && $(MAKE) clean
 	@cd scripts && $(MAKE) clean
@@ -165,10 +165,10 @@ eggclean:
 	@cd src/md5 && $(MAKE) clean
 	@cd src/compat && $(MAKE) clean
 
-clean: eggclean
+clean: hcclean
 	@cd src/mod && $(MAKE) clean
 
-distclean: eggclean clean-modconfig
+distclean: hcclean clean-modconfig
 	@cd src/mod && $(MAKE) distclean
 	@rm -f Makefile doc/Makefile scripts/Makefile src/Makefile src/md5/Makefile src/compat/Makefile src/mod/Makefile
 	@rm -f config.cache config.log config.status config.h lush.h eggint.h
@@ -213,12 +213,12 @@ clean-modconfig:
 
 conftest:
 	@if test ! -f .modules; then \
-		echo ""; \
-		echo "You have NOT configured modules yet. This has to be done before you"; \
-		echo "can start compiling."; \
-		echo ""; \
-		echo "   Run \"make config\" or \"make iconfig\" now."; \
-		echo ""; \
+		echo -e ""; \
+		echo -e "You have NOT configured modules yet. This has to be done before you"; \
+		echo -e "can start compiling."; \
+		echo -e ""; \
+		echo -e "   Run \"make config\" or \"make iconfig\" now."; \
+		echo -e ""; \
 		exit 1; \
 	fi
 
@@ -227,123 +227,123 @@ reconfig: clean-modconfig config
 # Modular builds
 
 modtest: conftest
-	@if [ -f EGGDROP.stamp ]; then \
-		echo "You're trying to do a MODULE build of eggdrop when you've";\
-		echo "already run 'make' for a static build.";\
-		echo "You must first type \"make clean\" before you can build";\
-		echo "a module version.";\
+	@if [ -f TEST.stamp ]; then \
+		echo -e "You're trying to do a MODULE build of hybrid(core) when you've";\
+		echo -e "already run 'make' for a static build.";\
+		echo -e "You must first type \"make clean\" before you can build";\
+		echo -e "a module version.";\
 		exit 1;\
 	fi && \
-	echo "stamp" >EGGMOD.stamp
+	echo -e "stamp" >MOD.stamp
 
-eggdrop: modtest
-	@echo "" && echo "Making core eggdrop files..." && echo "" && \
+hybridcore: modtest
+	@echo -e "" && echo -e "\x1b[38;5;32m□\x1b[0m make: \x1b[38;5;245mhybrid(core)\x1b[38;5;235m" && echo -e "" && \
 	rm -f src/mod/mod.xlibs && \
 	(cd src && $(MAKE) $(MAKE_MODEGG_ARGS) $(EGGEXEC)) && \
-	echo "" && echo "Making modules..." && echo "" && \
+	echo -e "" && echo -e "\x1b[38;5;32m□\x1b[0m make: \x1b[38;5;245mmodules\x1b[38;5;235m" && echo -e "" && \
 	(cd src/mod && $(MAKE) $(MAKE_MODULES_ARGS) modules) && \
-	$(show_test_run) && $(ls_mods) && $(egg_install_msg)
+	$(show_test_run) && $(ls_mods) && $(hc_install_msg)
 
 debug: modtest
-	@echo "" && echo "Making core eggdrop files..." && echo "" && \
+	@echo -e "" && echo -e "\x1b[38;5;32m□\x1b[0m make: \x1b[38;5;245mhybrid(core)\x1b[38;5;235m" && echo -e "" && \
 	rm -f src/mod/mod.xlibs && \
 	(cd src && $(MAKE) $(MAKE_DEBEGG_ARGS) $(EGGEXEC)) && \
-	echo "" && echo "Making modules..." && echo "" && \
+	echo -e "" && echo -e "\x1b[38;5;32m□\x1b[0m make: \x1b[38;5;245mmodules\x1b[38;5;235m" && echo -e "" && \
 	(cd src/mod && $(MAKE) $(MAKE_DEBMOD_ARGS) modules) && \
-	$(show_test_run) && $(ls_mods) && $(egg_install_msg)
+	$(show_test_run) && $(ls_mods) && $(hc_install_msg)
 
 # Static builds
 
-eggtest: conftest
-	@if test -f EGGMOD.stamp; then \
-		echo "You're trying to do a STATIC build of eggdrop when you've";\
-		echo "already run 'make' for a module build.";\
-		echo "You must first type \"make clean\" before you can build";\
-		echo "a static version.";\
+hctest: conftest
+	@if test -f MOD.stamp; then \
+		echo -e "You're trying to do a STATIC build of hybrid(core) when you've";\
+		echo -e "already run 'make' for a module build.";\
+		echo -e "You must first type \"make clean\" before you can build";\
+		echo -e "a static version.";\
 		exit 1;\
 	fi && \
-	echo "stamp" >EGGDROP.stamp
+	echo -e "stamp" >TEST.stamp
 
-static: eggtest
-	@echo "" && echo "Making module objects for static linking..." && \
-	echo "" && rm -f src/mod/mod.xlibs && \
+static: hctest
+	@echo -e "" && echo -e "\x1b[38;5;32m□\x1b[0m make: \x1b[38;5;245mmodule objects for static linking\x1b[38;5;235m" && \
+	echo -e "" && rm -f src/mod/mod.xlibs && \
 	(cd src/mod && $(MAKE) $(MAKE_STATIC_ARGS) static) && \
-	echo "" && echo "Making core eggdrop for static linking..." && \
-	echo "" && \
+	echo -e "" && echo -e "\x1b[38;5;32m□\x1b[0m make: \x1b[38;5;245mhybrid(core) for static linking\x1b[38;5;235m" && \
+	echo -e "" && \
 	(cd src && $(MAKE) $(MAKE_STATIC_ARGS) $(EGGEXEC)) && \
-	$(show_test_run) && $(ls_exe) && $(egg_install_msg)
+	$(show_test_run) && $(ls_exe) && $(hc_install_msg)
 
-sdebug: eggtest
-	@echo "" && echo "Making module objects for static linking..." && \
-	echo "" && rm -f src/mod/mod.xlibs && \
+sdebug: hctest
+	@echo -e "" && echo -e "\x1b[38;5;32m□\x1b[0m make: \x1b[38;5;245mmodule objects for static linking\x1b[38;5;235m" && \
+	echo -e "" && rm -f src/mod/mod.xlibs && \
 	(cd src/mod && $(MAKE) $(MAKE_SDEBUG_ARGS) static) && \
-	echo "" && echo "Making core eggdrop for static linking..." && \
-	echo "" && \
+	echo -e "" && echo -e "\x1b[38;5;32m□\x1b[0m make: \x1b[38;5;245mhybrid(core) for static linking\x1b[38;5;235m" && \
+	echo -e "" && \
 	(cd src && $(MAKE) $(MAKE_SDEBUG_ARGS) $(EGGEXEC)) && \
-	$(show_test_run) && $(ls_exe) && $(egg_install_msg)
+	$(show_test_run) && $(ls_exe) && $(hc_install_msg)
 
 # Install
 
 sslcert:
 	@if test ! -d $(DEST); then \
-		echo "You haven't installed eggdrop yet, or you installed using the DEST= flag.";\
-		echo "Please run \"make install\" first.";\
-		echo "If you have already run \"make install\" and used the DEST= option, please use it again here";\
+		echo -e "You haven't installed hybrid(core) yet, or you installed using the DEST= flag.";\
+		echo -e "Please run \"make install\" first.";\
+		echo -e "If you have already run \"make install\" and used the DEST= option, please use it again here";\
 		exit 1;\
 	fi && \
-	if test -f $(DEST)/.key; then \
-		cp $(DEST)/.key $(DEST)/eggdrop.key~old; \
+	if test -f $(DEST)/.ssl-key; then \
+		cp $(DEST)/.ssl-key $(DEST)/.ssl-key~old; \
 	fi && \
-	if test -f $(DEST)/.crt; then \
-		cp $(DEST)/.crt $(DEST)/.crt~old; \
+	if test -f $(DEST)/.ssl-crt; then \
+		cp $(DEST)/.ssl-crt $(DEST)/.ssl-crt~old; \
 	fi && \
-	openssl req -new -x509 -nodes -days 365 -keyout $(DEST)/.key -out $(DEST)/.crt -config ssl.conf; \
+	openssl req -new -x509 -nodes -days 365 -keyout $(DEST)/.ssl-key -out $(DEST)/.ssl-crt -config ssl.conf; \
 
 install: ainstall
 
-dinstall: eggdrop ainstall
+dinstall: hybridcore ainstall
 
 sinstall: static ainstall
 
-ainstall: install-start install-bin install-modules install-data install-text \
+ainstall: install-start install-bin install-modules install-data \
 install-help install-language install-filesys install-scripts install-end
 
 install-start:
 	@if test ! -f $(EGGEXEC); then \
-		echo ""; \
-		echo "You haven't compiled Eggdrop yet."; \
-		echo "To compile Eggdrop, use:"; \
-		echo ""; \
-		echo "  make [target]"; \
-		echo ""; \
-		echo "Valid targets: 'eggdrop', 'static', 'debug', 'sdebug'."; \
-		echo "Default target: '@DEFAULT_MAKE@'."; \
-		echo ""; \
+		echo -e ""; \
+		echo -e "You haven't compiled hybrid(core) yet."; \
+		echo -e "To compile hybrid(core), use:"; \
+		echo -e ""; \
+		echo -e "  make [target]"; \
+		echo -e ""; \
+		echo -e "Valid targets: 'hybridcore', 'static', 'debug', 'sdebug'."; \
+		echo -e "Default target: '@DEFAULT_MAKE@'."; \
+		echo -e ""; \
 		exit 1; \
 	fi && \
 	if test "x$(DEST)" = "x"; then \
-		echo "You must specify a destination directory."; \
-		echo "Example:"; \
-		echo ""; \
-		echo "  make install DEST=\"/home/wcc/mybot\""; \
-		echo ""; \
+		echo -e "You must specify a destination directory."; \
+		echo -e "Example:"; \
+		echo -e ""; \
+		echo -e "  make install DEST=\"/home/wcc/mybot\""; \
+		echo -e ""; \
 		exit 1; \
 	fi && \
 	if test "$(DEST)" -ef .; then \
-		echo "You are trying to install into the source directory."; \
-		echo "That will not work. Please specify a different"; \
-		echo "install directory with:"; \
-		echo ""; \
-		echo "make install DEST=\"/home/wcc/mybot\""; \
-		echo ""; \
+		echo -e "You are trying to install into the source directory."; \
+		echo -e "That will not work. Please specify a different"; \
+		echo -e "install directory with:"; \
+		echo -e ""; \
+		echo -e "make install DEST=\"/home/wcc/mybot\""; \
+		echo -e ""; \
 		exit 1; \
 	fi && \
-	echo "" && \
-	$(egg_test_run) && \
-	echo "" && echo "Installing in directory: '$(ABSDEST)'." && \
-	echo "" && \
+	echo -e "" && \
+	$(hc_test_run) && \
+	echo -e "" && echo -e "\x1b[38;5;32m□\x1b[0m install destination: \x1b[38;5;245m'$(ABSDEST)'\x1b[38;5;235m" && \
+	echo -e "" && \
 	if test ! -d $(DEST); then \
-		echo "Creating directory '$(DEST)'."; \
+		echo -e "\x1b[38;5;32m□\x1b[0m create: \x1b[38;5;245m'$(DEST)' directory\x1b[38;5;235m"; \
 		$(top_srcdir)/misc/mkinstalldirs $(DEST) >/dev/null; \
 	fi
 
@@ -352,63 +352,51 @@ install-bin:
 		rm -f $(DEST)/o$(EGGEXEC); \
 	fi && \
 	if test -h $(DEST)/$(EGGEXEC); then \
-		echo "Removing symlink to archival eggdrop binary."; \
+		echo -e "\x1b[38;5;32m□\x1b[0m remove: \x1b[38;5;245msymlink to archival hybrid(core) binary\x1b[38;5;235m"; \
 		rm -f $(DEST)/$(EGGEXEC); \
 	fi && \
 	if test -f $(DEST)/$(EGGEXEC); then \
-		echo "Renaming old '$(EGGEXEC)' executable to 'o$(EGGEXEC)'."; \
+		echo -e "\x1b[38;5;32m□\x1b[0m rename: \x1b[38;5;245mold '$(EGGEXEC)' executable to 'o$(EGGEXEC)'\x1b[38;5;235m"; \
 		mv -f $(DEST)/$(EGGEXEC) $(DEST)/o$(EGGEXEC); \
 	fi && \
-	echo "Copying new '$(EGGEXEC)' executable and creating symlink." && \
+	echo -e "\x1b[38;5;32m□\x1b[0m copy: \x1b[38;5;245m'$(EGGEXEC)' executable\x1b[38;5;235m" && \
 	$(INSTALL_PROGRAM) $(EGGEXEC) $(DEST)/$(EGGEXEC)
 
 install-modules:
 	@if test -h $(DEST)/modules; then \
-		echo "Removing symlink to archival modules subdirectory."; \
+		echo -e "\x1b[38;5;32m□\x1b[0m remove: \x1b[38;5;245msymlink to archival modules subdirectory\x1b[38;5;235m"; \
 		rm -f $(DEST)/modules; \
 	fi && \
 	if test -d $(DEST)/modules; then \
-		echo "Moving old modules into 'modules.old' subdirectory."; \
+		echo -e "\x1b[38;5;32m□\x1b[0m move: \x1b[38;5;245mold modules into 'modules.old' subdirectory\x1b[38;5;235m"; \
 		rm -rf $(DEST)/modules.old; \
 		mv -f $(DEST)/modules $(DEST)/modules.old; \
 	fi && \
 	if test ! "x`echo *.$(MOD_EXT)`" = "x*.$(MOD_EXT)"; then \
 		if test ! -d $(DEST)/modules; then \
-			echo "Creating 'modules' subdirectory and symlink."; \
+			echo -e "\x1b[38;5;32m□\x1b[0m create: \x1b[38;5;245m'modules' subdirectory\x1b[38;5;235m"; \
 			$(top_srcdir)/misc/mkinstalldirs $(DEST)/modules >/dev/null; \
 		fi; \
-		echo "Copying new modules."; \
+		echo -e "\x1b[38;5;32m□\x1b[0m copy: \x1b[38;5;245mmodules\x1b[38;5;235m"; \
 		for i in *.$(MOD_EXT); do \
 			$(INSTALL_PROGRAM) $$i $(DEST)/modules/; \
 		done; \
 	fi
 
 install-data:
-	#@if test ! -f $(DEST)/eggdrop.conf; then \
-	#	$(INSTALL_DATA) $(srcdir)/eggdrop.conf $(DEST)/; \
-	#fi
-	#@if test ! -f $(DEST)/eggdrop-basic.conf; then \
-	#	$(INSTALL_DATA) $(srcdir)/eggdrop-basic.conf $(DEST)/; \
-	#fi
 	@if test ! -f $(DEST)/hybrid.cf; then \
 		$(INSTALL_DATA) $(srcdir)/hybrid.cf $(DEST)/; \
 	fi
 	@if test ! -d $(DEST)/logs; then \
-		echo "Creating 'logs' subdirectory."; \
+		echo -e "\x1b[38;5;32m□\x1b[0m create: \x1b[38;5;245m'logs' subdirectory\x1b[38;5;235m"; \
 		$(top_srcdir)/misc/mkinstalldirs $(DEST)/logs >/dev/null; \
-		#$(INSTALL_DATA) $(srcdir)/logs/CONTENTS $(DEST)/logs/; \
-	fi
-
-install-text:
-	@if test ! -f $(DEST)/hybrid.m; then \
-		$(INSTALL_DATA) $(srcdir)/hybrid.m $(DEST)/; \
 	fi
 
 install-help:
-	@echo "Copying help files." && \
+	@echo -e "\x1b[38;5;32m□\x1b[0m copy: \x1b[38;5;245mhelp files\x1b[38;5;235m" && \
 	if test ! "x`echo $(srcdir)/help/*.help`" = "x$(srcdir)/help/*.help"; then \
 		if test ! -d $(DEST)/help; then \
-			echo "Creating 'help' subdirectory."; \
+			echo -e "\x1b[38;5;32m□\x1b[0m create: \x1b[38;5;245m'help' subdirectory\x1b[38;5;235m"; \
 			$(top_srcdir)/misc/mkinstalldirs $(DEST)/help >/dev/null; \
 		fi; \
 		for i in $(srcdir)/help/*.help; do \
@@ -417,7 +405,7 @@ install-help:
 	fi && \
 	if test ! "x`echo $(srcdir)/help/msg/*.help`" = "x$(srcdir)/help/msg/*.help"; then \
 		if test ! -d $(DEST)/help/msg; then \
-			echo "Creating 'help/msg' subdirectory."; \
+			echo -e "\x1b[38;5;32m□\x1b[0m create: \x1b[38;5;245m'help/msg' subdirectory\x1b[38;5;235m"; \
 			$(top_srcdir)/misc/mkinstalldirs $(DEST)/help/msg >/dev/null; \
 		fi; \
 		for i in $(srcdir)/help/msg/*.help; do \
@@ -426,7 +414,7 @@ install-help:
 	fi && \
 	if test ! "x`echo $(srcdir)/help/set/*.help`" = "x$(srcdir)/help/set/*.help"; then \
 		if test ! -d $(DEST)/help/set; then \
-			echo "Creating 'help/set' subdirectory."; \
+			echo -e "\x1b[38;5;32m□\x1b[0m create: \x1b[38;5;245m'help/set' subdirectory\x1b[38;5;235m"; \
 			$(top_srcdir)/misc/mkinstalldirs $(DEST)/help/set >/dev/null; \
 		fi; \
 		for i in $(srcdir)/help/set/*.help; do \
@@ -436,10 +424,10 @@ install-help:
 	cd src/mod/ && $(MAKE_INSTALL) install-help
 
 install-language:
-	@echo "Copying language files." && \
+	@echo -e "\x1b[38;5;32m□\x1b[0m copy: \x1b[38;5;245mlanguage files\x1b[38;5;235m" && \
 	if test ! "x`echo $(srcdir)/language/*.lang`" = "x$(srcdir)/language/*.lang"; then \
 		if test ! -d $(DEST)/language; then \
-			echo "Creating 'language' subdirectory."; \
+			echo -e "\x1b[38;5;32m□\x1b[0m create: \x1b[38;5;245m'language' subdirectory\x1b[38;5;235m"; \
 			$(top_srcdir)/misc/mkinstalldirs $(DEST)/language >/dev/null; \
 		fi; \
 		for i in $(srcdir)/language/*.lang; do \
@@ -450,7 +438,7 @@ install-language:
 
 install-filesys:
 	@if test ! -d $(DEST)/filesys; then \
-		echo "Creating skeletal filesystem subdirectories."; \
+		echo -e "\x1b[38;5;32m□\x1b[0m create: \x1b[38;5;245mskeletal filesystem\x1b[38;5;235m"; \
 		$(top_srcdir)/misc/mkinstalldirs $(DEST)/filesys >/dev/null; \
 		$(top_srcdir)/misc/mkinstalldirs $(DEST)/filesys/incoming >/dev/null; \
 	fi
@@ -463,12 +451,11 @@ install-scripts:
 	@cd scripts/ && $(MAKE_INSTALL) install
 
 install-end:
-	@echo "" && echo "Installation completed." && echo "" && \
-	echo "Run \"make sslcert\" NOW! If you installed hybrid(core) to a custom path" && \
-	echo "during the make install process, use the same DEST= option." && \
-	echo "" && \
-	echo "Installed: $(DEST)" && \
-	echo "Config: hybrid.core" && \
-	echo ""
+	@echo -e "" && echo -e "\x1b[38;5;32m□\x1b[0m install complete" && \
+	echo -e "\x1b[38;5;32m□\x1b[0m run: \x1b[38;5;245mmake sslcert" && \
+	echo -e "" && \
+	echo -e "\x1b[0minstalled: \x1b[38;5;245m$(DEST)" && \
+	echo -e "\x1b[0mconfig: \x1b[38;5;245mhybrid.cf" && \
+	echo -e "\x1b[0m"
 
 #safety hash

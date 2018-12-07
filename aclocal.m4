@@ -536,7 +536,7 @@ AC_DEFUN([EGG_CHECK_MODULE_SUPPORT],
 [
   MODULES_OK="yes"
   MOD_EXT="so"
-  DEFAULT_MAKE="eggdrop"
+  DEFAULT_MAKE="hybridcore"
   LOAD_METHOD="dl"
   WEIRD_OS="yes"
   UNKNOWN_OS="no"

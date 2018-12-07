@@ -15,7 +15,7 @@ DOCS = CONTENTS
 #SCRIPTS = action.fix.tcl alltools.tcl compat.tcl dccwhois.tcl getops.tcl \
 #klined.tcl notes2.tcl ques5.tcl sentinel.tcl userinfo.tcl cmd_resolve.tcl \
 #quotepass.tcl quotepong.tcl
-SCRIPTS = alltools.tcl action.fix.tcl dccwhois.tcl quotepass.tcl quotepong.tcl
+SCRIPTS = alltools.tcl action.fix.tcl quotepass.tcl quotepong.tcl
 
 EXESCRIPTS = autobotchk
 #EXESCRIPTS = autobotchk botchk weed
@@ -33,9 +33,9 @@ clean:
 
 install:
 	@if test ! -d $(DEST)/scripts; then \
-		echo "Creating 'scripts' subdirectory."; \
+		echo -e "\x1b[38;5;32m□\x1b[0m create: \x1b[38;5;245m'scripts' subdirectory\x1b[38;5;235m"; \
 		$(top_srcdir)/misc/mkinstalldirs $(DEST)/scripts >/dev/null; \
-		echo "Copying scripts."; \
+		echo -e "\x1b[38;5;32m□\x1b[0m copy: \x1b[38;5;245mscripts\x1b[38;5;235m"; \
 		for i in $(DOCS); do \
 			$(INSTALL_DATA) $(srcdir)/$$i $(DEST)/scripts/; \
 		done; \
@@ -47,7 +47,7 @@ install:
 		done; \
 		if test ! "x`echo $(srcdir)/help/*.help`" = "x$(srcdir)/help/*.help"; then \
 			if test ! -d $(DEST)/help; then \
-				echo "Creating 'help' subdirectory."; \
+				echo "\x1b[38;5;32m□\x1b[0m create: \x1b[38;5;245m'help' subdirectory\x1b[38;5;235m"; \
 				$(top_srcdir)/misc/mkinstalldirs $(DEST)/help >/dev/null; \
 			fi; \
 			for i in $(srcdir)/help/*.help; do \
@@ -56,7 +56,7 @@ install:
 		fi; \
 		if test ! "x`echo $(srcdir)/help/msg/*.help`" = "x$(srcdir)/help/msg/*.help"; then \
 			if test ! -d $(DEST)/help/msg; then \
-				echo "Creating 'help/msg' subdirectory."; \
+				echo "\x1b[38;5;32m□\x1b[0m create: \x1b[38;5;245m'help/msg' subdirectory\x1b[38;5;235m"; \
 				$(top_srcdir)/misc/mkinstalldirs $(DEST)/help/msg >/dev/null; \
 			fi; \
 			for i in $(srcdir)/help/msg/*.help; do \
@@ -65,7 +65,7 @@ install:
 		fi; \
 		if test ! "x`echo $(srcdir)/help/set/*.help`" = "x$(srcdir)/help/set/*.help"; then \
 			if test ! -d $(DEST)/help/set; then \
-				echo "Creating 'help/set' subdirectory."; \
+				echo "\x1b[38;5;32m□\x1b[0m create: \x1b[38;5;245m'help/set' subdirectory\x1b[38;5;235m"; \
 				$(top_srcdir)/misc/mkinstalldirs $(DEST)/help/set >/dev/null; \
 			fi; \
 			for i in $(srcdir)/help/set/*.help; do \

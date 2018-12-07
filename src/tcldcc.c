@@ -1058,7 +1058,7 @@ static int tcl_listen STDVAR
   pmap->realport = realport;
   pmap->mappedto = port;
 
-  putlog(LOG_MISC, "*", "*-* listening: %s:%d (%s).", iptostr(&dcc[idx].sockname.addr.sa), port, argv[2]);
+  putlog(LOG_MISC, "*", "□ listening: %s:%d (%s)", iptostr(&dcc[idx].sockname.addr.sa), port, argv[2]);
 
   return TCL_OK;
 }

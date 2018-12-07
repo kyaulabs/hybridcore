@@ -1141,7 +1141,7 @@ int main(int arg_c, char **arg_v)
 #endif
   strncpyz(s, ctime(&now), sizeof s);
   memmove(&s[11], &s[20], strlen(&s[20])+1);
-  putlog(LOG_ALL, "*", "*-* loading %s (%s)", ver, s);
+  putlog(LOG_ALL, "*", "□ loading %s (%s)", ver, s);
   chanprog();
   if (!encrypt_pass) {
     printf("%s", MOD_NOCRYPT);
@@ -1151,7 +1151,7 @@ int main(int arg_c, char **arg_v)
   i = 0;
   for (chan = chanset; chan; chan = chan->next)
     i++;
-  putlog(LOG_MISC, "*", "*-* %s: %d channels, %d users.",
+  putlog(LOG_MISC, "*", "□ %s: %d channels, %d users.",
          botnetnick, i, count_users(userlist));
 #ifdef TLS
   ssl_init();

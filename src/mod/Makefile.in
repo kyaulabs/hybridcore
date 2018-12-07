@@ -48,7 +48,7 @@ doofus:
 	cd ../.. && $(MAKE)
 
 modules: $(mod_libs)
-	@echo "" && echo "All modules compiled."
+	@echo "" && echo -e "\x1b[38;5;32m□\x1b[0m all modules compiled"
 
 static: $(mod_objs)
 	@$(modconfig) static.h
@@ -84,7 +84,7 @@ config:
 		if test -f $(srcdir)/$$i/configure; then \
 			modname=`echo $$i | sed -e 's/.mod//'`; \
 			echo ""; \
-			echo "Configuring module '$${modname}'."; \
+			echo -e "\x1b[38;5;32m□\x1b[0m configure module: \x1b[38;5;245m'$${modname}'\x1b[38;5;235m"; \
 			if test ! -d $$i; then mkdir $$i; fi; \
 			(cd $$i && $(MOD_UPDIR)$(srcdir)/$$i/configure --disable-option-checking $(egg_ac_parameters) --cache-file=../../../config.cache --srcdir=$(MOD_UPDIR)$(top_srcdir)/src/mod/$$i); \
 		fi; \
@@ -120,9 +120,9 @@ distclean:
 install: install-help install-language
 
 install-help:
-	@echo "Copying module help files." && \
+	@echo -e "\x1b[38;5;32m□\x1b[0m copy: \x1b[38;5;245mmodule help files\x1b[38;5;235m" && \
 	if test ! -d $(DEST)/help; then \
-		echo "Creating 'help' subdirectory."; \
+		echo -e "\x1b[38;5;32m□\x1b[0m create: \x1b[38;5;245m'help' subdirectory\x1b[38;5;235m"; \
 		$(top_srcdir)/misc/mkinstalldirs $(DEST)/help >/dev/null; \
 	fi; \
 	for i in $(mods); do \
@@ -133,7 +133,7 @@ install-help:
 		fi; \
 	done; \
 	if test ! -d $(DEST)/help/msg; then \
-		echo "Creating 'help/msg' subdirectory."; \
+		echo -e "\x1b[38;5;32m□\x1b[0m create: \x1b[38;5;245m'help/msg' subdirectory\x1b[38;5;235m"; \
 		$(top_srcdir)/misc/mkinstalldirs $(DEST)/help/msg >/dev/null; \
 	fi; \
 	for i in $(mods); do \
@@ -144,7 +144,7 @@ install-help:
 		fi; \
 	done; \
 	if test ! -d $(DEST)/help/set; then \
-		echo "Creating 'help/set' subdirectory."; \
+		echo -e "\x1b[38;5;32m□\x1b[0m create: \x1b[38;5;245m'help/set' subdirectory\x1b[38;5;235m"; \
 		$(top_srcdir)/misc/mkinstalldirs $(DEST)/help/set >/dev/null; \
 	fi; \
 	for i in $(mods); do \
@@ -156,9 +156,9 @@ install-help:
 	done;
 
 install-language:
-	@echo "Copying module language files." && \
+	@echo -e "\x1b[38;5;32m□\x1b[0m copy: \x1b[38;5;245mmodule language files\x1b[38;5;235m" && \
 	if test ! -d $(DEST)/language; then \
-		echo "Creating 'language' subdirectory."; \
+		echo -e "\x1b[38;5;32m□\x1b[0m create: \x1b[38;5;245m'language' subdirectory\x1b[38;5;235m"; \
 		$(top_srcdir)/misc/mkinstalldirs $(DEST)/language >/dev/null; \
 	fi; \
 	for i in $(mods); do \
