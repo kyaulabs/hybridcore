@@ -291,13 +291,13 @@ sslcert:
 		echo "If you have already run \"make install\" and used the DEST= option, please use it again here";\
 		exit 1;\
 	fi && \
-	if test -f $(DEST)/eggdrop.key; then \
-		cp $(DEST)/eggdrop.key $(DEST)/eggdrop.key~old; \
+	if test -f $(DEST)/.key; then \
+		cp $(DEST)/.key $(DEST)/eggdrop.key~old; \
 	fi && \
-	if test -f $(DEST)/eggdrop.crt; then \
-		cp $(DEST)/eggdrop.crt $(DEST)/eggdrop.crt~old; \
+	if test -f $(DEST)/.crt; then \
+		cp $(DEST)/.crt $(DEST)/.crt~old; \
 	fi && \
-	openssl req -new -x509 -nodes -days 365 -keyout $(DEST)/eggdrop.key -out $(DEST)/eggdrop.crt -config ssl.conf; \
+	openssl req -new -x509 -nodes -days 365 -keyout $(DEST)/.key -out $(DEST)/.crt -config ssl.conf; \
 
 install: ainstall
 
@@ -306,8 +306,7 @@ dinstall: eggdrop ainstall
 sinstall: static ainstall
 
 ainstall: install-start install-bin install-modules install-data install-text \
-install-help install-language install-filesys install-doc install-scripts \
-install-end
+install-help install-language install-filesys install-scripts install-end
 
 install-start:
 	@if test ! -f $(EGGEXEC); then \
@@ -361,8 +360,7 @@ install-bin:
 		mv -f $(DEST)/$(EGGEXEC) $(DEST)/o$(EGGEXEC); \
 	fi && \
 	echo "Copying new '$(EGGEXEC)' executable and creating symlink." && \
-	$(INSTALL_PROGRAM) $(EGGEXEC) $(DEST)/$(EGGEXEC)-$(EGGVERSION) && \
-	(cd $(DEST) && $(LN_S) $(EGGEXEC)-$(EGGVERSION) $(EGGEXEC))
+	$(INSTALL_PROGRAM) $(EGGEXEC) $(DEST)/$(EGGEXEC)
 
 install-modules:
 	@if test -h $(DEST)/modules; then \
@@ -375,40 +373,35 @@ install-modules:
 		mv -f $(DEST)/modules $(DEST)/modules.old; \
 	fi && \
 	if test ! "x`echo *.$(MOD_EXT)`" = "x*.$(MOD_EXT)"; then \
-		if test ! -d $(DEST)/modules-$(EGGVERSION); then \
-			echo "Creating 'modules-$(EGGVERSION)' subdirectory and symlink."; \
-			$(top_srcdir)/misc/mkinstalldirs $(DEST)/modules-$(EGGVERSION) >/dev/null; \
+		if test ! -d $(DEST)/modules; then \
+			echo "Creating 'modules' subdirectory and symlink."; \
+			$(top_srcdir)/misc/mkinstalldirs $(DEST)/modules >/dev/null; \
 		fi; \
-		(cd $(DEST) && $(LN_S) modules-$(EGGVERSION) modules); \
 		echo "Copying new modules."; \
 		for i in *.$(MOD_EXT); do \
-			$(INSTALL_PROGRAM) $$i $(DEST)/modules-$(EGGVERSION)/; \
+			$(INSTALL_PROGRAM) $$i $(DEST)/modules/; \
 		done; \
 	fi
 
 install-data:
-	@if test ! -f $(DEST)/eggdrop.conf; then \
-		$(INSTALL_DATA) $(srcdir)/eggdrop.conf $(DEST)/; \
-	fi
-	@if test ! -f $(DEST)/eggdrop-basic.conf; then \
-		$(INSTALL_DATA) $(srcdir)/eggdrop-basic.conf $(DEST)/; \
+	#@if test ! -f $(DEST)/eggdrop.conf; then \
+	#	$(INSTALL_DATA) $(srcdir)/eggdrop.conf $(DEST)/; \
+	#fi
+	#@if test ! -f $(DEST)/eggdrop-basic.conf; then \
+	#	$(INSTALL_DATA) $(srcdir)/eggdrop-basic.conf $(DEST)/; \
+	#fi
+	@if test ! -f $(DEST)/hybrid.cf; then \
+		$(INSTALL_DATA) $(srcdir)/hybrid.cf $(DEST)/; \
 	fi
 	@if test ! -d $(DEST)/logs; then \
 		echo "Creating 'logs' subdirectory."; \
 		$(top_srcdir)/misc/mkinstalldirs $(DEST)/logs >/dev/null; \
-		$(INSTALL_DATA) $(srcdir)/logs/CONTENTS $(DEST)/logs/; \
+		#$(INSTALL_DATA) $(srcdir)/logs/CONTENTS $(DEST)/logs/; \
 	fi
 
 install-text:
-	@if test ! -d $(DEST)/text; then \
-		echo "Creating 'text' subdirectory."; \
-		$(top_srcdir)/misc/mkinstalldirs $(DEST)/text >/dev/null; \
-	fi && \
-	if test ! -f $(DEST)/text/motd; then \
-		$(INSTALL_DATA) $(srcdir)/text/motd $(DEST)/text/; \
-	fi && \
-	if test ! -f $(DEST)/text/banner; then \
-		$(INSTALL_DATA) $(srcdir)/text/banner $(DEST)/text/; \
+	@if test ! -f $(DEST)/hybrid.m; then \
+		$(INSTALL_DATA) $(srcdir)/hybrid.m $(DEST)/; \
 	fi
 
 install-help:
@@ -471,14 +464,11 @@ install-scripts:
 
 install-end:
 	@echo "" && echo "Installation completed." && echo "" && \
-	echo "If you intend to use this bot as a botnet hub for other 1.8 bots using SSL," && \
-	echo "please run \"make sslcert\" now. If you installed eggdrop to a custom path" && \
-	echo "during the make install process, use the same DEST= option here." && \
+	echo "Run \"make sslcert\" NOW! If you installed hybrid(core) to a custom path" && \
+	echo "during the make install process, use the same DEST= option." && \
 	echo "" && \
-	echo "You MUST ensure that you edit/verify your configuration file." && \
-	echo "An example configuration file, eggdrop.conf, is distributed with Eggdrop." && \
-	echo "" && \
-	echo "Remember to change directory to $(DEST) before you proceed." && \
+	echo "Installed: $(DEST)" && \
+	echo "Config: hybrid.core" && \
 	echo ""
 
 #safety hash

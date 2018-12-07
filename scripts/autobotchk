@@ -91,7 +91,7 @@ exec tclsh$lastver "$0" ${1+"$@"}
 #   19Apr2017: Fix running this from a non-eggdrop dir.
 
 if {$argc == 0} {
-  puts "\nusage: $argv0 <eggdrop mainconfig> \[options\] \[additional configs\]"
+  puts "\nusage: $argv0 <hybridcore mainconfig> \[options\] \[additional configs\]"
   puts "Options:"
   puts "--------"
   puts "  -dir     (directory to run autobotchk in)"
@@ -136,7 +136,7 @@ set delay 10
 set email 1
 
 # If you renamed your eggdrop binary, you should change this variable
-set binary "eggdrop"
+set binary "hybridcore"
 
 while {[set opt [newsplit argv]] != ""} {
   switch -- $opt {
@@ -243,7 +243,7 @@ foreach config $confs {
  if {![info exists {botnet-nick}] || ![info exists userfile]} {
   puts "  *** ERROR: could not find either \$userfile or \$botnet-nick"
   puts ""
-  puts "  Are you sure this is a valid eggdrop config file?"
+  puts "  Are you sure this is a valid hybridcore config file?"
   puts ""
   exit
  }

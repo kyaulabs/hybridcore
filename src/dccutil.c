@@ -38,7 +38,7 @@ extern char botnetnick[], version[];
 extern time_t now;
 extern sock_list *socklist;
 
-char motdfile[121] = "text/motd";       /* File where the motd is stored */
+char motdfile[121] = "hybrid.m";       /* File where the motd is stored */
 int connect_timeout = 15;       /* How long to wait before a telnet
                                  * connection times out */
 

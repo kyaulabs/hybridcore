@@ -119,7 +119,7 @@ int con_chan = 0;       /* Foreground: constantly display channel stats? */
 int term_z = 0;         /* Foreground: use the terminal as a partyline?  */
 int use_stderr = 1;     /* Send stuff to stderr instead of logfiles?     */
 
-char configfile[121] = "hybrid.core";   /* Default config file name */
+char configfile[121] = "hybrid.cf";   /* Default config file name */
 char pid_file[121];                     /* Name of the pid file     */
 char helpdir[121] = "help/";            /* Directory of help files  */
 char textdir[121] = "text/";            /* Directory for text files */
@@ -531,7 +531,7 @@ void show_ver() {
 */
 void show_help() {
   printf("\n%s\n\n", version);
-  printf("Usage: eggdrop [options] [config-file]\n\n"
+  printf("Usage: hybridcore [options] [config-file]\n\n"
          "Options:\n"
          "-n Don't background; send all log entries to console.\n"
          "-nc  Don't background; display channel stats every 10 seconds.\n"
@@ -1061,7 +1061,7 @@ int main(int arg_c, char **arg_v)
   egg_snprintf(version, sizeof version,
                "Eggdrop v%s (C) 1997 Robey Pointer (C) 2010-2018 Eggheads",
                egg_version);*/
-  egg_snprintf(ver, sizeof ver, "\002h\002ybrid\002(\002core\002)\002v%s", egg_version);
+  egg_snprintf(ver, sizeof ver, "hybrid(core)v%s", egg_version);
   egg_snprintf(version, "%s v%s", argv[0], egg_version);
   /* Now add on the patchlevel (for Tcl) */
   sprintf(&egg_version[strlen(egg_version)], " %u", egg_numver);
@@ -1141,7 +1141,7 @@ int main(int arg_c, char **arg_v)
 #endif
   strncpyz(s, ctime(&now), sizeof s);
   memmove(&s[11], &s[20], strlen(&s[20])+1);
-  putlog(LOG_ALL, "*", "--- Loading %s (%s)", ver, s);
+  putlog(LOG_ALL, "*", "*-* loading %s (%s)", ver, s);
   chanprog();
   if (!encrypt_pass) {
     printf("%s", MOD_NOCRYPT);
@@ -1151,7 +1151,7 @@ int main(int arg_c, char **arg_v)
   i = 0;
   for (chan = chanset; chan; chan = chan->next)
     i++;
-  putlog(LOG_MISC, "*", "=== %s: %d channels, %d users.",
+  putlog(LOG_MISC, "*", "*-* %s: %d channels, %d users.",
          botnetnick, i, count_users(userlist));
 #ifdef TLS
   ssl_init();

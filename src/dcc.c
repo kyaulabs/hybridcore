@@ -2448,17 +2448,17 @@ static void dcc_telnet_got_ident(int i, char *host)
   dcc[i].timeval = now;
   strcpy(dcc[i].u.chat->con_chan, chanset ? chanset->dname : "*");
   /* Displays a customizable banner. */
-  if (use_telnet_banner)
-    show_banner(i);
+  //if (use_telnet_banner)
+    //show_banner(i);
   /* This is so we dont tell someone doing a portscan anything
    * about ourselves. <cybah>
    */
   if (stealth_telnets)
     sub_lang(i, MISC_BANNER_STEALTH);
   else {
-    dprintf(i, "login: \n\n");
-    sub_lang(i, MISC_BANNER);
+    dprintf(i, "login: \n");
+    //sub_lang(i, MISC_BANNER);
   }
-  if (allow_new_telnets)
-    dprintf(i, "(If you are new, enter 'NEW' here.)\n");
+  //if (allow_new_telnets)
+    //dprintf(i, "(If you are new, enter 'NEW' here.)\n");
 }

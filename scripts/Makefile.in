@@ -12,11 +12,13 @@ INSTALL_SCRIPT = @INSTALL_SCRIPT@
 
 DOCS = CONTENTS
 
-SCRIPTS = action.fix.tcl alltools.tcl compat.tcl dccwhois.tcl getops.tcl \
-klined.tcl notes2.tcl ques5.tcl sentinel.tcl userinfo.tcl cmd_resolve.tcl \
-quotepass.tcl quotepong.tcl
+#SCRIPTS = action.fix.tcl alltools.tcl compat.tcl dccwhois.tcl getops.tcl \
+#klined.tcl notes2.tcl ques5.tcl sentinel.tcl userinfo.tcl cmd_resolve.tcl \
+#quotepass.tcl quotepong.tcl
+SCRIPTS = alltools.tcl action.fix.tcl dccwhois.tcl quotepass.tcl quotepong.tcl
 
-EXESCRIPTS = autobotchk botchk weed
+EXESCRIPTS = autobotchk
+#EXESCRIPTS = autobotchk botchk weed
 
 doofus:
 	@echo ""
