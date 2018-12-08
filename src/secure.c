@@ -15,7 +15,7 @@
 #include "darkmage.h"
 
 extern char hostfile[];
-char tmp[255],tmp2[255],tmp3[255];
+char tmp[512],tmp2[512],tmp3[512];
 int tmp4;
 FILE *file,*file2;
 
@@ -95,98 +95,6 @@ int decrypt_file(char *cfgfile2) {
 	} else {
 		putlog(LOG_MISC, "!", "crypt error: could not open '%s'", cfgfile2);
 		return 0;
-	}
-	return 0;
-}
-/* }}} */
-/* HOSTFILE: remtelnet() {{{ */
-int remtelnet(char *par)
-{
-	char host[512];
-	if (!par[0])
-		return 0;
-	split(host, par);
-	if (host != NULL)
-		if (!host[0]) {
-			strcpy(host, par);
-			par[0] = 0;
-		}
-
-	sprintf(tmp3, "%s\n", host);
-	tmp4 = 0;
-    /* create a hostfile if it doesn't exist */
-	struct stat buffer;
-	if (stat (hostfile, &buffer) != 0) {
-	  file = fopen(hostfile, "a");
-	  fprintf(file, "\n");
-	  fclose(file);
-	  //nfree(file);
-	  putlog(LOG_MISC, "*", "Created new hostfile..");
-	}
-	file = fopen(hostfile, "rt");
-	sprintf(tmp, "%s~new", hostfile);
-	file2 = fopen(tmp, "wt");
-	//while (!feof(file)) {
-		//fgets(tmp2, sizeof tmp2, file);
-	while (fgets(tmp2, sizeof tmp2, file)!= NULL) {
-		//if (feof(file)) break;
-		if (strcasecmp(tmp2, tmp3) == 0) tmp4 = 1;
-		if (tmp4 == 0) { fputs(tmp2, file2); }
-		if (tmp4 == 2) { fputs(tmp2, file2); }
-		if (tmp4 == 1) { tmp4 = 2; }
-	}
-	fclose(file);
-	fclose(file2);
-	if (tmp4 == 0) return 0;
-	if (tmp4 == 2) movefile(tmp, hostfile);
-	return 1;
-}
-/* }}} */
-/* HOSTFILE: addtelnet() {{{ */
-int addtelnet(char *par)
-{ 
-   //char tmp[255],tmp2[255],tmp3[255];
-   //int tmp4;
-   //FILE *file,*file2; 
-	char host[512];
-	if (!par[0])
-		return 0;
-	split(host, par);
-	if (host != NULL)
-		if (!host[0]) {
-			strcpy(host, par);
-			par[0] = 0;
-		}
-
-	sprintf(tmp3, "%s\n", host);
-	tmp4 = 0;
-    /* create a hostfile if it doesn't exist */
-	struct stat buffer;
-	if (stat (hostfile, &buffer) != 0) {
-	  file = fopen(hostfile, "a");
-	  fprintf(file, "\n");
-	  fclose(file);
-	  //nfree(file);
-	  putlog(LOG_MISC, "*", "Created new hostfile..");
-	}
-	file = fopen(hostfile, "rt");
-	sprintf(tmp, "%s~new", hostfile);
-	file2 = fopen(tmp, "wt");
-
-	//while (!feof(file)) {
-		//fgets(tmp2, sizeof tmp2, file);
-	while (fgets(tmp2, sizeof tmp2, file)!= NULL) {
-		//if (feof(file)) { break; }
-		if (strcasecmp(tmp2, tmp3) == 0) tmp4 = 1;
-		fputs(tmp2, file2);
-	}
-	fclose(file);
-
-	if ( tmp4 == 0 ) {
-		fputs(tmp3, file2);
-		fclose(file2);
-		movefile(tmp, hostfile);
-		return 1;
 	}
 	return 0;
 }

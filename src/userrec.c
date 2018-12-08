@@ -592,8 +592,8 @@ void write_userfile(int idx)
   encrypt_file(new_userfile);
   movefile(".tmp1", userfile);
   /* purge decrypted files */
-  putlog(LOG_MISC, "*", "-- write_userfile(): removing '.tmp1'");
-  unlink(".tmp1");
+  //putlog(LOG_MISC, "*", "-- write_userfile(): removing '.tmp1'");
+  //unlink(".tmp1");
   putlog(LOG_MISC, "*", "-- write_userfile(): removing '%s'", new_userfile);
   unlink(new_userfile);
   //movefile(new_userfile, userfile);

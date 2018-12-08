@@ -77,7 +77,7 @@ extern tcl_timer_t *timer, *utimer;
 Tcl_Interp *interp;
 
 /* hosts file to use for strict telnet */
-char hostfile[120] = "hybrid.hosts";
+char hostfile[120] = "hybrid.h";
 
 int protect_readonly = 0; /* Enable read-only protection? */
 char whois_fields[1025] = "";

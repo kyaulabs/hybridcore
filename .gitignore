@@ -27,7 +27,7 @@ _$*
 core
 # CVS default ignores end
 autom4te.cache
-Makefile
+/Makefile
 .modules
 .known_modules
 /config.h

@@ -122,6 +122,7 @@ int check_dcc_chanattrs(struct userrec *, char *, int, int);
 int check_int_range(char *value, int min, int max);
 int stripmodes(char *);
 char *stripmasktype(int);
+void chopN(char *str, size_t);
 
 /* dcc.c */
 void failed_link(int);
@@ -302,8 +303,6 @@ void split(char *first, char *rest);
 int secpass(char *);
 int decrypt_file(char *);
 int encrypt_file(char *);
-int addtelnet(char *);
-int remtelnet(char *);
 
 /* tcl.c */
 struct threaddata *threaddata();

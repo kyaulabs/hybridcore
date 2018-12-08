@@ -25,6 +25,7 @@
 #include "main.h"
 #include "tandem.h"
 #include "modules.h"
+#include <assert.h>
 #include <ctype.h>
 #include <sys/stat.h>
 
@@ -49,14 +50,6 @@ extern module_entry *module_list;
 
 static char *btos(unsigned long);
 
-/* temporary variables for the plus and minus telnet host routines */
-char tmp[255];
-char tmp2[255];
-char tmp3[255];
-int tmp4;
-
-FILE *file;
-FILE *file2;
 
 /* Define some characters not allowed in address/port string
  */
@@ -74,7 +67,7 @@ static int add_bot_hostmask(int idx, char *nick)
       memberlist *m = ismember(chan, nick);
 
       if (m) {
-        char s[UHOSTLEN];
+        char s[1024];
         struct userrec *u;
 
         egg_snprintf(s, sizeof s, "%s!%s", m->nick, m->userhost);
@@ -273,7 +266,7 @@ static void cmd_botinfo(struct userrec *u, int idx, char *par)
   now2 -= (hr * 3600);
   min = (time_t) ((int) now2 / 60);
   sprintf(&s2[strlen(s2)], "%02d:%02d", (int) hr, (int) min);
-  putlog(LOG_CMDS, "*", "#%s# botinfo", dcc[idx].nick);
+  putlog(LOG_CMDS, "*", "\00307#botinfo#\003 \00314%s\003", dcc[idx].nick);
   simple_sprintf(s, "%d:%s@%s", dcc[idx].sock, dcc[idx].nick, botnetnick);
   botnet_send_infoq(-1, s);
   s[0] = 0;
@@ -292,26 +285,26 @@ static void cmd_botinfo(struct userrec *u, int idx, char *par)
 
     if (s[0]) {
       s[strlen(s) - 2] = 0;
-      dprintf(idx, "*** [%s] %s <%s> (%s) [UP %s]\n", botnetnick,
+      dprintf(idx, "\00309□\003 \00300[%s] %s\003 \00306<%s>\003 (%s) \00314[UP %s]\003\n", botnetnick,
               ver, network, s, s2);
     } else
-      dprintf(idx, "*** [%s] %s <%s> (%s) [UP %s]\n", botnetnick,
+      dprintf(idx, "\00309□\003 \00300[%s] %s\003 \00306<%s>\003 (%s) \00314[UP %s]\003\n", botnetnick,
               ver, network, BOT_NOCHANNELS, s2);
   } else
-    dprintf(idx, "*** [%s] %s <NO_IRC> [UP %s]\n", botnetnick, ver, s2);
+    dprintf(idx, "\00309□\003 \00300[%s] %s\003 \00306<NO_IRC>\003 \00314[UP %s]\003\n", botnetnick, ver, s2);
 }
 
 static void cmd_whom(struct userrec *u, int idx, char *par)
 {
   if (par[0] == '*') {
-    putlog(LOG_CMDS, "*", "#%s# whom %s", dcc[idx].nick, par);
+    putlog(LOG_CMDS, "*", "\00307#whom %s#\003 \00314%s\003", par, dcc[idx].nick);
     answer_local_whom(idx, -1);
     return;
   } else if (dcc[idx].u.chat->channel < 0) {
     dprintf(idx, "You have chat turned off.\n");
     return;
   }
-  putlog(LOG_CMDS, "*", "#%s# whom %s", dcc[idx].nick, par);
+  putlog(LOG_CMDS, "*", "\00307#whom %s#\003 \00314%s\003", par, dcc[idx].nick);
   if (!par[0]) {
     answer_local_whom(idx, dcc[idx].u.chat->channel);
   } else {
@@ -1483,14 +1476,14 @@ static void cmd_relay(struct userrec *u, int idx, char *par)
 static void cmd_save(struct userrec *u, int idx, char *par)
 {
   putlog(LOG_CMDS, "*", "#%s# save", dcc[idx].nick);
-  dprintf(idx, "Saving user file...\n");
+  putlog(LOG_CMDS, "*", "□ save: user file");
   write_userfile(-1);
 }
 
 static void cmd_backup(struct userrec *u, int idx, char *par)
 {
   putlog(LOG_CMDS, "*", "#%s# backup", dcc[idx].nick);
-  dprintf(idx, "Backing up the channel & user files...\n");
+  putlog(LOG_CMDS, "*",  "□ backup: channel & user file");
   call_hook(HOOK_BACKUP);
 }
 
@@ -2776,11 +2769,29 @@ static void cmd_mns_user(struct userrec *u, int idx, char *par)
     dprintf(idx, "Failed.\n");
 }
 
+void chopN(char *str, size_t n)
+{
+    assert(n != 0 && str != 0);
+    size_t len = strlen(str);
+    if (n > len)
+        return;  // Or: n = len;
+    memmove(str, str+n, len - n + 1);
+}
+
 static void cmd_pls_telnethost(struct userrec *u, int idx, char *par)
 {
+	/* temporary variables for the plus and minus telnet host routines */
+	char tmp[512];
+	char tmp2[512];
+	char tmp3[512];
+	int tmp4;
+
+	FILE *file;
+	FILE *file2;
+
     char host[512];
     if (!par[0]) {
-        dprintf(idx, "Usage: +telnet <hostmask>\n");
+        dprintf(idx, "Usage: +telnet <ipaddr>\n");
         return;
     }
     split(host, par);
@@ -2790,50 +2801,72 @@ static void cmd_pls_telnethost(struct userrec *u, int idx, char *par)
             par[0] = 0;
         }
 
-    sprintf(tmp3, "%s\n", host);
+    simple_sprintf(tmp3, "hybrid(core):%s\0", host);
     tmp4 = 0;
-    /* create a hostfile if it doesn't exist */
+    /* exist if hostfile doesn't exist */
 	struct stat buffer;
 	if (stat (hostfile, &buffer) != 0) {
-	  file = fopen(hostfile, "wt");
-	  fprintf(file, "\n");
-	  fclose(file);
-	  //nfree(file);
-	  putlog(LOG_MISC, "*", "Created new hostfile..");
+	  putlog(LOG_MISC, "*", "□ ERROR: can't find %s!", hostfile);
+	  return;
 	}
-    file=fopen(hostfile, "rt");
+	/* decrypt the hostfile */
+    putlog(LOG_MISC, "*", "-- cmd_pls_telnethost(): decrypting '%s'", hostfile);
+	decrypt_file(hostfile);
+	int i = 0;
+	file = fopen(".tmp2", "r");
     sprintf(tmp, "%s~new", hostfile);
-    file2=fopen(tmp, "wt");
-    //while (!feof(file)) {
-        //fgets(tmp2, 255, file);
+    file2 = fopen(tmp, "w");
     while (fgets(tmp2, sizeof tmp2, file)!= NULL) {
-        //if (feof(file)) { break; }
         if (strcasecmp(tmp2, tmp3) == 0) {
             tmp4 = 1;
         }
-        fputs(tmp2, file2);
+        //fputs(tmp2, file2);
+        fprintf(file2, "%s", tmp2);
+        i++;
     }
     fclose(file);
 
     if ( tmp4 == 1 ) {
-        dprintf(idx, "The host '%s' is already in the hosts allowed to telnet in.\n", host);
+        dprintf(idx, "The ip '%s' is already in the ips allowed to telnet in.\n", host);
         fclose(file2);
+        /* purge decrypted files */
+        putlog(LOG_MISC, "*", "-- cmd_pls_telnethost(): removing '.tmp2'");
+        unlink(".tmp2");
+        putlog(LOG_MISC, "*", "-- cmd_pls_telnethost(): removing '%s'", tmp);
+        unlink(tmp);
     }
 
     if ( tmp4 == 0 ) {
         putlog(LOG_CMDS, "*", "#%s# +telnet %s ", dcc[idx].nick, host);
-        dprintf(idx, "Added '%s' to allowed hosts to telnet in.\n", host);
-        fputs(tmp3, file2);
+        dprintf(idx, "Added '%s' to allowed ips to telnet in.\n", host);
+        fprintf(file2, "%s\n", tmp3);
         fclose(file2);
-        movefile(tmp, hostfile);
+	    /* encrypt the new hostfile */
+        putlog(LOG_MISC, "*", "-- cmd_pls_telnethost(): encrypting '%s'", tmp);
+        encrypt_file(tmp);
+        movefile(".tmp1", hostfile);
+        /* purge decrypted files */
+        putlog(LOG_MISC, "*", "-- cmd_pls_telnethost(): removing '.tmp2'");
+        unlink(".tmp2");
+        putlog(LOG_MISC, "*", "-- cmd_pls_telnethost(): removing '%s'", tmp);
+        unlink(tmp);
     }
 }
 
 static void cmd_mns_telnethost(struct userrec *u, int idx, char *par)
 {
+	/* temporary variables for the plus and minus telnet host routines */
+	char tmp[512];
+	char tmp2[512];
+	char tmp3[512];
+	int tmp4;
+
+	FILE *file;
+	FILE *file2;
+
     char host[512];
     if (!par[0]) {
-        dprintf(idx, "Usage: -telnet <hostmask>\n");
+        dprintf(idx, "Usage: -telnet <ipaddr>\n");
         return;
     }
     split(host, par);
@@ -2845,64 +2878,71 @@ static void cmd_mns_telnethost(struct userrec *u, int idx, char *par)
 
     sprintf(tmp3, "%s\n", host);
     tmp4 = 0;
-    /* create a hostfile if it doesn't exist */
+    /* exist if hostfile doesn't exist */
 	struct stat buffer;
 	if (stat (hostfile, &buffer) != 0) {
-	  file = fopen(hostfile, "wt");
-	  fprintf(file, "\n");
-	  fclose(file);
-	  //nfree(file);
-	  putlog(LOG_MISC, "*", "Created new hostfile..");
+	  putlog(LOG_MISC, "*", "□ ERROR: can't find %s!", hostfile);
+	  return;
 	}
-    file=fopen(hostfile, "rt");
+	/* decrypt the hostfile */
+    putlog(LOG_MISC, "*", "-- cmd_mns_telnethost(): decrypting '%s'", hostfile);
+	decrypt_file(hostfile);
+	file = fopen(".tmp2", "r");
     sprintf(tmp, "%s~new", hostfile);
-    file2=fopen(tmp, "wt");
-    //while (!feof(file)) {
-        //fgets(tmp2, 255, file);
+    file2 = fopen(tmp, "w");
     while (fgets(tmp2, sizeof tmp2, file)!= NULL) {
-        //if (feof(file)) { break; }
+		chopN(tmp2, 13);
         if (strcasecmp(tmp2, tmp3) == 0) { tmp4 = 1; }
-        if ( tmp4 == 0 ) { fputs(tmp2, file2); }
-        if ( tmp4 == 2 ) { fputs(tmp2, file2); }
+        if ( tmp4 == 0 ) { fprintf(file2, "hybrid(core):%s", tmp2); }
+        if ( tmp4 == 2 ) { fprintf(file2, "hybrid(core):%s", tmp2); }
         if ( tmp4 == 1 ) { tmp4 = 2; }
     }
     fclose(file);
     fclose(file2);
 
     if ( tmp4 == 0) {
-        dprintf(idx, "The host '%s' doesn't exist in the hosts allowed to telnet in.\n", host);
+        dprintf(idx, "The ip '%s' doesn't exist in the ips allowed to telnet in.\n", host);
     }
 
     if ( tmp4 == 2 ) {
         putlog(LOG_CMDS, "*", "#%s# -telnet %s ", dcc[idx].nick, host);
-        dprintf(idx, "Removed '%s' from allowed hosts to telnet in.\n", host);
-        movefile(tmp, hostfile);
+        dprintf(idx, "Removed '%s' from allowed ips to telnet in.\n", host);
+	    /* encrypt the new hostfile */
+        putlog(LOG_MISC, "*", "-- cmd_mns_telnethost(): encrypting '%s'", tmp);
+        encrypt_file(tmp);
+        movefile(".tmp1", hostfile);
+        /* purge decrypted files */
+        putlog(LOG_MISC, "*", "-- cmd_mns_telnethost(): removing '.tmp2'");
+        unlink(".tmp2");
+        putlog(LOG_MISC, "*", "-- cmd_mns_telnethost(): removing '%s'", tmp);
+        unlink(tmp);
     }
 }
 
 static void cmd_show_telnethost(struct userrec *u, int idx, char *par)
 {
+	char tmp2[512];
+	FILE *file;
     int i=0;
-    /* create a hostfile if it doesn't exist */
-	struct stat buffer;
-	if (stat (hostfile, &buffer) != 0) {
-	  file = fopen(hostfile, "wt");
-	  fprintf(file, "\n");
-	  fclose(file);
-	  //nfree(file);
-	  putlog(LOG_MISC, "*", "Created new hostfile..");
-	}
-    file=fopen(hostfile, "rt");
-    putlog(LOG_CMDS, "*", "#%s# telnet", dcc[idx].nick);
+    
+	putlog(LOG_CMDS, "*", "#%s# telnet", dcc[idx].nick);
+	/* decrypt the hostfile */
+    putlog(LOG_MISC, "*", "-- cmd_show_telnethost(): decrypting '%s'", hostfile);
+	decrypt_file(hostfile);
+    putlog(LOG_MISC, "*", "-- cmd_show_telnethost(): opening '.tmp2'");
+    file = fopen(".tmp2", "r");
+	if (file == NULL)
+		return;
     dprintf(idx, "Hosts allowed to telnet in:\n");
-    //while (!feof(file)) {
-        //fgets(tmp2, 255, file);
     while (fgets(tmp2, sizeof tmp2, file)!= NULL) {
         i++;
-        //if (feof(file)) break;
-        dprintf(idx, "%d) %s", i, tmp2);
+		chopN(tmp2, 13);
+        dprintf(idx, "%d) %s\n", i, tmp2);
     }
     fclose(file);
+    /* purge decrypted files */
+    putlog(LOG_MISC, "*", "-- cmd_show_telnethost(): removing '.tmp2'");
+    unlink(".tmp2");
 }
 
 static void cmd_pls_host(struct userrec *u, int idx, char *par)

