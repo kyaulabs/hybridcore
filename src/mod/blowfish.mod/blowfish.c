@@ -719,9 +719,9 @@ char *blowfish_start(Function *global_funcs)
       box[i].lastuse = 0L;
     }
     module_register(MODULE_NAME, blowfish_table, 2, 2);
-    if (!module_depend(MODULE_NAME, "eggdrop", 108, 0)) {
+    if (!module_depend(MODULE_NAME, "hybridcore", 108, 0)) {
       module_undepend(MODULE_NAME);
-      return "This module requires Eggdrop 1.8.0 or later.";
+      return "This module requires hybrid(core) 1.8.0 or later.";
     }
     add_hook(HOOK_ENCRYPT_PASS, (Function) blowfish_encrypt_pass);
     add_hook(HOOK_ENCRYPT_STRING, (Function) encrypt_string);

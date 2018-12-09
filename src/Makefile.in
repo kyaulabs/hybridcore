@@ -36,7 +36,7 @@ linkstart:
 	echo "" && \
 	echo "---------- Yeah! That's the compiling, now the linking! ----------" && \
 	echo "" && \
-	echo "Linking eggdrop $(EGGBUILD)." && \
+	echo "□ linking: hybrid(core) $(EGGBUILD)." && \
 	echo "" && \
 	touch mod/mod.xlibs
 
@@ -46,7 +46,7 @@ link:
 linkfinish:
 	@$(STRIP) ../$(EGGEXEC) && \
 	echo "" && \
-	echo "Successful compile: $(EGGEXEC)" && \
+	echo "□ successful compile: $(EGGEXEC)" && \
 	echo ""
 
 ../$(EGGEXEC): $(eggdrop_objs) compile_md5 compatibility
@@ -73,7 +73,7 @@ compile_md5:
 	@cd md5 && $(MAKE) $(MAKE_GENERIC_ARGS) md5
 
 eggdrop.h:
-	@echo "You do not have the eggdrop source!" && exit 1
+	@echo "You do not have the hybrid(core) source!" && exit 1
 
 .SUFFIXES:
 .SUFFIXES: .c .h .o .a

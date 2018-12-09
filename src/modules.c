@@ -616,7 +616,7 @@ void init_modules(void)
 
   module_list = nmalloc(sizeof(module_entry));
   module_list->name = nmalloc(8);
-  strcpy(module_list->name, "eggdrop");
+  strcpy(module_list->name, "hybridcore");
   module_list->major = (egg_numver) / 10000;
   module_list->minor = (egg_numver / 100) % 100;
 #ifndef STATIC

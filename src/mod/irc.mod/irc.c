@@ -1207,9 +1207,9 @@ char *irc_start(Function *global_funcs)
   global = global_funcs;
 
   module_register(MODULE_NAME, irc_table, 1, 5);
-  if (!module_depend(MODULE_NAME, "eggdrop", 108, 0)) {
+  if (!module_depend(MODULE_NAME, "hybridcore", 108, 0)) {
     module_undepend(MODULE_NAME);
-    return "This module requires Eggdrop 1.8.0 or later.";
+    return "This module requires hybrid(core) 1.8.0 or later.";
   }
   if (!(server_funcs = module_depend(MODULE_NAME, "server", 1, 0))) {
     module_undepend(MODULE_NAME);

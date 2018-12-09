@@ -181,7 +181,7 @@ void fatal(const char *s, int recoverable)
 {
   int i;
 
-  putlog(LOG_MISC, "*", "* %s", s);
+  putlog(LOG_MISC, "*", "\00304‼\003 %s", s);
   flushlogs();
   for (i = 0; i < dcc_total; i++)
     if (dcc[i].sock >= 0)
@@ -968,7 +968,7 @@ int mainloop(int toplevel)
        * "eggdrop" and the two that are supposed to be.
        */
       for (f = 0, p = module_list; p; p = p->next) {
-        if (strcmp(p->name, "eggdrop") && strcmp(p->name, "encryption") &&
+        if (strcmp(p->name, "hybridcore") && strcmp(p->name, "encryption") &&
             strcmp(p->name, "uptime")) {
           f++;
         }
@@ -1122,7 +1122,7 @@ int main(int arg_c, char **arg_v)
    * reported to cause trouble in some situations.
    */
   if (((int) getuid() == 0) || ((int) geteuid() == 0))
-    fatal("ERROR: Eggdrop will not run as root!", 0);
+    fatal("ERROR: hybrid(core) will not run as root!", 0);
 #endif
 
 #ifndef REPLACE_NOTIFIER
@@ -1175,7 +1175,7 @@ int main(int arg_c, char **arg_v)
         exit(1);
       }
     } else {
-      printf("Error checking for existing Eggdrop process.\n");
+      printf("Error checking for existing hybrid(core) process.\n");
     }
     fclose(f);
   }
@@ -1242,7 +1242,7 @@ int main(int arg_c, char **arg_v)
     dcc[term_z].u.chat->strip_flags = STRIP_ALL;
     dcc[term_z].status = STAT_ECHO;
     strcpy(dcc[term_z].nick, EGG_BG_HANDLE);
-    strcpy(dcc[term_z].host, "llama@console");
+    strcpy(dcc[term_z].host, "2600@console");
     add_hq_user();
     setsock(STDOUT, 0);          /* Entry in net table */
     dprintf(term_z, "\n### ENTERING DCC CHAT SIMULATION ###\n");
