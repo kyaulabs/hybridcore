@@ -522,7 +522,7 @@ static void cmd_status(struct userrec *u, int idx, char *par)
 
   if (!egg_strcasecmp(par, "all")) {
     if (!(atr & USER_MASTER)) {
-      dprintf(idx, "You do not have Bot Master privileges.\n");
+      dprintf(idx, "You do not have bot master privileges.\n");
       return;
     }
     putlog(LOG_CMDS, "*", "\00307#status#\003 \00306all\003 %s", dcc[idx].nick);
@@ -1695,7 +1695,7 @@ static void cmd_chattr(struct userrec *u, int idx, char *par)
     user.match |= FR_CHAN;
   get_user_flagrec(u, &user, chan ? chan->dname : 0);
   if (!chan && !glob_botmast(user)) {
-    dprintf(idx, "\00304You do not have Bot Master privileges.\003\n");
+    dprintf(idx, "\00304You do not have bot master privileges.\003\n");
     if (tmpchg)
       nfree(tmpchg);
     return;
@@ -1883,7 +1883,7 @@ static void cmd_botattr(struct userrec *u, int idx, char *par)
   user.match = FR_GLOBAL;
   get_user_flagrec(u, &user, chan ? chan->dname : 0);
   if (!glob_botmast(user)) {
-    dprintf(idx, "\00304You do not have Bot Master privileges.\003\n");
+    dprintf(idx, "\00304You do not have bot master privileges.\003\n");
     if (tmpchg)
       nfree(tmpchg);
     return;

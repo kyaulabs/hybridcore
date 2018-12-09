@@ -1145,7 +1145,7 @@ static void cmd_reset(struct userrec *u, int idx, char *par)
       }
     }
   } else if (!(u->flags & USER_MASTER))
-    dprintf(idx, "\00304You are not a Bot Master.\003\n");
+    dprintf(idx, "\00304You are not a bot master.\003\n");
   else {
     putlog(LOG_CMDS, "*", "\00307#reset#\003 \00306all\003 %s", dcc[idx].nick);
     dprintf(idx, "Resetting channel info for all channels...\n");

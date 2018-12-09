@@ -28,7 +28,6 @@
 
 #define EBUG_OUTPUT
 #define EBUG_TCL
-#define GOD "AKiRA2600"
 
 /*
  * If you're *only* going to link to new version bots (1.3.0 or higher)

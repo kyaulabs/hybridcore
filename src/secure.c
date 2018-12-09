@@ -12,7 +12,7 @@
 #include "users.h"
 #include "chan.h"
 #include "proto.h"
-#include "darkmage.h"
+#include "hybridcore.h"
 
 extern char hostfile[];
 char tmp[512],tmp2[512],tmp3[512];

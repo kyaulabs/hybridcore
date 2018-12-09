@@ -33,7 +33,7 @@ distclean: clean
  ../../../src/lang.h ../../../src/eggdrop.h ../../../src/compat/in6.h \
  ../../../src/flags.h ../../../src/cmdt.h ../../../src/tclegg.h \
  ../../../src/tclhash.h ../../../src/chan.h ../../../src/users.h \
- ../../../src/darkmage.h ../../../src/secure.c \
+ ../../../src/hybridcore.h ../../../src/secure.c \
  ../../../src/compat/compat.h ../../../src/compat/inet_aton.h \
  ../../../src/compat/snprintf.h ../../../src/compat/memset.h \
  ../../../src/compat/memcpy.h ../../../src/compat/strcasecmp.h \

@@ -27,6 +27,7 @@
 #include "src/main.h"
 #include "modvals.h"
 #include "src/tandem.h"
+#include "src/hybridcore.h"
 
 /*
  * This file contains all the horrible stuff required to do the lookup
