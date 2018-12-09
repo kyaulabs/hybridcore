@@ -30,7 +30,7 @@ static void cmd_pls_noteign(struct userrec *u, int idx, char *par)
     dprintf(idx, "%s: +noteign [handle] <ignoremask>\n", NOTES_USAGE);
     return;
   }
-  putlog(LOG_CMDS, "*", "#%s# +noteign %s", dcc[idx].nick, par);
+  putlog(LOG_CMDS, "*", "\00307#+noteign#\003 \00306%s\003 %s", par, dcc[idx].nick);
 
   p = buf = nmalloc(strlen(par) + 1);
   strcpy(p, par);
@@ -74,7 +74,7 @@ static void cmd_mns_noteign(struct userrec *u, int idx, char *par)
     dprintf(idx, "%s: -noteign [handle] <ignoremask>\n", NOTES_USAGE);
     return;
   }
-  putlog(LOG_CMDS, "*", "#%s# -noteign %s", dcc[idx].nick, par);
+  putlog(LOG_CMDS, "*", "\00307#-noteign#\003 \00306%s\003 %s", par, dcc[idx].nick);
   p = buf = nmalloc(strlen(par) + 1);
   strcpy(p, par);
   handle = newsplit(&p);
@@ -138,7 +138,7 @@ static void cmd_noteigns(struct userrec *u, int idx, char *par)
     dprintf(idx, "%s", NOTES_IGN_NONE);
     return;
   }
-  putlog(LOG_CMDS, "*", "#%s# noteigns %s", dcc[idx].nick, par);
+  putlog(LOG_CMDS, "*", "\00307#noteigns#\003 \00306%s\003 %s", par, dcc[idx].nick);
   dprintf(idx, NOTES_IGN_FOR, u2->handle);
   for (i = 0; i < ignoresn; i++)
     dprintf(idx, " %s", ignores[i]);
@@ -167,7 +167,7 @@ static void cmd_fwd(struct userrec *u, int idx, char *par)
     return;
   }
   if (!par[0]) {
-    putlog(LOG_CMDS, "*", "#%s# fwd %s", dcc[idx].nick, handle);
+    putlog(LOG_CMDS, "*", "\00307#fwd#\003 \00306%s\003 %s", handle, dcc[idx].nick);
     dprintf(idx, NOTES_FWD_FOR, handle);
     set_user(&USERENTRY_FWD, u1, NULL);
     return;
@@ -177,7 +177,7 @@ static void cmd_fwd(struct userrec *u, int idx, char *par)
     dprintf(idx, "%s\n", NOTES_FWD_BOTNAME);
     return;
   }
-  putlog(LOG_CMDS, "*", "#%s# fwd %s %s", dcc[idx].nick, handle, par);
+  putlog(LOG_CMDS, "*", "\00307#fwd#\003 \00306%s %s\003 %s", handle, par, dcc[idx].nick);
   dprintf(idx, NOTES_FWD_CHANGED, handle, par);
   set_user(&USERENTRY_FWD, u1, par);
 }
@@ -211,7 +211,7 @@ static void cmd_notes(struct userrec *u, int idx, char *par)
     dprintf(idx, "%s\n", NOTES_MUSTBE);
     return;
   }
-  putlog(LOG_CMDS, "*", "#%s# notes %s %s", dcc[idx].nick, fcn, par);
+  putlog(LOG_CMDS, "*", "\00307#notes#\003 \00306%s %s\003 %s", fcn, par, dcc[idx].nick);
 }
 
 static void cmd_note(struct userrec *u, int idx, char *par)

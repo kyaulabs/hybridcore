@@ -607,7 +607,7 @@ void backup_userfile(void)
   char s[125];
 
   if (quiet_save < 2)
-    putlog(LOG_MISC, "*", USERF_BACKUP);
+    putlog(LOG_MISC, "*", "\00309□\003 backup: \00314user file\003");
   egg_snprintf(s, sizeof s, "%s~bak", userfile);
   copyfile(userfile, s);
 }
@@ -693,7 +693,7 @@ static void core_secondly()
       call_hook(HOOK_DAILY);
       if (!keep_all_logs) {
         if (quiet_save < 3)
-          putlog(LOG_MISC, "*", MISC_LOGSWITCH);
+          putlog(LOG_MISC, "*", "\00309□\003 switching logfiles");
         for (i = 0; i < max_logs; i++)
           if (logs[i].filename) {
             char s[1024];
@@ -1141,7 +1141,7 @@ int main(int arg_c, char **arg_v)
 #endif
   strncpyz(s, ctime(&now), sizeof s);
   memmove(&s[11], &s[20], strlen(&s[20])+1);
-  putlog(LOG_ALL, "*", "□ loading %s (%s)", ver, s);
+  putlog(LOG_ALL, "*", "\00309□\003 loading %s \00314(%s)\003", ver, s);
   chanprog();
   if (!encrypt_pass) {
     printf("%s", MOD_NOCRYPT);
@@ -1151,7 +1151,7 @@ int main(int arg_c, char **arg_v)
   i = 0;
   for (chan = chanset; chan; chan = chan->next)
     i++;
-  putlog(LOG_MISC, "*", "□ %s: %d channels, %d users.",
+  putlog(LOG_MISC, "*", "\00309□\003 %s: \00314%d channels, %d users\003",
          botnetnick, i, count_users(userlist));
 #ifdef TLS
   ssl_init();

@@ -47,8 +47,8 @@
 0x20d,You have installed modules but have not selected an encryption\n\
 module, please consult the default config file for info.\n
 0x20e,Filesys module not loaded.
-0x20f,□ module: %-16s (with lang support)
-0x210,□ module: %-16s
+0x20f,\00309□\003 module: \00314%-16s (with lang support)\003
+0x210,\00309□\003 module: \00314%-16s\003
 
 # USERF_
 0x400,Userlist transfer complete; switched over
@@ -61,14 +61,14 @@ module, please consult the default config file for info.\n
 0x408,Duplicate user record
 0x409,Corrupted password reset for
 0x40a,Ignored masks for channel(s):
-0x40b,□ encrypting user file...
+0x40b,\00309□\003 encrypting: \00314user file\003
 0x40c,ERROR writing user file.
 0x40d,ERROR writing user file to transfer.
 0x40e,Userfile creation not necessary--skipping
-0x40f,□ rehashing...
+0x40f,\00309□\003 rehashing
 0x410,I don't know anyone by that name.\n
 0x411,No such user record.
-0x412,□ backing up user file...
+0x412,\00309□\003 backup: \00314user file\003
 0x413,Failed connection; aborted userfile transfer.
 0x414,Old style share request by
 0x415,Antiquated sharing request
@@ -86,9 +86,9 @@ module, please consult the default config file for info.\n
 0x509,Ambiguous command.\n
 0x50a,What?  You need '.help'\n
 0x50b,Command bindings:\n
-0x50c,□ restarting...
+0x50c,\00309□\003 restarting
 0x50d,es
-0x50e,□ switching logfiles...
+0x50e,\00309□\003 switching logfiles
 0x512,idle
 0x513,AWAY
 0x516,Disconnected

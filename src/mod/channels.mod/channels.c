@@ -439,11 +439,9 @@ static void write_channels()
   f = fopen(s, "w");
   chmod(s, userfile_perm);
   if (f == NULL) {
-    putlog(LOG_MISC, "*", "ERROR writing channel file.");
+    putlog(LOG_MISC, "*", "\00304‼ ERROR:\003 writing %s!", chanfile);
     return;
   }
-  if (!quiet_save)
-    putlog(LOG_MISC, "*", "□ encrypting channel file...");
   fprintf(f, "#Dynamic Channel File for %s (%s) -- written %s\n",
           botnetnick, ver, ctime(&now));
   for (chan = chanset; chan; chan = chan->next) {
@@ -523,21 +521,20 @@ static void write_channels()
       }
     }
     if (fflush(f)) {
-      putlog(LOG_MISC, "*", "ERROR writing channel file.");
+      putlog(LOG_MISC, "*", "\00304‼ ERROR:\003 writing %s!", chanfile);
       fclose(f);
       return;
     }
   }
   fclose(f);
   unlink(chanfile);
-  putlog(LOG_MISC, "*", "-- write_channels(): encrypting '%s'", s);
+  //putlog(LOG_MISC, "*", "-- write_channels(): encrypting '%s'", s);
   encrypt_file(s);
   movefile(".tmp1", chanfile);
-  //movefile(s, chanfile);
   /* purge decrypted files */
-  putlog(LOG_MISC, "*", "-- write_channels(): removing '.tmp1'");
+  //putlog(LOG_MISC, "*", "-- write_channels(): removing '.tmp1'");
   unlink(".tmp1");
-  putlog(LOG_MISC, "*", "-- write_channels(): removing '%s'", s);
+  //putlog(LOG_MISC, "*", "-- write_channels(): removing '%s'", s);
   unlink(s);
 }
 
@@ -559,32 +556,21 @@ static void read_channels(int create, int reload)
   struct stat buffer;
   if (stat (chanfile, &buffer) == 0) {
     decrypt_file(chanfile);
-    putlog(LOG_MISC, "*", "-- read_channels(): decypted '%s'", chanfile);
+    //putlog(LOG_MISC, "*", "-- read_channels(): decypted '%s'", chanfile);
   }
-  //if (!readtclprog(chanfile) && create) {
   if (!readtclprog(".tmp2") && create) {
     /* create a chanfile if it doesn't exist */
     if (stat (chanfile, &buffer) != 0) {
       f = fopen(chanfile, "wt");
       fprintf(f, "\n");
       fclose(f);
-      putlog(LOG_MISC, "*", "□ created new %s..", chanfile);
+      putlog(LOG_MISC, "*", "\00309□\003 created new: \00314%s\003", chanfile);
     }
-    //FILE *f;
-
-    /* Assume file isnt there & therfore make it */
-    //putlog(LOG_MISC, "*", "Creating channel file");
-    //f = fopen(chanfile, "w");
-    //if (!f)
-      //putlog(LOG_MISC, "*", "Couldn't create channel file: %s.  Dropping",
-             //chanfile);
-    //else
-      //fclose(f);
   }
   chan_hack = 0;
   if (!reload) {
     /* purge decrypted files */
-    putlog(LOG_MISC, "*", "-- read_channels(): removing '.tmp2'");
+    //putlog(LOG_MISC, "*", "-- read_channels(): removing '.tmp2'");
     unlink(".tmp2");
     return;
   }
@@ -596,7 +582,7 @@ static void read_channels(int create, int reload)
     }
   }
   /* purge decrypted files */
-  putlog(LOG_MISC, "*", "-- read_channels(): removing '.tmp2'");
+  //putlog(LOG_MISC, "*", "-- read_channels(): removing '.tmp2'");
   unlink(".tmp2");
 }
 
@@ -605,7 +591,7 @@ static void backup_chanfile()
   char s[125];
 
   if (quiet_save < 2)
-    putlog(LOG_MISC, "*", "□ backing up channel file...");
+    putlog(LOG_MISC, "*", "\00309□\003 backup: \00314channel file\003");
   egg_snprintf(s, sizeof s, "%s~bak", chanfile);
   copyfile(chanfile, s);
 }

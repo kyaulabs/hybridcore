@@ -107,7 +107,7 @@ static void cmd_act(struct userrec *u, int idx, char *par)
     dprintf(idx, "\00304Cannot say to %s: It is moderated.\003\n", chan->dname);
     return;
   }
-  putlog(LOG_CMDS, "*", "\00307#(%s) act %s#\003 %s", chan->dname, par), dcc[idx].nick;
+  putlog(LOG_CMDS, "*", "\00307#(%s) act#\003 \00306%s\003 %s", chan->dname, par), dcc[idx].nick;
   dprintf(DP_HELP, "PRIVMSG %s :\001ACTION %s\001\n", chan->name, par);
   dprintf(idx, "Action to %s: %s\n", chan->dname, par);
 }
@@ -120,7 +120,7 @@ static void cmd_msg(struct userrec *u, int idx, char *par)
   if (!par[0])
     dprintf(idx, "Usage: msg <nick> <message>\n");
   else {
-    putlog(LOG_CMDS, "*", "\00307#msg %s %s#\003 %s", nick, par, dcc[idx].nick);
+    putlog(LOG_CMDS, "*", "\00307#msg#\003 \00306%s %s\003 %s", nick, par, dcc[idx].nick);
     dprintf(DP_HELP, "PRIVMSG %s :%s\n", nick, par);
     dprintf(idx, "Msg to %s: %s\n", nick, par);
   }
@@ -153,7 +153,7 @@ static void cmd_say(struct userrec *u, int idx, char *par)
     dprintf(idx, "\00304Cannot say to %s: It is moderated.\003\n", chan->dname);
     return;
   }
-  putlog(LOG_CMDS, "*", "\00307#(%s) say %s#\003 %s", chan->dname, par, dcc[idx].nick);
+  putlog(LOG_CMDS, "*", "\00307#(%s) say#\003 \00306%s\003 %s", chan->dname, par, dcc[idx].nick);
   dprintf(DP_HELP, "PRIVMSG %s :%s\n", chan->name, par);
   dprintf(idx, "Said to %s: %s\n", chan->dname, par);
 }
@@ -187,7 +187,7 @@ static void cmd_kickban(struct userrec *u, int idx, char *par)
             "on %s, or halfops cannot set bans.\003\n", chan->dname);
     return;
   }
-  putlog(LOG_CMDS, "*", "\00307#(%s) kickban %s#\003 %s",
+  putlog(LOG_CMDS, "*", "\00307#(%s) kickban#\003 \00306%s\003 %s",
          chan->dname, par, dcc[idx].nick);
   nick = newsplit(&par);
   if ((nick[0] == '@') || (nick[0] == '-')) {
@@ -288,7 +288,7 @@ static void cmd_op(struct userrec *u, int idx, char *par)
     return;
   }
 
-  putlog(LOG_CMDS, "*", "\00307#(%s) op %s#\003 %s", chan->dname, nick, dcc[idx].nick);
+  putlog(LOG_CMDS, "*", "\00307#(%s) op#\003 \00306%s\003 %s", chan->dname, nick, dcc[idx].nick);
   m = ismember(chan, nick);
   if (!m) {
     dprintf(idx, "\00304%s is not on %s.\003\n", nick, chan->dname);
@@ -338,7 +338,7 @@ static void cmd_deop(struct userrec *u, int idx, char *par)
     return;
   }
 
-  putlog(LOG_CMDS, "*", "\00307#(%s) deop %s#\003 %s", chan->dname, nick, dcc[idx].nick);
+  putlog(LOG_CMDS, "*", "\00307#(%s) deop#\003 \00306%s\003 %s", chan->dname, nick, dcc[idx].nick);
   m = ismember(chan, nick);
   if (!m) {
     dprintf(idx, "\00304%s is not on %s.\003\n", nick, chan->dname);
@@ -407,7 +407,7 @@ static void cmd_halfop(struct userrec *u, int idx, char *par)
     return;
   }
 
-  putlog(LOG_CMDS, "*", "\00307#(%s) halfop %s#\003 %s",
+  putlog(LOG_CMDS, "*", "\00307#(%s) halfop#\003 \00306%s\003 %s",
          chan->dname, nick, dcc[idx].nick);
   m = ismember(chan, nick);
   if (!m) {
@@ -473,7 +473,7 @@ static void cmd_dehalfop(struct userrec *u, int idx, char *par)
     return;
   }
 
-  putlog(LOG_CMDS, "*", "\00307#(%s) dehalfop %s#\003 %s",
+  putlog(LOG_CMDS, "*", "\00307#(%s) dehalfop#\003 \00306%s\003 %s",
          chan->dname, nick, dcc[idx].nick);
   m = ismember(chan, nick);
   if (!m) {
@@ -554,7 +554,7 @@ static void cmd_voice(struct userrec *u, int idx, char *par)
     return;
   }
 
-  putlog(LOG_CMDS, "*", "\00307#(%s) voice %s#\003 %s", chan->dname, nick, dcc[idx].nick);
+  putlog(LOG_CMDS, "*", "\00307#(%s) voice#\003 \00306%s\003 %s", chan->dname, nick, dcc[idx].nick);
   m = ismember(chan, nick);
   if (!m) {
     dprintf(idx, "\00304%s is not on %s.\003\n", nick, chan->dname);
@@ -607,7 +607,7 @@ static void cmd_devoice(struct userrec *u, int idx, char *par)
     return;
   }
 
-  putlog(LOG_CMDS, "*", "\00307#(%s) devoice %s#\003 %s",
+  putlog(LOG_CMDS, "*", "\00307#(%s) devoice#\003 \00306%s\003 %s",
          chan->dname, nick, dcc[idx].nick);
   m = ismember(chan, nick);
   if (!m) {
@@ -645,7 +645,7 @@ static void cmd_kick(struct userrec *u, int idx, char *par)
             "on %s.\003\n", chan->dname);
     return;
   }
-  putlog(LOG_CMDS, "*", "\00307#(%s) kick %s#\003 %s", chan->dname, par, dcc[idx].nick);
+  putlog(LOG_CMDS, "*", "\00307#(%s) kick#\003 \00306%s\003 %s", chan->dname, par, dcc[idx].nick);
   nick = newsplit(&par);
   if (!par[0])
     par = "request";
@@ -698,7 +698,7 @@ static void cmd_invite(struct userrec *u, int idx, char *par)
   if (!chan || !has_oporhalfop(idx, chan))
     return;
 
-  putlog(LOG_CMDS, "*", "\00307#(%s) invite %s#\003 %s", chan->dname,
+  putlog(LOG_CMDS, "*", "\00307#(%s) invite#\003 \00306%s\003 %s", chan->dname,
          nick, dcc[idx].nick);
   if (!me_op(chan) && !me_halfop(chan)) {
     if (chan->channel.mode & CHANINV) {
@@ -923,7 +923,7 @@ static void cmd_topic(struct userrec *u, int idx, char *par)
   else {
     dprintf(DP_SERVER, "TOPIC %s :%s\n", chan->name, par);
     dprintf(idx, "Changing topic...\n");
-    putlog(LOG_CMDS, "*", "\00307#(%s) topic %s#\003 %s",
+    putlog(LOG_CMDS, "*", "\00307#(%s) topic#\003 \00306%s\003 %s",
            chan->dname, par, dcc[idx].nick);
   }
 }
@@ -1059,7 +1059,7 @@ static void cmd_adduser(struct userrec *u, int idx, char *par)
     get_user_flagrec(u, &user, chan->dname);
     check_this_user(hand, 0, NULL);
   }
-  putlog(LOG_CMDS, "*", "\00307#adduser %s %s#\003 %s", nick,
+  putlog(LOG_CMDS, "*", "\00307#adduser#\003 \00306%s %s\003 %s", nick,
          hand == nick ? "" : hand, dcc[idx].nick);
 }
 
@@ -1118,7 +1118,7 @@ static void cmd_deluser(struct userrec *u, int idx, char *par)
     buf[HANDLEN] = 0;
     if (deluser(u->handle)) {
       dprintf(idx, "Deleted %s.\n", buf);       /* ?!?! :) */
-      putlog(LOG_CMDS, "*", "\00307#deluser %s [%s]#\003 %s", nick, buf, dcc[idx].nick);
+      putlog(LOG_CMDS, "*", "\00307#deluser#\003 \00306%s [%s]\003 %s", nick, buf, dcc[idx].nick);
     } else
       dprintf(idx, "\00304Failed.\003\n");
   }
@@ -1139,7 +1139,7 @@ static void cmd_reset(struct userrec *u, int idx, char *par)
       else if (!channel_active(chan))
         dprintf(idx, "\00304I'm not on %s at the moment!\003\n", chan->dname);
       else {
-        putlog(LOG_CMDS, "*", "\00307#reset %s#\003 %s", par, dcc[idx].nick);
+        putlog(LOG_CMDS, "*", "\00307#reset#\003 \00306%s\003 %s", par, dcc[idx].nick);
         dprintf(idx, "Resetting channel info for %s...\n", chan->dname);
         reset_chan_info(chan, CHAN_RESETALL);
       }
@@ -1147,7 +1147,7 @@ static void cmd_reset(struct userrec *u, int idx, char *par)
   } else if (!(u->flags & USER_MASTER))
     dprintf(idx, "\00304You are not a Bot Master.\003\n");
   else {
-    putlog(LOG_CMDS, "*", "\00307#reset all#\003 %s", dcc[idx].nick);
+    putlog(LOG_CMDS, "*", "\00307#reset#\003 \00306all\003 %s", dcc[idx].nick);
     dprintf(idx, "Resetting channel info for all channels...\n");
     for (chan = chanset; chan; chan = chan->next) {
       if (channel_active(chan))

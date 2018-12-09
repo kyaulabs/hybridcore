@@ -27,9 +27,9 @@ static void cmd_servers(struct userrec *u, int idx, char *par)
   int i;
   char s[1024];
 
-  putlog(LOG_CMDS, "*", "#%s# servers", dcc[idx].nick);
+  putlog(LOG_CMDS, "*", "\00307#servers#\003 %s", dcc[idx].nick);
   if (!x) {
-    dprintf(idx, "There are no servers in the server list.\n");
+    dprintf(idx, "\00304There are no servers in the server list.\003\n");
   } else {
     dprintf(idx, "Server list:\n");
     i = 0;
@@ -68,7 +68,7 @@ static void cmd_dump(struct userrec *u, int idx, char *par)
     dprintf(idx, "Usage: dump <server stuff>\n");
     return;
   }
-  putlog(LOG_CMDS, "*", "#%s# dump %s", dcc[idx].nick, par);
+  putlog(LOG_CMDS, "*", "\00307#dump#\003 \00306%s\003 %s", par, dcc[idx].nick);
   dprintf(DP_SERVER, "%s\n", par);
 }
 
@@ -92,24 +92,24 @@ static void cmd_jump(struct userrec *u, int idx, char *par)
       port = default_port;
       use_ssl = 0;
     }
-    putlog(LOG_CMDS, "*", "#%s# jump %s %s%d %s", dcc[idx].nick, other,
-           use_ssl ? "+" : "", port, par);
+    putlog(LOG_CMDS, "*", "\00307#jump#\003 \00306%s %s%d %s\003 %s", other,
+           use_ssl ? "+" : "", port, par, dcc[idx].nick);
 #else
-    putlog(LOG_MISC, "*", "Error: Attempted to jump to SSL-enabled \
-server, but Eggdrop was not compiled with SSL libraries. Skipping...");
+    putlog(LOG_MISC, "*", "\00304Error: Attempted to jump to SSL-enabled \
+server, but hybrid(core) was not compiled with SSL libraries. Skipping...\003");
       return;
     }
     port = atoi(sport);
     if (!port)
       port = default_port;
-    putlog(LOG_CMDS, "*", "#%s# jump %s %d %s", dcc[idx].nick, other,
-           port, par);
+    putlog(LOG_CMDS, "*", "\00307#jump#\003 \00306%s %d %s\003 %s", other,
+           port, par, dcc[idx].nick);
 #endif
     strncpyz(newserver, other, sizeof newserver);
     newserverport = port;
     strncpyz(newserverpass, par, sizeof newserverpass);
   } else
-    putlog(LOG_CMDS, "*", "#%s# jump", dcc[idx].nick);
+    putlog(LOG_CMDS, "*", "\00307#jump#\003 %s", dcc[idx].nick);
   dprintf(idx, "%s...\n", IRC_JUMP);
   cycle_time = 0;
   nuke_server("changing servers");
@@ -157,7 +157,7 @@ static void cmd_clearqueue(struct userrec *u, int idx, char *par)
     dprintf(idx, "Usage: clearqueue <mode|server|help|all>\n");
     return;
   }
-  putlog(LOG_CMDS, "*", "#%s# clearqueue %s", dcc[idx].nick, par);
+  putlog(LOG_CMDS, "*", "\00307#clearqueue#\003 \00306%s\003 %s", par, dcc[idx].nick);
 }
 
 static cmd_t C_dcc_serv[] = {

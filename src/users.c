@@ -691,15 +691,15 @@ int readuserfile(char *file, struct userrec **ret)
   struct stat buffer;
   if (stat (file, &buffer) == 0) {
     decrypt_file(file);
-    putlog(LOG_MISC, "*", "-- readuserfile(): decypted '%s'", file);
+    //putlog(LOG_MISC, "*", "-- readuserfile(): decypted '%s'", file);
     f = fopen(".tmp2", "r");
-    putlog(LOG_MISC, "*", "-- readuserfile(): opening '.tmp2'");
+    //putlog(LOG_MISC, "*", "-- readuserfile(): opening '.tmp2'");
   } else {
     f = fopen(file, "r");
-    putlog(LOG_MISC, "*", "-- readuserfile(): opening '%s'", file);
+    //putlog(LOG_MISC, "*", "-- readuserfile(): opening '%s'", file);
   }
   if (f == NULL) {
-    putlog(LOG_MISC, "*", "-- readuserfile(): open file failed, returning");
+    putlog(LOG_MISC, "*", "\00304‼ ERROR:\003 can't find %s!", file);
     return 0;
   }
   noshare = noxtra = 1;
@@ -973,13 +973,13 @@ int readuserfile(char *file, struct userrec **ret)
   }
   fclose(f);
   /* purge decrypted file */
-  putlog(LOG_MISC, "*", "-- readuserfile(): removing '.tmp2'");
+  //putlog(LOG_MISC, "*", "-- readuserfile(): removing '.tmp2'");
   unlink(".tmp2");
   (*ret) = bu;
   if (ignored[0]) {
     putlog(LOG_MISC, "*", "%s %s", USERF_IGNBANS, ignored);
   }
-  putlog(LOG_MISC, "*", "Userfile loaded, unpacking...");
+  putlog(LOG_MISC, "*", "\00309□\003 userfile loaded: \00314unpacking\003");
   for (u = bu; u; u = u->next) {
     struct user_entry *e;
 
