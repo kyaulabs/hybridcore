@@ -4,7 +4,7 @@
 [![](https://img.shields.io/badge/coded_in-vim-green.svg?logo=vim&logoColor=brightgreen&colorB=brightgreen&longCache=true&style=flat)](https://vim.org) &nbsp; [![](https://img.shields.io/badge/license-GNU_GPLv2-blue.svg?style=flat)](https://gitlab.com/kyaulabs/hybridcore/blob/master/COPYING) &nbsp; [![](https://img.shields.io/badge/tcl-8.5+-C85000.svg?style=flat)](https://www.tcl.tk/)  
 
 ### About
-Originally started back in the late 1990s, hybrid(core) was a patch for eggdrop that introduced numerous changes/improvements for private botpacks and irc warfare. While typically it was also paired with either `daCrew.tcl`, `phorce.tcl` or `tnt.tcl` it had a quite a bit of use outside of those botpacks as well. The version that was used as a basis here was the (what is believed to be) final release which was for eggdrop-1.1.6.
+Originally started back in the late 1990s, hybrid(core) was a patch for eggdrop that introduced numerous changes/improvements for private botpacks and irc warfare. While typically it was also paired with either `daCrew.tcl`, `phorce.tcl` or `tnt.tcl` it had quite a bit of use outside of those botpacks as well. The version that was used here as a basis is believed to be the final release, which was for eggdrop-1.1.6-p8.1.
 
 ### Features
 Given that not everything that was originally added/changed in the eggdrop-1.1.6 version of hybrid(core) is still relevant. Listed here are the core features that were taken and ported to the newer version.
@@ -29,3 +29,4 @@ In order to install hybrid(core), run the following:
 Everything that made it possible for me to port this to the newer version of eggdrop is listed here.
 * [DH1080.so TCL Library](https://github.com/orkim/dh1080_tcl)
 * [FiSH-irssi](https://github.com/falsovsky/FiSH-irssi)
+* [str_replace](https://gist.github.com/amcsi/6068ef6ae59951ed4a9f) function used to convert IRC codes to ANSI codes
