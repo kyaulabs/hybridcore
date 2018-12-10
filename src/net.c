@@ -720,7 +720,7 @@ int getdccfamilyaddr(sockname_t *addr, char *s, size_t l, int restrict_af)
     //if ((
     if (!af
 #ifdef IPV6
-	   && restrict_af != AF_INET6
+        && restrict_af != AF_INET6
 #endif
       ) {
       if (!egg_inet_aton(vhost, &r->addr.s4.sin_addr)) {

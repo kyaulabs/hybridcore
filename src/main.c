@@ -123,7 +123,7 @@ int use_stderr = 1;     /* Send stuff to stderr instead of logfiles?     */
 char configfile[121] = "hybrid.cf";   /* Default config file name */
 char pid_file[121];                     /* Name of the pid file     */
 char helpdir[121] = "help/";            /* Directory of help files  */
-char textdir[121] = "text/";            /* Directory for text files */
+char textdir[121] = "./";            /* Directory for text files */
 
 int keep_all_logs = 0;                  /* Never erase logfiles?    */
 int switch_logfiles_at = 1200;          /* When to switch logfiles  */
@@ -573,13 +573,13 @@ static void do_arg()
         make_userfile = 1;
         break;
       case 'v':
-        cliflags |= 129;		//128 + 1
+        cliflags |= 129;        //128 + 1
         break;
       case 'h':
-        cliflags |= 160;		//128 + 32
+        cliflags |= 160;        //128 + 32
         break;
       default:
-        cliflags |= 192;		//128 + 64
+        cliflags |= 192;        //128 + 64
         break;
     }
   }
@@ -1146,6 +1146,11 @@ int main(int arg_c, char **arg_v)
 #endif
   strncpyz(s, ctime(&now), sizeof s);
   memmove(&s[11], &s[20], strlen(&s[20])+1);
+  printf("[0;1m▄▄ ▄ ▄▄ ▄ ▄▄▄▄ ▄▄▄▄ ▄▄ ▄▄▄   [35m▄▄ [36m▄▄▄▄ ▄▄▄▄ ▄▄▄▄ ▄▄▄▄ [35m▄▄\n");
+  printf("[37m██ █ ██ █ ██ █ ██ █ ██ ██ █ [35m██  [36m██ █ ██ █ ██ █ ██ ▀  [35m██\n");
+  printf("[37m██▄█ ██▄█ ██▄▀ ██▄▀ ██ ██ █ [35m██  [36m██   ██ █ ██▄▀ ██▀   [35m██\n");
+  printf("[47m [37;40m█ █ [0m▄[1m▄ █ [47m [40m█ █ [47m▀[40m█ █ [47m▀[40m█ [47m [40m█ █ [45m [35;40m█  [46m [36;40m█ █ [46m [40m█ █ [46m▀[40m█ █ [46m [40m█ █  [35m█[45m [40m\n");
+  printf("[0m▀▀ ▀ ▀▀▀▀ ▀▀▀▀ ▀▀ ▀ ▀▀ ▀▀▀▀ [35m▀▀▀ [36m▀▀▀▀ ▀▀▀▀ ▀▀ ▀ ▀▀▀▀ [35m▀▀▀[0m\n");
   putlog(LOG_ALL, "*", "\00309□\003 loading %s \00314(%s)\003", ver, s);
   chanprog();
   if (!encrypt_pass) {

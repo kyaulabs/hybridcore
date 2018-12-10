@@ -510,6 +510,117 @@ void daysdur(time_t now, time_t then, char *out)
   strcat(out, s);
 }
 
+/**
+ * Replaces all found instances of the passed substring in the passed string.
+ *
+ * @param search The substring to look for
+ * @param replace The substring with which to replace the found substrings
+ * @param subject The string in which to look
+ *
+ * @return A new string with the search/replacement performed
+ **/
+char* str_replace(char* search, char* replace, char* subject) {
+  int i, j, k;
+
+  int searchSize = strlen(search);
+  int replaceSize = strlen(replace);
+  int size = strlen(subject);
+
+  char* ret;
+
+  if (!searchSize) {
+    ret = nmalloc(size + 1);
+    for (i = 0; i <= size; i++) {
+      ret[i] = subject[i];
+    }
+    return ret;
+  }
+
+  int retAllocSize = (strlen(subject) + 1) * 2; // Allocation size of the return string.
+  // let the allocation size be twice as that of the subject initially
+  ret = nmalloc(retAllocSize);
+
+  int bufferSize = 0; // Found characters buffer counter
+  char* foundBuffer = nmalloc(searchSize); // Found character bugger
+
+  for (i = 0, j = 0; i <= size; i++) {
+    /**
+     * Double the size of the allocated space if it's possible for us to surpass it
+     **/
+    if (retAllocSize <= j + replaceSize) {
+      retAllocSize *= 2;
+      ret = (char*) realloc(ret, retAllocSize);
+    }
+    /**
+     * If there is a hit in characters of the substring, let's add it to the
+     * character buffer
+     **/
+    else if (subject[i] == search[bufferSize]) {
+      foundBuffer[bufferSize] = subject[i];
+      bufferSize++;
+
+      /**
+       * If the found character's bugger's counter has reached the searched substring's
+       * length, then there's a hit. Let's copy the replace substring's characters
+       * onto the return string.
+       **/
+      if (bufferSize == searchSize) {
+        bufferSize = 0;
+        for (k = 0; k < replaceSize; k++) {
+          ret[j++] = replace[k];
+        }
+      }
+    }
+    /**
+     * If the character is a miss, let's put everything back from the buffer
+     * to the return string, and set the found character buffer counter to 0.
+     **/
+    else {
+      for (k = 0; k < bufferSize; k++) {
+        ret[j++] = foundBuffer[k];
+      }
+      bufferSize = 0;
+      /**
+       * Add the current character in the subject string to the return string.
+       **/
+      ret[j++] = subject[i];
+    }
+  }
+
+  /**
+   * Free memory
+   **/
+  nfree(foundBuffer);
+
+  return ret;
+}
+
+char* irccodes_toecho(char *subject) {
+  char *ret;
+  int size = strlen(subject);
+  int retAllocSize = (strlen(subject) + 1) * 2; // Allocation size of the return string.
+  // let the allocation size be twice as that of the subject initially
+  ret = nmalloc(retAllocSize);
+
+  ret = str_replace("\00300", "\[1;37m", subject);
+  ret = str_replace("\00301", "\[30m", ret);
+  ret = str_replace("\00302", "\[34m", ret);
+  ret = str_replace("\00303", "\[32m", ret);
+  ret = str_replace("\00304", "\[1;31m", ret);
+  ret = str_replace("\00305", "\[31m", ret);
+  ret = str_replace("\00306", "\[35m", ret);
+  ret = str_replace("\00307", "\[33m", ret);
+  ret = str_replace("\00308", "\[1;33m", ret);
+  ret = str_replace("\00309", "\[1;32m", ret);
+  ret = str_replace("\00310", "\[36m", ret);
+  ret = str_replace("\00311", "\[1;36m", ret);
+  ret = str_replace("\00312", "\[1;34m", ret);
+  ret = str_replace("\00313", "\[1;35m", ret);
+  ret = str_replace("\00314", "\[1;30m", ret);
+  ret = str_replace("\00315", "\[37m", ret);
+  ret = str_replace("\003", "\[0m", ret);
+  return ret;
+}
 
 /*
  *    Logging functions
@@ -522,7 +633,7 @@ void putlog EGG_VARARGS_DEF(int, arg1)
 {
   static int inhere = 0;
   int i, type, tsl = 0;
-  char *format, *chname, s[LOGLINELEN], s1[256], *out, ct[81], *s2, stamp[34];
+  char *format, *chname, s[LOGLINELEN], s1[256], *out, ct[81], *s2, stamp[34], *resultx;
   va_list va;
   time_t now2 = time(NULL);
   struct tm *t = localtime(&now2);
@@ -626,12 +737,19 @@ void putlog EGG_VARARGS_DEF(int, arg1)
       }
     }
   }
-  if (!backgrd && !con_chan && !term_z)
-    dprintf(DP_STDOUT, "%s", out);
-  else if ((type & LOG_MISC) && use_stderr) {
+  if (!backgrd && !con_chan && !term_z) {
+    /* change irc codes into shell codes */
+    resultx = irccodes_toecho(out);
+    dprintf(DP_STDOUT, "%s", resultx);
+    nfree(resultx);
+  } else if ((type & LOG_MISC) && use_stderr) {
     if (shtime)
       out += tsl;
-    dprintf(DP_STDERR, "%s", s);
+    /* change irc codes into shell codes */
+    resultx = irccodes_toecho(s);
+    //dprintf(DP_STDERR, "%s", resultx);
+    printf("%s", resultx);
+    nfree(resultx);
   }
   va_end(va);
 }

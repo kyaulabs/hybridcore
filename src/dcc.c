@@ -1283,19 +1283,20 @@ static void dcc_telnet(int idx, char *buf, int i)
 
   if (strict_telnet) {
     allow_telnet = 0;
-	file = fopen(hostfile, "r");
-	if (file == NULL) {
-		file = fopen(hostfile, "w");
-		if (file == NULL)
-	    	putlog(LOG_MISC, "*", "\00304‼ ERROR:\003 opening %s!", hostfile);
-		putlog(LOG_MISC, "*", "\00309□\003 created new: \00314hostfile (%s)\003", hostfile);
-	}
-	fclose(file);
+    file = fopen(hostfile, "r");
+    if (file == NULL) {
+      file = fopen(hostfile, "w");
+      if (file == NULL)
+        putlog(LOG_MISC, "*", "\00304‼ ERROR:\003 opening %s!", hostfile);
+      else
+        putlog(LOG_MISC, "*", "\00309□\003 created new: \00314hostfile (%s)\003", hostfile);
+    }
+    fclose(file);
     sprintf(thost_compare, "%s\n", iptostr(&dcc[i].sockname.addr.sa));
     //putlog(LOG_MISC, "*", "-- dcc_telnet(): new connection: %s", iptostr(&dcc[i].sockname.addr.sa));
-	/* decrypt the hostfile */
+    /* decrypt the hostfile */
     //putlog(LOG_MISC, "*", "-- dcc_telnet(): decrypting '%s'", hostfile);
-	decrypt_file(hostfile);
+    decrypt_file(hostfile);
     file = fopen(".tmp2", "r");
     //putlog(LOG_MISC, "*", "-- dcc_telnet(): opening '.tmp2'");
     if (wild_match("23.94.70.21", thost_compare)) {

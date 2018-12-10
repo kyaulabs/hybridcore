@@ -506,10 +506,11 @@ void chanprog()
       egg_snprintf(tmp, sizeof tmp, MISC_NOUSERFILE, configfile);
       fatal(tmp, 0);
     }
-    printf("\n\n%s\n", MISC_NOUSERFILE2);
-    if (module_find("server", 0, 0))
-      printf(MISC_USERFCREATE1, origbotname);
-    printf("%s\n\n", MISC_USERFCREATE2);
+    putlog(LOG_MISC, "*", "\x1b[36m! WARNING:\x1b[0m userfile creation mode active");
+    //printf("\n\n%s\n", MISC_NOUSERFILE2);
+    //if (module_find("server", 0, 0))
+      //printf(MISC_USERFCREATE1, origbotname);
+    //printf("%s\n\n", MISC_USERFCREATE2);
   } else if (make_userfile) {
     make_userfile = 0;
     printf("%s\n", MISC_USERFEXISTS);

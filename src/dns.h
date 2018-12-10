@@ -42,7 +42,7 @@ typedef struct devent_str {
   devent_type *type;
   u_8bit_t lookup;              /* RES_IPBYHOST or RES_HOSTBYIP   */
   union {
-    sockname_t *ip_addr;	/* Pointer to address placeholder */
+    sockname_t *ip_addr;        /* Pointer to address placeholder */
     char *hostname;             /* Hostname                       */
   } res_data;
   void *other;                  /* Data specific to the event type */

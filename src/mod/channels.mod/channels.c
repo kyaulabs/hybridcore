@@ -56,44 +56,44 @@ static int gfld_chan_thr, gfld_chan_time, gfld_deop_thr, gfld_deop_time,
 
 /* SECURE: encrypt_file() {{{ */
 int encrypt_file(char *cfgfile) {
-	struct stat buffer;
-	if (stat (cfgfile, &buffer) == 0) {
-		char stuff[1024];
-		FILE *ecfg, *dcfg;
-		ecfg = fopen(cfgfile, "r");
-		dcfg = fopen(".tmp1", "w");
-		while (fgets(stuff, sizeof stuff, ecfg)!= NULL) {
-			fprintf(dcfg, "%s\n", encrypt_string(GOD, stuff));
-		}
-		fclose(ecfg);
-		fclose(dcfg);
-		return 1;
-	} else {
-		putlog(LOG_MISC, "!", "crypt error: could not open '%s'", cfgfile);
-		return 0;
-	}
-	return 0;
+  struct stat buffer;
+  if (stat (cfgfile, &buffer) == 0) {
+    char stuff[1024];
+    FILE *ecfg, *dcfg;
+    ecfg = fopen(cfgfile, "r");
+    dcfg = fopen(".tmp1", "w");
+    while (fgets(stuff, sizeof stuff, ecfg)!= NULL) {
+     fprintf(dcfg, "%s\n", encrypt_string(GOD, stuff));
+    }
+    fclose(ecfg);
+    fclose(dcfg);
+    return 1;
+  } else {
+    putlog(LOG_MISC, "!", "crypt error: could not open '%s'", cfgfile);
+    return 0;
+  }
+  return 0;
 }
 /* }}} */
 /* SECURE: decrypt_file() {{{ */
 int decrypt_file(char *cfgfile2) {
-	struct stat buffer;
-	if (stat (cfgfile2, &buffer) == 0) {
-		char stuff2[1024];
-		FILE *ecfg2, *dcfg2;
-		ecfg2 = fopen(cfgfile2, "r");
-		dcfg2 = fopen(".tmp2", "w");
-		while (fgets(stuff2, sizeof stuff2, ecfg2)!= NULL) {
-			fprintf(dcfg2, "%s", decrypt_string(GOD, stuff2));
-		}
-		fclose(ecfg2);
-		fclose(dcfg2);
-		return 1;
-	} else {
-		putlog(LOG_MISC, "!", "crypt error: could not open '%s'", cfgfile2);
-		return 0;
-	}
-	return 0;
+  struct stat buffer;
+  if (stat (cfgfile2, &buffer) == 0) {
+    char stuff2[1024];
+    FILE *ecfg2, *dcfg2;
+    ecfg2 = fopen(cfgfile2, "r");
+    dcfg2 = fopen(".tmp2", "w");
+    while (fgets(stuff2, sizeof stuff2, ecfg2)!= NULL) {
+      fprintf(dcfg2, "%s", decrypt_string(GOD, stuff2));
+    }
+    fclose(ecfg2);
+    fclose(dcfg2);
+    return 1;
+  } else {
+    putlog(LOG_MISC, "!", "crypt error: could not open '%s'", cfgfile2);
+    return 0;
+  }
+  return 0;
 }
 /* }}} */
 
