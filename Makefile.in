@@ -164,6 +164,7 @@ hcclean:
 	@cd src && $(MAKE) clean
 	@cd src/md5 && $(MAKE) clean
 	@cd src/compat && $(MAKE) clean
+	@cd dh1080_tcl && rm -f *.o
 
 clean: hcclean
 	@cd src/mod && $(MAKE) clean
@@ -306,7 +307,7 @@ dinstall: hybridcore ainstall
 sinstall: static ainstall
 
 ainstall: install-start install-bin install-modules install-data \
-install-help install-language install-scripts install-end
+install-help install-language install-scripts install-dh1080 install-end
 
 install-start:
 	@if test ! -f $(EGGEXEC); then \
@@ -388,10 +389,6 @@ install-data:
 	@if test ! -f $(DEST)/hybrid.cf; then \
 		$(INSTALL_DATA) $(srcdir)/hybrid.cf $(DEST)/; \
 	fi
-	@if test ! -d $(DEST)/logs; then \
-		echo -e "\x1b[38;5;32m□\x1b[0m create: \x1b[38;5;245m'logs' subdirectory\x1b[38;5;235m"; \
-		$(top_srcdir)/misc/mkinstalldirs $(DEST)/logs >/dev/null; \
-	fi
 
 install-help:
 	@echo -e "\x1b[38;5;32m□\x1b[0m copy: \x1b[38;5;245mhelp files\x1b[38;5;235m" && \
@@ -444,8 +441,20 @@ install-doc:
 install-scripts:
 	@cd scripts/ && $(MAKE_INSTALL) install
 
+install-dh1080:
+	@echo -e "\x1b[38;5;32m□\x1b[0m compile: \x1b[38;5;245mdh1080_tcl\x1b[38;5;235m" ; \
+	cd dh1080_tcl/ && \
+	gcc -fPIC -c -static base64.c && \
+	gcc -fPIC -c -static DH1080.c && \
+	gcc -fPIC -shared DH1080.o base64.o -o DH1080.so && \
+	gcc -fPIC -I$(TCLLIB) -c DH1080_tcl.c && \
+	gcc -fPIC -shared DH1080_tcl.o DH1080.o base64.o -lssl -lcrypto -o dh1080.so && \
+	$(INSTALL_DATA) $(srcdir)/dh1080.so $(DEST)/modules/dh1080.so ; \
+	chmod 0700 $(DEST)/modules/dh1080.so
+
 install-end:
-	@echo -e "" && echo -e "\x1b[38;5;32m□\x1b[0m install complete" && \
+	@chmod -R go-rwx $(DEST) && \
+	echo -e "" && echo -e "\x1b[38;5;32m□\x1b[0m install complete" && \
 	echo -e "\x1b[38;5;32m□\x1b[0m run: \x1b[38;5;245mmake sslcert" && \
 	echo -e "" && \
 	echo -e "\x1b[0minstalled: \x1b[38;5;245m$(DEST)" && \
