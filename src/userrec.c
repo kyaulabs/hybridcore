@@ -553,7 +553,7 @@ void write_userfile(int idx)
   int ok;
 
   if (userlist == NULL) {
-    putlog(LOG_MISC, "%", "write_userfile(): no userlist returning");
+    putlog(LOG_MISC, "*", "\00310! WARNING:\003 no userfile to save");
     return;                     /* No point in saving userfile */
   }
 

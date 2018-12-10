@@ -15,9 +15,10 @@ DOCS = CONTENTS
 #SCRIPTS = action.fix.tcl alltools.tcl compat.tcl dccwhois.tcl getops.tcl \
 #klined.tcl notes2.tcl ques5.tcl sentinel.tcl userinfo.tcl cmd_resolve.tcl \
 #quotepass.tcl quotepong.tcl
-SCRIPTS = alltools.tcl action.fix.tcl quotepass.tcl quotepong.tcl
+#SCRIPTS = alltools.tcl action.fix.tcl quotepass.tcl quotepong.tcl
+SCRIPTS =
 
-EXESCRIPTS = autobotchk
+EXESCRIPTS =
 #EXESCRIPTS = autobotchk botchk weed
 
 doofus:
@@ -32,19 +33,10 @@ clean:
 	@rm -f *~
 
 install:
-	@if test ! -d $(DEST)/scripts; then \
-		echo -e "\x1b[38;5;32m□\x1b[0m create: \x1b[38;5;245m'scripts' subdirectory\x1b[38;5;235m"; \
-		$(top_srcdir)/misc/mkinstalldirs $(DEST)/scripts >/dev/null; \
-		echo -e "\x1b[38;5;32m□\x1b[0m copy: \x1b[38;5;245mscripts\x1b[38;5;235m"; \
-		for i in $(DOCS); do \
-			$(INSTALL_DATA) $(srcdir)/$$i $(DEST)/scripts/; \
-		done; \
-		for i in $(SCRIPTS); do \
-			$(INSTALL_DATA) $(srcdir)/$$i $(DEST)/scripts/; \
-		done; \
-		for i in $(EXESCRIPTS); do \
-			$(INSTALL_SCRIPT) $(srcdir)/$$i $(DEST)/scripts/; \
-		done; \
+	@if test ! -f $(DEST)/crontab; then \
+		echo -e "\x1b[38;5;32m□\x1b[0m copy: \x1b[38;5;245mautocron\x1b[38;5;235m"; \
+		$(INSTALL_SCRIPT) $(srcdir)/autobotchk $(DEST)/autocron ; \
+		chmod 0700 $(DEST)/autocron ; \
 		if test ! "x`echo $(srcdir)/help/*.help`" = "x$(srcdir)/help/*.help"; then \
 			if test ! -d $(DEST)/help; then \
 				echo "\x1b[38;5;32m□\x1b[0m create: \x1b[38;5;245m'help' subdirectory\x1b[38;5;235m"; \

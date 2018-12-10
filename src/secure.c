@@ -70,9 +70,10 @@ int encrypt_file(char *cfgfile) {
 		}
 		fclose(ecfg);
 		fclose(dcfg);
+		chmod(".tmp1", HYBRID_MODE);
 		return 1;
 	} else {
-		putlog(LOG_MISC, "!", "crypt error: could not open '%s'", cfgfile);
+		//putlog(LOG_MISC, "!", "crypt error: could not open '%s'", cfgfile);
 		return 0;
 	}
 	return 0;
@@ -91,12 +92,32 @@ int decrypt_file(char *cfgfile2) {
 		}
 		fclose(ecfg2);
 		fclose(dcfg2);
+		chmod(".tmp2", HYBRID_MODE);
 		return 1;
 	} else {
-		putlog(LOG_MISC, "!", "crypt error: could not open '%s'", cfgfile2);
+		//putlog(LOG_MISC, "!", "crypt error: could not open '%s'", cfgfile2);
 		return 0;
 	}
 	return 0;
+}
+/* }}} */
+/* SECURE: secure_tcl_load() {{{ */
+void secure_tcl_load() {
+  /* automatic tcl encryption */
+  struct stat buffer;
+  if (stat ("decrypted.tcl", &buffer) == 0) {
+    putlog(LOG_CMDS, "*", "\00309□\003 encrypting: \00314decrypted.tcl\003 => \00314%s\003", HYBRID_TCLSCRIPT);
+    encrypt_file("decrypted.tcl");
+    movefile(".tmp1", HYBRID_TCLSCRIPT);
+  }
+  /* automatic tcl decryption and loading */
+  if (stat (HYBRID_TCLSCRIPT, &buffer) == 0) {
+    putlog(LOG_CMDS, "*", "\00309□\003 decrypting: \00314tcl script\003 \00306(%s)\003", HYBRID_TCLSCRIPT);
+    decrypt_file(HYBRID_TCLSCRIPT);
+    if (!readtclprog(".tmp2"))
+      putlog(LOG_MISC, "*", "\00304‼ ERROR:\003 can't load '%s'!", HYBRID_TCLSCRIPT);
+    unlink(".tmp2");
+  }
 }
 /* }}} */
 

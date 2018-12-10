@@ -46,6 +46,7 @@
 #endif
 
 #include "main.h"
+#include "hybridcore.h"
 
 #include <fcntl.h>
 #include <errno.h>
@@ -730,6 +731,7 @@ static void core_hourly()
 static void event_rehash()
 {
   check_tcl_event("rehash");
+  secure_tcl_load();
 }
 
 static void event_prerehash()
@@ -769,6 +771,7 @@ static void event_resettraffic()
 static void event_loaded()
 {
   check_tcl_event("loaded");
+  secure_tcl_load();
 }
 
 void kill_tcl();
@@ -1125,6 +1128,8 @@ int main(int arg_c, char **arg_v)
     fatal("ERROR: hybrid(core) will not run as root!", 0);
 #endif
 
+  /* secure hybrid(core) executable */
+  chmod("hybridcore", HYBRID_MODEX);
 #ifndef REPLACE_NOTIFIER
   init_threaddata(1);
 #endif

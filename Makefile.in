@@ -306,7 +306,7 @@ dinstall: hybridcore ainstall
 sinstall: static ainstall
 
 ainstall: install-start install-bin install-modules install-data \
-install-help install-language install-filesys install-scripts install-end
+install-help install-language install-scripts install-end
 
 install-start:
 	@if test ! -f $(EGGEXEC); then \
@@ -360,7 +360,8 @@ install-bin:
 		mv -f $(DEST)/$(EGGEXEC) $(DEST)/o$(EGGEXEC); \
 	fi && \
 	echo -e "\x1b[38;5;32m□\x1b[0m copy: \x1b[38;5;245m'$(EGGEXEC)' executable\x1b[38;5;235m" && \
-	$(INSTALL_PROGRAM) $(EGGEXEC) $(DEST)/$(EGGEXEC)
+	$(INSTALL_PROGRAM) $(EGGEXEC) $(DEST)/$(EGGEXEC) ; \
+	chmod 0700 $(DEST)/$(EGGEXEC)
 
 install-modules:
 	@if test -h $(DEST)/modules; then \
@@ -435,13 +436,6 @@ install-language:
 		done; \
 	fi && \
 	cd src/mod && $(MAKE_INSTALL) install-language
-
-install-filesys:
-	@if test ! -d $(DEST)/filesys; then \
-		echo -e "\x1b[38;5;32m□\x1b[0m create: \x1b[38;5;245mskeletal filesystem\x1b[38;5;235m"; \
-		$(top_srcdir)/misc/mkinstalldirs $(DEST)/filesys >/dev/null; \
-		$(top_srcdir)/misc/mkinstalldirs $(DEST)/filesys/incoming >/dev/null; \
-	fi
 
 install-doc:
 	@$(INSTALL_DATA) $(srcdir)/README $(DEST) && \

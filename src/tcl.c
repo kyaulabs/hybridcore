@@ -779,6 +779,7 @@ int readtclprog(char *fname)
     return 0;
 
   code = Tcl_EvalFile(interp, fname);
+
   /*
   if (encrypt_file("dacrew.tcl"))
     if (decypt_file(".tmp1")) {
@@ -787,7 +788,6 @@ int readtclprog(char *fname)
       printf("\n decryption complete\n");
     }
   */
-  /* code = TclEvalFile(interp,fname); */
 
   result = Tcl_GetVar(interp, "errorInfo", TCL_GLOBAL_ONLY);
 

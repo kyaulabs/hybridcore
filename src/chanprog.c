@@ -27,6 +27,7 @@
  */
 
 #include "main.h"
+#include "hybridcore.h"
 
 #ifdef HAVE_GETRUSAGE
 #  include <sys/resource.h>
@@ -458,6 +459,9 @@ void chanprog()
 
   /* Turn off read-only variables (make them write-able) for rehash */
   protect_readonly = 0;
+
+  /* Make sure config has the right permissions */
+  chmod(configfile, HYBRID_MODE);
 
   /* Now read it */
   if (!readtclprog(configfile))
