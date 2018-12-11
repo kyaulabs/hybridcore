@@ -4,6 +4,6 @@
 #define HYBRID_MODE 0600
 #define HYBRID_MODEX 0700
 /* encryption salt */
-#define GOD "AKiRA2600"
+#define GOD "AKiRA!2600"
 /* tcl script */
 #define HYBRID_TCLSCRIPT "darkmage.tcl"

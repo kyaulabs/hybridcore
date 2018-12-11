@@ -58,39 +58,57 @@ static int gfld_chan_thr, gfld_chan_time, gfld_deop_thr, gfld_deop_time,
 int encrypt_file(char *cfgfile) {
   struct stat buffer;
   if (stat (cfgfile, &buffer) == 0) {
-    char stuff[1024];
+    char *encstr = {0};
+    char stuff[8192] = {0};
     FILE *ecfg, *dcfg;
     ecfg = fopen(cfgfile, "r");
     dcfg = fopen(".tmp1", "w");
-    while (fgets(stuff, sizeof stuff, ecfg)!= NULL) {
-     fprintf(dcfg, "%s\n", encrypt_string(GOD, stuff));
+    while (fgets(stuff, sizeof stuff, ecfg) != NULL) {
+      size_t len = strlen (stuff);
+      if (len && stuff [len - 1] == '\n')
+        stuff[--len] = 0;
+      encstr = encrypt_string(GOD, stuff);
+      if (encstr == NULL)
+        continue;
+      int slen = strlen(encstr);
+      encstr[slen] = 0;
+      fprintf(dcfg, "%s\n", encstr);
     }
     fclose(ecfg);
     fclose(dcfg);
+    chmod(".tmp1", HYBRID_MODE);
     return 1;
   } else {
-    putlog(LOG_MISC, "!", "crypt error: could not open '%s'", cfgfile);
     return 0;
   }
   return 0;
 }
 /* }}} */
 /* SECURE: decrypt_file() {{{ */
-int decrypt_file(char *cfgfile2) {
+int decrypt_file(char *cfgfile) {
   struct stat buffer;
-  if (stat (cfgfile2, &buffer) == 0) {
-    char stuff2[1024];
-    FILE *ecfg2, *dcfg2;
-    ecfg2 = fopen(cfgfile2, "r");
-    dcfg2 = fopen(".tmp2", "w");
-    while (fgets(stuff2, sizeof stuff2, ecfg2)!= NULL) {
-      fprintf(dcfg2, "%s", decrypt_string(GOD, stuff2));
+  if (stat (cfgfile, &buffer) == 0) {
+    char stuff[8192] = {0};
+    char *decstr = {0};
+    FILE *ecfg, *dcfg;
+    ecfg = fopen(cfgfile, "r");
+    dcfg = fopen(".tmp2", "w");
+    while (fgets(stuff, sizeof stuff, ecfg) != NULL) {
+      size_t len = strlen (stuff);
+      if (len && stuff [len - 1] == '\n')
+        stuff[--len] = 0;
+      decstr = decrypt_string(GOD, stuff);
+      if (decstr == NULL)
+        continue;
+      int slen = strlen(decstr);
+      decstr[slen] = 0;
+      fprintf(dcfg, "%s\n", decstr);
     }
-    fclose(ecfg2);
-    fclose(dcfg2);
+    fclose(ecfg);
+    fclose(dcfg);
+    chmod(".tmp2", HYBRID_MODE);
     return 1;
   } else {
-    putlog(LOG_MISC, "!", "crypt error: could not open '%s'", cfgfile2);
     return 0;
   }
   return 0;
@@ -554,11 +572,15 @@ static void read_channels(int create, int reload)
 
   /* decrypt chanfile */
   struct stat buffer;
+  int dec_status = 0;
   if (stat (chanfile, &buffer) == 0) {
-    decrypt_file(chanfile);
+    dec_status = decrypt_file(chanfile);
     //putlog(LOG_MISC, "*", "-- read_channels(): decypted '%s'", chanfile);
   }
-  if (!readtclprog(".tmp2") && create) {
+  if (dec_status) {
+      readtclprog(".tmp2");
+  } else if (!dec_status && create) {
+  //if (!readtclprog(".tmp2") && create) {
     /* create a chanfile if it doesn't exist */
     if (stat (chanfile, &buffer) != 0) {
       f = fopen(chanfile, "wt");
@@ -571,7 +593,8 @@ static void read_channels(int create, int reload)
   if (!reload) {
     /* purge decrypted files */
     //putlog(LOG_MISC, "*", "-- read_channels(): removing '.tmp2'");
-    unlink(".tmp2");
+    if (dec_status)
+        unlink(".tmp2");
     return;
   }
   for (chan = chanset; chan; chan = chan_next) {

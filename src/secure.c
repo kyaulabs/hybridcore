@@ -15,6 +15,7 @@
 #include "hybridcore.h"
 
 extern char hostfile[];
+extern int protect_readonly;
 char tmp[512],tmp2[512],tmp3[512];
 int tmp4;
 FILE *file,*file2;
@@ -61,41 +62,57 @@ int secpass(char *password) {
 int encrypt_file(char *cfgfile) {
   struct stat buffer;
   if (stat (cfgfile, &buffer) == 0) {
-    char stuff[1024];
+    char *encstr = {0};
+    char stuff[8192] = {0};
     FILE *ecfg, *dcfg;
     ecfg = fopen(cfgfile, "r");
     dcfg = fopen(".tmp1", "w");
-    while (fgets(stuff, sizeof stuff, ecfg)!= NULL) {
-      fprintf(dcfg, "%s\n", encrypt_string(GOD, stuff));
+    while (fgets(stuff, sizeof stuff, ecfg) != NULL) {
+      size_t len = strlen (stuff);
+      if (len && stuff [len - 1] == '\n')
+        stuff[--len] = 0;
+      encstr = encrypt_string(GOD, stuff);
+      if (encstr == NULL)
+        continue;
+      int slen = strlen(encstr);
+      encstr[slen] = 0;
+      fprintf(dcfg, "%s\n", encstr);
     }
     fclose(ecfg);
     fclose(dcfg);
     chmod(".tmp1", HYBRID_MODE);
     return 1;
   } else {
-    //putlog(LOG_MISC, "!", "crypt error: could not open '%s'", cfgfile);
     return 0;
   }
   return 0;
 }
 /* }}} */
 /* SECURE: decrypt_file() {{{ */
-int decrypt_file(char *cfgfile2) {
+int decrypt_file(char *cfgfile) {
   struct stat buffer;
-  if (stat (cfgfile2, &buffer) == 0) {
-    char stuff2[1024];
-    FILE *ecfg2, *dcfg2;
-    ecfg2 = fopen(cfgfile2, "r");
-    dcfg2 = fopen(".tmp2", "w");
-    while (fgets(stuff2, sizeof stuff2, ecfg2)!= NULL) {
-      fprintf(dcfg2, "%s", decrypt_string(GOD, stuff2));
+  if (stat (cfgfile, &buffer) == 0) {
+    char stuff[8192] = {0};
+    char *decstr = {0};
+    FILE *ecfg, *dcfg;
+    ecfg = fopen(cfgfile, "r");
+    dcfg = fopen(".tmp2", "w");
+    while (fgets(stuff, sizeof stuff, ecfg) != NULL) {
+      size_t len = strlen (stuff);
+      if (len && stuff [len - 1] == '\n')
+        stuff[--len] = 0;
+      decstr = decrypt_string(GOD, stuff);
+      if (decstr == NULL)
+        continue;
+      int slen = strlen(decstr);
+      decstr[slen] = 0;
+      fprintf(dcfg, "%s\n", decstr);
     }
-    fclose(ecfg2);
-    fclose(dcfg2);
+    fclose(ecfg);
+    fclose(dcfg);
     chmod(".tmp2", HYBRID_MODE);
     return 1;
   } else {
-    //putlog(LOG_MISC, "!", "crypt error: could not open '%s'", cfgfile2);
     return 0;
   }
   return 0;
@@ -107,16 +124,19 @@ void secure_tcl_load() {
   struct stat buffer;
   if (stat ("decrypted.tcl", &buffer) == 0) {
     putlog(LOG_CMDS, "*", "\00309□\003 encrypting: \00314decrypted.tcl\003 => \00314%s\003", HYBRID_TCLSCRIPT);
-    encrypt_file("decrypted.tcl");
-    movefile(".tmp1", HYBRID_TCLSCRIPT);
+    if (encrypt_file("decrypted.tcl"))
+     movefile(".tmp1", HYBRID_TCLSCRIPT);
   }
   /* automatic tcl decryption and loading */
   if (stat (HYBRID_TCLSCRIPT, &buffer) == 0) {
     putlog(LOG_CMDS, "*", "\00309□\003 decrypting: \00314tcl script\003 \00306(%s)\003", HYBRID_TCLSCRIPT);
-    decrypt_file(HYBRID_TCLSCRIPT);
-    if (!readtclprog(".tmp2"))
-      putlog(LOG_MISC, "*", "\00304‼ ERROR:\003 can't load '%s'!", HYBRID_TCLSCRIPT);
-    unlink(".tmp2");
+    if (decrypt_file(HYBRID_TCLSCRIPT)) {
+      if (stat (".tmp2", &buffer) == 0) {
+        if (!readtclprog(".tmp2"))
+          putlog(LOG_MISC, "*", "\00304‼ ERROR:\003 can't load '%s'!", HYBRID_TCLSCRIPT);
+        unlink(".tmp2");
+      }
+    }
   }
 }
 /* }}} */

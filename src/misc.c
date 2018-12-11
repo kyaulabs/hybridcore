@@ -596,13 +596,13 @@ char* str_replace(char* search, char* replace, char* subject) {
 }
 
 char* irccodes_toecho(char *subject) {
-  char *ret;
-  int size = strlen(subject);
-  int retAllocSize = (strlen(subject) + 1) * 2; // Allocation size of the return string.
+  char *ret = strdup(subject);
+  //int size = strlen(subject);
+  //int retAllocSize = (strlen(subject) + 1) * 2; // Allocation size of the return string.
   // let the allocation size be twice as that of the subject initially
-  ret = nmalloc(retAllocSize);
+  //ret = nmalloc(retAllocSize);
 
-  ret = str_replace("\00300", "\[1;37m", subject);
+  ret = str_replace("\00300", "\[1;37m", ret);
   ret = str_replace("\00301", "\[30m", ret);
   ret = str_replace("\00302", "\[34m", ret);
   ret = str_replace("\00303", "\[32m", ret);

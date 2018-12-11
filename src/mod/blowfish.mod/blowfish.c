@@ -526,7 +526,8 @@ static char *decrypt_string_cbc(char *key, char *str)
   slen = strlen(str);
   s = nmalloc(slen + 1);
   strcpy(s, str);
-  s[slen] = 0;
+  if (s[slen] != 0)
+    s[slen] = 0;
   if ((!key) || (!key[0]) || (slen % 4))
     return s;
 

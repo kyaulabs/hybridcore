@@ -52,6 +52,10 @@ extern time_t now, online_since;
 extern int backgrd, term_z, con_chan, cache_hit, cache_miss, firewallport,
            default_flags, max_logs, conmask, protect_readonly, make_userfile,
            noshare, ignore_time, max_socks;
+extern int encrypt_file(char *cfgfile);
+extern int decrypt_file(char *cfgfile);
+extern void secure_tcl_load();
+
 #ifdef TLS
 extern SSL_CTX *ssl_ctx;
 #endif

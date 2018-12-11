@@ -30,3 +30,5 @@ Everything that made it possible for me to port this to the newer version of egg
 * [DH1080.so TCL Library](https://github.com/orkim/dh1080_tcl)
 * [FiSH-irssi](https://github.com/falsovsky/FiSH-irssi)
 * [str_replace](https://gist.github.com/amcsi/6068ef6ae59951ed4a9f) function used to convert IRC codes to ANSI codes
+* [StackOverflow
+* C Question](https://stackoverflow.com/questions/45528533/fgets-function-printing-garbage-at-the-end) helped me fix my garbage output when encrypting/decrypting

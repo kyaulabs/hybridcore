@@ -88,7 +88,7 @@ int use_exempts = 0;
 int force_expire = 0;
 int remote_boots = 2;
 int allow_dk_cmds = 1;
-int must_be_owner = 1;
+int must_be_owner = 2;
 int quiet_reject = 1;
 int copy_to_tmp = 1;
 int max_socks = 100;
@@ -702,7 +702,7 @@ void init_tcl(int argc, char **argv)
   }
 
   if (encoding == NULL) {
-    encoding = "utf-8";
+    encoding = "iso8859-1";
   }
 
   Tcl_SetSystemEncoding(NULL, encoding);
@@ -779,16 +779,6 @@ int readtclprog(char *fname)
     return 0;
 
   code = Tcl_EvalFile(interp, fname);
-
-  /*
-  if (encrypt_file("dacrew.tcl"))
-    if (decypt_file(".tmp1")) {
-      code = Tcl_EvalFile(interp,".tmp2");
-      unlink(".tmp2");
-      printf("\n decryption complete\n");
-    }
-  */
-
   result = Tcl_GetVar(interp, "errorInfo", TCL_GLOBAL_ONLY);
 
   /* properly convert string to system encoding. */

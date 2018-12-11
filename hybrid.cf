@@ -1,0 +1,52 @@
+loadmodule blowfish
+## BASIC
+set admin "kyau <email: kyau@kyau.net>"
+set hub "hc"
+set username "kyau"
+#set timezone "EST"
+#set offset "5"
+set timezone "PST"
+set offset "8"
+set vhost4 ""
+#set vhost6 ""
+set listenaddr ""
+set prefer-ipv6 0
+## LOGS
+## CONSOLE
+## BOTNET/DCC/TELNET
+#listen +2600 all
+listen 2600 all
+## SSL
+set ssl-capath "/etc/ssl/certs/"
+## MORE ADVANCED SETTINGS
+set reserved-portrange 5000:5050
+## MODULES
+## MODULE: BLOWFISH
+## MODULE: DNS
+## MODULE: CHANNELS
+set default-chanset {
+-autoop         -autovoice
+-bitch          +cycle
++dontkickops    +dynamicbans
++dynamicexempts +dynamicinvites
+-enforcebans    +greet
+-inactive       -nodesynch
+-protectfriends +protectops
+-revenge        -revengebot
+-secret         -seen
++shared         -statuslog
++userbans       +userexempts
++userinvites    -protecthalfops
+-autohalfop     -static
+}
+## MODULE: SERVER
+set nick "hc"
+set altnick "hc-"
+## MODULE: CTCP
+## MODULE: IRC
+## MODULE: TRANSFER
+## MODULE: SHARE
+if { ${botnet-nick} != ${nick} } { set botnet-nick "$nick" }
+if { ${nick} == ${hub} } { set private-user 1 } else { set private-user 0 }
+
+# vim: ft=tcl sw=4 ts=4 noet:
