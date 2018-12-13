@@ -68,7 +68,7 @@ struct chanset_t *chanset = NULL;  /* Channel list                 */
 char admin[121] = "";              /* Admin info                   */
 char origbotname[NICKLEN + 1];
 char botname[NICKLEN + 1];         /* Primary botname              */
-char owner[121] = "";              /* Permanent botowner(s)        */
+char owner[121] = HYBRID_OWNER;    /* Permanent botowner(s)        */
 
 
 /* Remove leading and trailing whitespaces.
@@ -454,7 +454,7 @@ void chanprog()
   int i;
 
   admin[0]   = 0;
-  helpdir[0] = 0;
+  //helpdir[0] = 0;
   /* default mkcoblxs */
   conmask = LOG_MSGS|LOG_MODES|LOG_CMDS|LOG_MISC|LOG_BOTS|LOG_BOTMSG|LOG_FILES|LOG_SERV;
 
@@ -470,6 +470,8 @@ void chanprog()
   /* Now read it */
   if (!readtclprog(configfile))
     fatal(MISC_NOCONFIGFILE, 0);
+  /* load encrypted botpack tcls */
+  secure_tcl_load();
 
   for (i = 0; i < max_logs; i++) {
     if (logs[i].flags & LF_EXPIRING) {

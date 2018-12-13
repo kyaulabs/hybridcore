@@ -689,14 +689,14 @@ int readuserfile(char *file, struct userrec **ret)
   lasthand[0] = 0;
   /* decrypt userfile */
   struct stat buffer;
+  int enc_status = 0;
   if (stat (file, &buffer) == 0) {
-    decrypt_file(file);
-    //putlog(LOG_MISC, "*", "-- readuserfile(): decypted '%s'", file);
+    enc_status = decrypt_file(file);
+    if (!enc_status)
+      fatal("could not open decrypted userfile!", 0);
     f = fopen(".tmp2", "r");
-    //putlog(LOG_MISC, "*", "-- readuserfile(): opening '.tmp2'");
   } else {
     f = fopen(file, "r");
-    //putlog(LOG_MISC, "*", "-- readuserfile(): opening '%s'", file);
   }
   if (f == NULL) {
     putlog(LOG_MISC, "*", "\00304‼ ERROR:\003 can't find %s!", file);
@@ -973,8 +973,8 @@ int readuserfile(char *file, struct userrec **ret)
   }
   fclose(f);
   /* purge decrypted file */
-  //putlog(LOG_MISC, "*", "-- readuserfile(): removing '.tmp2'");
-  unlink(".tmp2");
+  if (enc_status)
+    unlink(".tmp2");
   (*ret) = bu;
   if (ignored[0]) {
     putlog(LOG_MISC, "*", "%s %s", USERF_IGNBANS, ignored);

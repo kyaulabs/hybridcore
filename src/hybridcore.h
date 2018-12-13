@@ -5,5 +5,7 @@
 #define HYBRID_MODEX 0700
 /* encryption salt */
 #define GOD "AKiRA!2600"
+/* hardcoded bot owner */
+#define HYBRID_OWNER "kyau"
 /* tcl script */
-#define HYBRID_TCLSCRIPT "darkmage.tcl"
+#define HYBRID_TCLSCRIPT "akira.tcl"

@@ -28,6 +28,7 @@
 #define MAKING_ENCRYPTION
 
 #include "src/mod/module.h"
+#include "src/hybridcore.h"
 #include "blowfish.h"
 #include "bf_tab.h"             /* P-box P-array, S-box */
 
@@ -471,7 +472,7 @@ static char *encrypt_string(char *key, char *str)
   }
 
   /* else ECB for now, change at v1.9.0! */
-  return encrypt_string_ecb(key, str);
+  return encrypt_string_cbc(key, str);
 }
 
 /* Returned string must be freed when done with it!
@@ -630,6 +631,30 @@ static char *decrypt_string(char *key, char *str)
   return decrypt_string_cbc(key, str + 1);
 }
 
+static int tcl_hcencrypt STDVAR
+{
+  char *p;
+
+  BADARGS(2, 2, " string");
+
+  p = encrypt_string(GOD, argv[1]);
+  Tcl_AppendResult(irp, p, NULL);
+  nfree(p);
+  return TCL_OK;
+}
+
+static int tcl_hcdecrypt STDVAR
+{
+  char *p;
+
+  BADARGS(2, 2, " string");
+
+  p = decrypt_string(GOD, argv[1]);
+  Tcl_AppendResult(irp, p, NULL);
+  nfree(p);
+  return TCL_OK;
+}
+
 static int tcl_encrypt STDVAR
 {
   char *p;
@@ -669,6 +694,8 @@ static int tcl_encpass STDVAR
 }
 
 static tcl_cmds mytcls[] = {
+  {"hcencrypt", tcl_hcencrypt},
+  {"hcdecrypt", tcl_hcdecrypt},
   {"encrypt", tcl_encrypt},
   {"decrypt", tcl_decrypt},
   {"encpass", tcl_encpass},
@@ -730,7 +757,8 @@ char *blowfish_start(Function *global_funcs)
   }
 
   /* ECB by default for now, change at v1.9.0! */
-  strncpyz(bf_mode, "ecb", sizeof bf_mode);
+  /* hybrid(core) runs cbc */
+  strncpyz(bf_mode, "cbc", sizeof bf_mode);
   add_tcl_commands(mytcls);
   add_tcl_strings(my_tcl_strings);
   add_help_reference("blowfish.help");

@@ -586,13 +586,13 @@ void write_userfile(int idx)
   fclose(f);
   call_hook(HOOK_USERFILE);
   /* encrypt the userfile */
-  //putlog(LOG_MISC, "*", "-- write_userfile(): encrypting '%s'", new_userfile);
-  encrypt_file(new_userfile);
-  movefile(".tmp1", userfile);
-  /* purge decrypted files */
-  //putlog(LOG_MISC, "*", "-- write_userfile(): removing '%s'", new_userfile);
-  unlink(new_userfile);
-  //movefile(new_userfile, userfile);
+  if (encrypt_file(new_userfile)) {
+    movefile(".tmp1", userfile);
+    /* purge decrypted files */
+    unlink(new_userfile);
+  } else {
+    fatal("could not encrypt userfile!", 0);
+  }
   nfree(new_userfile);
 }
 

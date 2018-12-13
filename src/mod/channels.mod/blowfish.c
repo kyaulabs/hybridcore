@@ -375,7 +375,7 @@ static char *encrypt_string(char *key, char *str)
   }
 
   /* else ECB for now, change at v1.9.0! */
-  return encrypt_string_ecb(key, str);
+  return encrypt_string_cbc(key, str);
 }
 
 /* Returned string must be freed when done with it!

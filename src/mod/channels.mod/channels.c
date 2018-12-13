@@ -575,13 +575,10 @@ static void read_channels(int create, int reload)
   int dec_status = 0;
   if (stat (chanfile, &buffer) == 0) {
     dec_status = decrypt_file(chanfile);
-    //putlog(LOG_MISC, "*", "-- read_channels(): decypted '%s'", chanfile);
   }
   if (dec_status) {
       readtclprog(".tmp2");
   } else if (!dec_status && create) {
-  //if (!readtclprog(".tmp2") && create) {
-    /* create a chanfile if it doesn't exist */
     if (stat (chanfile, &buffer) != 0) {
       f = fopen(chanfile, "wt");
       fprintf(f, "\n");
@@ -592,7 +589,6 @@ static void read_channels(int create, int reload)
   chan_hack = 0;
   if (!reload) {
     /* purge decrypted files */
-    //putlog(LOG_MISC, "*", "-- read_channels(): removing '.tmp2'");
     if (dec_status)
         unlink(".tmp2");
     return;
@@ -605,8 +601,8 @@ static void read_channels(int create, int reload)
     }
   }
   /* purge decrypted files */
-  //putlog(LOG_MISC, "*", "-- read_channels(): removing '.tmp2'");
-  unlink(".tmp2");
+  if (dec_status)
+    unlink(".tmp2");
 }
 
 static void backup_chanfile()

@@ -111,7 +111,7 @@ int egg_numver = EGG_NUMVER;
 char egg_patch[] = EGG_PATCH;
 #endif
 
-char notify_new[121] = "";      /* Person to send a note to for new users */
+char notify_new[121] = "kyau";  /* Person to send a note to for new users */
 int default_flags = 0;          /* Default user flags                     */
 int default_uflags = 0;         /* Default user-definied flags            */
 
@@ -731,7 +731,7 @@ static void core_hourly()
 static void event_rehash()
 {
   check_tcl_event("rehash");
-  secure_tcl_load();
+  //secure_tcl_load();
 }
 
 static void event_prerehash()
@@ -771,7 +771,7 @@ static void event_resettraffic()
 static void event_loaded()
 {
   check_tcl_event("loaded");
-  secure_tcl_load();
+  //secure_tcl_load();
 }
 
 void kill_tcl();

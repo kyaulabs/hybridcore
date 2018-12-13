@@ -1,52 +1,49 @@
-loadmodule blowfish
-## BASIC
-set admin "kyau <email: kyau@kyau.net>"
-set hub "hc"
-set username "kyau"
-#set timezone "EST"
-#set offset "5"
-set timezone "PST"
-set offset "8"
-set vhost4 ""
-#set vhost6 ""
-set listenaddr ""
-set prefer-ipv6 0
-## LOGS
-## CONSOLE
-## BOTNET/DCC/TELNET
-#listen +2600 all
-listen 2600 all
-## SSL
-set ssl-capath "/etc/ssl/certs/"
-## MORE ADVANCED SETTINGS
-set reserved-portrange 5000:5050
-## MODULES
-## MODULE: BLOWFISH
-## MODULE: DNS
-## MODULE: CHANNELS
-set default-chanset {
--autoop         -autovoice
--bitch          +cycle
-+dontkickops    +dynamicbans
-+dynamicexempts +dynamicinvites
--enforcebans    +greet
--inactive       -nodesynch
--protectfriends +protectops
--revenge        -revengebot
--secret         -seen
-+shared         -statuslog
-+userbans       +userexempts
-+userinvites    -protecthalfops
--autohalfop     -static
-}
-## MODULE: SERVER
-set nick "hc"
-set altnick "hc-"
-## MODULE: CTCP
-## MODULE: IRC
-## MODULE: TRANSFER
-## MODULE: SHARE
+# $Arch: hybrid.cf,v 1.008 2018/12/13 15:01:40 kyau Exp $
+#
+#   █████████▀█ █████████ █ ▀▀▀▀▀▀▀▀▀▀ █████████▀█ █████████▀█
+#   █████████ █ █████████ █ ██████████ █████████ █ █████████ █
+#   █████████▀█ █████████▀▄ ██████████ █████████▀▄ █████████▀█
+# ───────────────────────── ██████████ ──────────────────bz!────
+#
+# hybrid.cf - config for hybrid(core)
+# Copyright (C) 2018 KYAU Labs (https://kyaulabs.com)
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Affero General Public License as
+# published by the Free Software Foundation, either version 3 of the
+# License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Affero General Public License for more details.
+#
+# You should have received a copy of the GNU Affero General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+#
+
+set admin "kyau"					;# administrator
+set hub "hc"						;# botnet-nick for hub bot
+set username "kyau"					;# ident
+set nick "hc"						;# irc nickname
+set altnick "hc-"					;# irc alternate nickname
+set timezone "PST"					;# timezone
+									;#   CET : Frankfurt/DE (offset -1)
+									;#       : Amsterdam/NL 
+									;#   EST : Buffalo/NY (offset 5)
+									;#   CST : Dallas/TX (offset 6)
+									;#   PST : Seattle/WA (offset 8)
+									;#       : Los_Angeles/CA
+set offset "8"						;# timezone offset
+set vhost4 ""						;# vhost (ipv4)
+#set vhost6 ""						;# vhost (ipv6)
+set listenaddr ""					;# ip addr for incoming connections
+set prefer-ipv6 0					;# prefer ipv6 over ipv4?
+set reserved-portrange 5000:5050	;# dcc data port range
+
+
 if { ${botnet-nick} != ${nick} } { set botnet-nick "$nick" }
 if { ${nick} == ${hub} } { set private-user 1 } else { set private-user 0 }
+if { [catch { loadmodule blowfish } err] } { die "\00304‼ ERROR:\003 can't load blowfish module:\n$err" }
 
 # vim: ft=tcl sw=4 ts=4 noet:
