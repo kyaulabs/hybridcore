@@ -114,7 +114,7 @@ int secpass(char *password) {
   int ucase, lcase, other, pl, i, check_it;
   pl = strlen(password);
  
-  if (pl < 7) {
+  if (pl < HYBRID_PASSWDLEN) {
       return 0;
   }
   other = ucase = lcase = 0;
@@ -159,10 +159,11 @@ static int msg_pass(char *nick, char *host, struct userrec *u, char *par)
   putlog(LOG_CMDS, "*", "(%s!%s) !%s! (SECURE PASS)", nick, host, u->handle);
   if (strlen(new) > 15)
     new[15] = 0;
+  /*
   if (strlen(new) < 7) {
     dprintf(DP_HELP, "NOTICE %s :%s\n", nick, IRC_PASSFORMAT);
     return 0;
-  }
+  } */
   /* secpass function */
   if (secpass(new) == 0) {
     dprintf(DP_HELP, "NOTICE %s :(%s) is not secure try again\n", nick, new);

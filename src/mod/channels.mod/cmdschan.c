@@ -1584,6 +1584,7 @@ static void cmd_chansave(struct userrec *u, int idx, char *par)
     putlog(LOG_CMDS, "*", "\00307#chansave#\003 %s", dcc[idx].nick);
     putlog(LOG_CMDS, "*", "\00309□\003 save: \00314channel file\003");
     write_channels();
+    check_tcl_event("savechannels");
   }
 }
 
@@ -1595,6 +1596,7 @@ static void cmd_chanload(struct userrec *u, int idx, char *par)
     putlog(LOG_CMDS, "*", "\00307#chanload#\003 %s", dcc[idx].nick);
     putlog(LOG_CMDS, "*", "\00309□\003 reload: \00314channel file\003");
     read_channels(1, 1);
+    check_tcl_event("loadchannels");
   }
 }
 

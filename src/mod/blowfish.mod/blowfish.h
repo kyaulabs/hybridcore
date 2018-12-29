@@ -23,6 +23,7 @@
 #ifndef _EGG_MOD_BLOWFISH_BLOWFISH_H
 #define _EGG_MOD_BLOWFISH_BLOWFISH_H
 
+
 #define MAXKEYBYTES 56 /* 448 bits */
 #define bf_N        16
 #define noErr        0

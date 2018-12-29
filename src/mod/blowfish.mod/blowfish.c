@@ -637,7 +637,7 @@ static int tcl_hcencrypt STDVAR
 
   BADARGS(2, 2, " string");
 
-  p = encrypt_string(GOD, argv[1]);
+  p = encrypt_string(HYBRID_SALT, argv[1]);
   Tcl_AppendResult(irp, p, NULL);
   nfree(p);
   return TCL_OK;
@@ -649,7 +649,7 @@ static int tcl_hcdecrypt STDVAR
 
   BADARGS(2, 2, " string");
 
-  p = decrypt_string(GOD, argv[1]);
+  p = decrypt_string(HYBRID_SALT, argv[1]);
   Tcl_AppendResult(irp, p, NULL);
   nfree(p);
   return TCL_OK;

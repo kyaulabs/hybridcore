@@ -1297,6 +1297,7 @@ static void cmd_reload(struct userrec *u, int idx, char *par)
   putlog(LOG_CMDS, "*", "\00307#reload#\003 %s", dcc[idx].nick);
   putlog(LOG_CMDS, "*", "\00309□\003 reload: \00314user file\003");
   reload();
+  check_tcl_event("reload");
 }
 
 void cmd_die(struct userrec *u, int idx, char *par)

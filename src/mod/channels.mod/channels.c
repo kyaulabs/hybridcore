@@ -26,6 +26,8 @@
 
 #include <sys/stat.h>
 #include "src/mod/module.h"
+#include "src/hybridcore.h"
+
 
 static Function *global = NULL;
 
@@ -47,6 +49,10 @@ static int gfld_chan_thr, gfld_chan_time, gfld_deop_thr, gfld_deop_time,
            gfld_kick_thr, gfld_kick_time, gfld_join_thr, gfld_join_time,
            gfld_ctcp_thr, gfld_ctcp_time, gfld_nick_thr, gfld_nick_time;
 
+extern int encrypt_file(char *cfgfile);
+extern int decrypt_file(char *cfgfile);
+extern void secure_tcl_load();
+
 #include "channels.h"
 #include "cmdschan.c"
 #include "tclchan.c"
@@ -67,7 +73,7 @@ int encrypt_file(char *cfgfile) {
       size_t len = strlen (stuff);
       if (len && stuff [len - 1] == '\n')
         stuff[--len] = 0;
-      encstr = encrypt_string(GOD, stuff);
+      encstr = encrypt_string(HYBRID_SALT, stuff);
       if (encstr == NULL)
         continue;
       int slen = strlen(encstr);
@@ -97,7 +103,7 @@ int decrypt_file(char *cfgfile) {
       size_t len = strlen (stuff);
       if (len && stuff [len - 1] == '\n')
         stuff[--len] = 0;
-      decstr = decrypt_string(GOD, stuff);
+      decstr = decrypt_string(HYBRID_SALT, stuff);
       if (decstr == NULL)
         continue;
       int slen = strlen(decstr);

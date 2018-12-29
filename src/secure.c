@@ -1,3 +1,28 @@
+/*
+ * $Arch: secure.c,v 1.002 2018/12/14 00:55:49 kyau Exp $
+ *
+ * ▄▄ ▄ ▄▄ ▄ ▄▄▄▄ ▄▄▄▄ ▄▄ ▄▄▄   ▄▄ ▄▄▄▄ ▄▄▄▄ ▄▄▄▄ ▄▄▄▄ ▄▄
+ * ██ █ ██ █ ██ █ ██ █ ██ ██ █ ██  ██ █ ██ █ ██ █ ██ ▀  ██
+ * ██▄█ ██▄█ ██▄▀ ██▄▀ ██ ██ █ ██  ██   ██ █ ██▄▀ ██▀   ██
+ * ██ █ ▄▄ █ ██ █ ██ █ ██ ██ █ ██  ██ █ ██ █ ██ █ ██ █  ██
+ * ▀▀ ▀ ▀▀▀▀ ▀▀▀▀ ▀▀ ▀ ▀▀ ▀▀▀▀ ▀▀▀ ▀▀▀▀ ▀▀▀▀ ▀▀ ▀ ▀▀▀▀ ▀▀▀
+ *
+ * src/secure.c - hybrid(core)
+ * Copyright (C) 2018 KYAU Labs (https://kyaulabs.com)
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
 #if HAVE_CONFIG_H
 #include <config.h>
 #endif
@@ -43,7 +68,7 @@ int secpass(char *password) {
   int ucase, lcase, other, pl, i, check_it;
   pl = strlen(password);
  
-  if (pl < 7)
+  if (pl < HYBRID_PASSWDLEN)
     return 0;
   other = ucase = lcase = 0;
   for(i=0; i < pl; i++) {
@@ -71,7 +96,7 @@ int encrypt_file(char *cfgfile) {
       size_t len = strlen (stuff);
       if (len && stuff [len - 1] == '\n')
         stuff[--len] = 0;
-      encstr = encrypt_string(GOD, stuff);
+      encstr = encrypt_string(HYBRID_SALT, stuff);
       if (encstr == NULL)
         continue;
       int slen = strlen(encstr);
@@ -101,7 +126,7 @@ int decrypt_file(char *cfgfile) {
       size_t len = strlen (stuff);
       if (len && stuff [len - 1] == '\n')
         stuff[--len] = 0;
-      decstr = decrypt_string(GOD, stuff);
+      decstr = decrypt_string(HYBRID_SALT, stuff);
       if (decstr == NULL)
         continue;
       int slen = strlen(decstr);
