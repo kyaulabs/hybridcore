@@ -18,6 +18,7 @@ Given that not everything that was originally added/changed in the eggdrop-1.1.6
 In order to install hybrid(core), run the following:
 
 ```shell
+# autoconf
 # ./configure --enable-tls
 # make config
 # make

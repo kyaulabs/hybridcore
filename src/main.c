@@ -53,6 +53,7 @@
 #include <resolv.h>
 #include <setjmp.h>
 #include <signal.h>
+#include <sys/stat.h>
 
 #ifdef TIME_WITH_SYS_TIME
 #  include <sys/time.h>
@@ -511,6 +512,11 @@ static void show_ver() {
   strlcpy(x, egg_version, sizeof x);
   newsplit(&z);
   newsplit(&z);
+  printf("[0;1m▄▄ ▄ ▄▄ ▄ ▄▄▄▄ ▄▄▄▄ ▄▄ ▄▄▄   [35m▄▄ [36m▄▄▄▄ ▄▄▄▄ ▄▄▄▄ ▄▄▄▄ [35m▄▄\n");
+  printf("[0;1m██ █ ██ █ ██ █ ██ █ ██ ██ █ [35m██  [36m██ █ ██ █ ██ █ ██ ▀  [35m██\n");
+  printf("[0;1m██▄█ ██▄█ ██▄▀ ██▄▀ ██ ██ █ [35m██  [36m██   ██ █ ██▄▀ ██▀   [35m██\n");
+  printf("[1;30m█[0;1m█ █ [30m▄[0;1m▄ █ [0;1;30m█[0;1;40m█ █ [47m▀[40m█ █ [47m▀[40m█ [47m [40m█ █ [45m [35;40m█  [46m [36;40m█ █ [46m [40m█ █ [46m▀[40m█ █ [46m [40m█ █  [35m█[45m [40m\n");
+  printf("[1;30m▀▀ ▀ ▀▀▀▀ ▀▀▀▀ ▀▀ ▀ ▀▀ ▀▀▀▀ [0;35m▀▀▀ [36m▀▀▀▀ ▀▀▀▀ ▀▀ ▀ ▀▀▀▀ [35m▀▀▀[0m\n");
   printf("%s\n", version);
   if (z[0]) {
     printf("  (patches: %s)\n", z);
@@ -1085,8 +1091,8 @@ int main(int arg_c, char **arg_v)
   egg_snprintf(version, sizeof version,
                "Eggdrop v%s (C) 1997 Robey Pointer (C) 2010-2018 Eggheads",
                egg_version);*/
-  egg_snprintf(ver, sizeof ver, "hybrid(core)v%s", egg_version);
-  egg_snprintf(version, "%s v%s", argv[0], egg_version);
+  egg_snprintf(ver, 1064, "hybrid(core) v%s", egg_version);
+  egg_snprintf(version, 1064, "%s v%s", argv[0], egg_version);
   /* Now add on the patchlevel (for Tcl) */
   sprintf(&egg_version[strlen(egg_version)], " %u", egg_numver);
 

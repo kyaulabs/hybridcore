@@ -48,7 +48,6 @@ static int me_op(struct chanset_t *);
 static int me_halfop(struct chanset_t *);
 static int me_voice(struct chanset_t *);
 static int any_ops(struct chanset_t *);
-static int hand_on_chan(struct chanset_t *, struct userrec *);
 static char *getchanmode(struct chanset_t *);
 static void flush_mode(struct chanset_t *, int);
 static void set_delay(struct chanset_t *, char *);

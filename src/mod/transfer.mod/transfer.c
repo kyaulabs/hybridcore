@@ -1210,9 +1210,9 @@ char *transfer_start(Function *global_funcs)
 
   fileq = NULL;
   module_register(MODULE_NAME, transfer_table, 2, 4);
-  if (!module_depend(MODULE_NAME, "eggdrop", 108, 0)) {
+  if (!module_depend(MODULE_NAME, "hybridcore", 108, 0)) {
     module_undepend(MODULE_NAME);
-    return "This module requires Eggdrop 1.8.0 or later.";
+    return "This module requires hybrid(core) 1.8.0 or later.";
   }
 
   add_tcl_commands(mytcls);

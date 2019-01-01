@@ -36,7 +36,7 @@ linkstart:
 	echo "" && \
 	echo "---------- Yeah! That's the compiling, now the linking! ----------" && \
 	echo "" && \
-	echo "□ linking: hybrid(core) $(EGGBUILD)." && \
+	echo -e "\x1b[38;5;32m□\x1b[0m linking: \x1b[38;5;245mhybrid(core) $(EGGBUILD)\x1b[38;5;235m" && \
 	echo "" && \
 	touch mod/mod.xlibs
 
@@ -46,7 +46,7 @@ link:
 linkfinish:
 	@$(STRIP) ../$(EGGEXEC) && \
 	echo "" && \
-	echo "□ successful compile: $(EGGEXEC)" && \
+	echo -e "\x1b[38;5;32m□\x1b[0m compile: \x1b[38;5;245msuccess ($(EGGEXEC))\x1b[38;5;235m" && \
 	echo ""
 
 ../$(EGGEXEC): $(eggdrop_objs) compile_md5 compatibility

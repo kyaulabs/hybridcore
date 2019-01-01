@@ -264,19 +264,6 @@ static void set_key(struct chanset_t *chan, char *k)
   strcpy(chan->channel.key, k);
 }
 
-static int hand_on_chan(struct chanset_t *chan, struct userrec *u)
-{
-  char s[NICKMAX+UHOSTLEN+1];
-  memberlist *m;
-
-  for (m = chan->channel.member; m && m->nick[0]; m = m->next) {
-    sprintf(s, "%s!%s", m->nick, m->userhost);
-    if (u == get_user_by_host(s))
-      return 1;
-  }
-  return 0;
-}
-
 static void refresh_who_chan(char *channame)
 {
   if (use_354)

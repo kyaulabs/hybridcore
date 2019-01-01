@@ -48,7 +48,7 @@ doofus:
 	cd ../.. && $(MAKE)
 
 modules: $(mod_libs)
-	@echo "" && echo -e "\x1b[38;5;32m□\x1b[0m all modules compiled"
+	@echo "" && echo -e "\x1b[38;5;32m□\x1b[0m modules: \x1b[38;5;245mall compiled\x1b[38;5;235m"
 
 static: $(mod_objs)
 	@$(modconfig) static.h

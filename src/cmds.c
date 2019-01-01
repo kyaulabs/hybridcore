@@ -2713,12 +2713,14 @@ static void cmd_mns_telnethost(struct userrec *u, int idx, char *par)
   FILE *file;
   FILE *file2;
 
-  char host[512];
+  char *host;
+  //char host[512];
   if (!par[0]) {
     dprintf(idx, "Usage: -telnet <ipaddr>\n");
     return;
   }
-  split(host, par);
+  host = newsplit(&par);
+  //split(host, par);
   if (host != NULL)
     if (!host[0]) {
       strcpy(host, par);
@@ -2734,7 +2736,6 @@ static void cmd_mns_telnethost(struct userrec *u, int idx, char *par)
     return;
   }
   /* decrypt the hostfile */
-  //putlog(LOG_MISC, "*", "-- cmd_mns_telnethost(): decrypting '%s'", hostfile);
   decrypt_file(hostfile);
   file = fopen(".tmp2", "r");
   sprintf(tmp, "%s~new", hostfile);
@@ -2757,13 +2758,10 @@ static void cmd_mns_telnethost(struct userrec *u, int idx, char *par)
     putlog(LOG_CMDS, "*", "\00307#-telnet#\003 \00306%s\003 %s", host, dcc[idx].nick);
     dprintf(idx, "Removed '%s' from allowed ips to telnet in.\n", host);
     /* encrypt the new hostfile */
-    //putlog(LOG_MISC, "*", "-- cmd_mns_telnethost(): encrypting '%s'", tmp);
     encrypt_file(tmp);
     movefile(".tmp1", hostfile);
     /* purge decrypted files */
-    //putlog(LOG_MISC, "*", "-- cmd_mns_telnethost(): removing '.tmp2'");
     unlink(".tmp2");
-    //putlog(LOG_MISC, "*", "-- cmd_mns_telnethost(): removing '%s'", tmp);
     unlink(tmp);
   }
 }
