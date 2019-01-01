@@ -193,8 +193,8 @@ int mainloop(int);
 /* match.c */
 int casecharcmp(unsigned char, unsigned char);
 int charcmp(unsigned char, unsigned char);
-int _wild_match(register unsigned char *, register unsigned char *);
-int _wild_match_per(register unsigned char *, register unsigned char *,
+int _wild_match(unsigned char *, unsigned char *);
+int _wild_match_per(unsigned char *, unsigned char *,
                     int (*)(unsigned char, unsigned char),
                     int (*)(unsigned char, unsigned char),
                     unsigned char *);
@@ -256,8 +256,8 @@ int oatoi(const char *);
 int is_file(const char *);
 void logsuffix_change(char *);
 char *str_escape(const char *, const char, const char);
-char *strchr_unescape(char *, const char, register const char);
-void str_unescape(char *, register const char);
+char *strchr_unescape(char *, const char, const char);
+void str_unescape(char *, const char);
 int str_isdigit(const char *);
 void kill_bot(char *, char *);
 
@@ -280,12 +280,11 @@ int setsockname(sockname_t *, char *, int, int);
 int open_address_listen(sockname_t *);
 int open_telnet_raw(int, sockname_t *);
 int open_telnet(int, char *, int);
-int answer(int, sockname_t *, unsigned short *, int);
+int answer(int, sockname_t *, uint16_t *, int);
 int getdccaddr(sockname_t *, char *, size_t);
 int getdccfamilyaddr(sockname_t *, char *, size_t, int);
 void tputs(int, char *, unsigned int);
 void dequeue_sockets();
-int preparefdset(fd_set *, sock_list *, int, int, int);
 int sockread(char *, int *, sock_list *, int, int);
 int sockgets(char *, int *);
 void tell_netdebug(int);
@@ -356,8 +355,8 @@ int match_ignore(char *);
 void check_expired_ignores();
 void autolink_cycle(char *);
 void tell_file_stats(int, char *);
-void tell_user_ident(int, char *, int);
-void tell_users_match(int, char *, int, int, int, char *);
+void tell_user_ident(int, char *);
+void tell_users_match(int, char *, int, int, char *);
 int readuserfile(char *, struct userrec **);
 
 /* rfc1459.c */

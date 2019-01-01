@@ -70,7 +70,7 @@ static char *getnick(char *handle, struct chanset_t *chan)
 {
   char s[UHOSTLEN];
   struct userrec *u;
-  register memberlist *m;
+  memberlist *m;
 
   for (m = chan->channel.member; m && m->nick[0]; m = m->next) {
     egg_snprintf(s, sizeof s, "%s!%s", m->nick, m->userhost);
@@ -195,7 +195,7 @@ static void cmd_kickban(struct userrec *u, int idx, char *par)
     nick++;
   }
   if (match_my_nick(nick)) {
-    dprintf(idx, "I'm not going to kickban myself.\n");
+    dprintf(idx, "\00304I'm not going to kickban myself.\003\n");
     return;
   }
   m = ismember(chan, nick);
@@ -278,13 +278,13 @@ static void cmd_op(struct userrec *u, int idx, char *par)
   }
 
   if (!channel_active(chan)) {
-    dprintf(idx, "I'm not on %s right now!\n", chan->dname);
+    dprintf(idx, "\00304I'm not on %s right now!\003\n", chan->dname);
     return;
   }
 
   if (HALFOP_CANTDOMODE('o')) {
-    dprintf(idx, "I can't help you now because I'm not a chan op or halfop on "
-            "%s, or halfops cannot set +o modes.\n", chan->dname);
+    dprintf(idx, "\00304I can't help you now because I'm not a chan op or halfop on \003"
+            "\00304%s, or halfops cannot set +o modes.\003\n", chan->dname);
     return;
   }
 
@@ -732,7 +732,7 @@ static void cmd_channel(struct userrec *u, int idx, char *par)
   if (!chan || !has_oporhalfop(idx, chan))
     return;
   putlog(LOG_CMDS, "*", "\00307#(%s) channel#\003 %s", chan->dname, dcc[idx].nick);
-  strncpyz(s, getchanmode(chan), sizeof s);
+  strlcpy(s, getchanmode(chan), sizeof s);
   if (channel_pending(chan))
     egg_snprintf(s1, sizeof s1, "%s %s", IRC_PROCESSINGCHAN, chan->dname);
   else if (channel_active(chan))
@@ -768,15 +768,15 @@ static void cmd_channel(struct userrec *u, int idx, char *par)
         else
           egg_strftime(s, 6, "%H:%M", localtime(&(m->joined)));
       } else
-        strncpyz(s, " --- ", sizeof s);
+        strlcpy(s, " --- ", sizeof s);
       if (m->user == NULL) {
         egg_snprintf(s1, sizeof s1, "%s!%s", m->nick, m->userhost);
         m->user = get_user_by_host(s1);
       }
       if (m->user == NULL)
-        strncpyz(handle, "*", sizeof handle);
+        strlcpy(handle, "*", sizeof handle);
       else
-        strncpyz(handle, m->user->handle, sizeof handle);
+        strlcpy(handle, m->user->handle, sizeof handle);
       get_user_flagrec(m->user, &user, chan->dname);
       /* Determine status char to use */
       if (glob_bot(user) && (glob_op(user) || chan_op(user)))
@@ -873,7 +873,7 @@ static void cmd_channel(struct userrec *u, int idx, char *par)
         else if (now - (m->last) > 180)
           egg_snprintf(s1, sizeof s1, "%2lum", ((now - (m->last)) / 60));
         else
-          strncpyz(s1, "   ", sizeof s1);
+          strlcpy(s1, "   ", sizeof s1);
         egg_snprintf(format, sizeof format,
                      "%%c%%-%us %%-%us %%s %%c %%s  %%s\n", maxnicklen,
                      maxhandlen);
@@ -1037,7 +1037,7 @@ static void cmd_adduser(struct userrec *u, int idx, char *par)
   if (!statichost)
     maskhost(s, s1);
   else {
-    strncpyz(s1, s, sizeof s1);
+    strlcpy(s1, s, sizeof s1);
     p1 = strchr(s1, '!');
     if (strchr("~^+=-", p1[1])) {
       if (strict_host)
@@ -1114,7 +1114,7 @@ static void cmd_deluser(struct userrec *u, int idx, char *par)
   } else {
     char buf[HANDLEN + 1];
 
-    strncpyz(buf, u->handle, sizeof buf);
+    strlcpy(buf, u->handle, sizeof buf);
     buf[HANDLEN] = 0;
     if (deluser(u->handle)) {
       dprintf(idx, "Deleted %s.\n", buf);       /* ?!?! :) */

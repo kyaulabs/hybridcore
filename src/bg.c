@@ -105,9 +105,9 @@ static void bg_do_detach(pid_t p)
   unlink(pid_file);
   fp = fopen(pid_file, "w");
   if (fp != NULL) {
-    fprintf(fp, "%u\n", p);
+    fprintf(fp, "%li\n", (long) p);
     if (fflush(fp)) {
-      /* Kill bot incase a botchk is run from crond. */
+      /* Kill bot in case a botchk is run from crond. */
       printf(EGG_NOWRITE, pid_file);
       printf("  Try freeing some disk space\n");
       fclose(fp);
@@ -117,7 +117,7 @@ static void bg_do_detach(pid_t p)
     fclose(fp);
   } else
     printf(EGG_NOWRITE, pid_file);
-  putlog(LOG_MISC, "*", "\x1b[1;32m□\x1b[0m launched: \x1b[1;30mbackground\x1b[0m  \x1b[35m(pid: %d)\x1b[0m\n", p);
+  putlog(LOG_MISC, "*", "\x1b[1;32m□\x1b[0m launched: \x1b[1;30mbackground\x1b[0m  \x1b[35m(pid: %li)\x1b[0m\n", (long) p);
 #ifdef HAVE_SETPGID
   setpgid(p, p);
 #endif

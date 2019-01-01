@@ -243,7 +243,7 @@ foreach config $confs {
  if {![info exists {botnet-nick}] || ![info exists userfile]} {
   puts "  *** ERROR: could not find either \$userfile or \$botnet-nick"
   puts ""
-  puts "  Are you sure this is a valid hybridcore config file?"
+  puts "  Are you sure this is a valid hybrid(core) config file?"
   puts ""
   exit
  }

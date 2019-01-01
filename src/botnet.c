@@ -89,7 +89,7 @@ void addbot(char *who, char *from, char *next, char flag, int vernum)
 
   while (*ptr) {
     if (!egg_strcasecmp((*ptr)->bot, who))
-      putlog(LOG_BOTS, "!", "!*! Duplicate botnet bot entry!!");
+      putlog(LOG_BOTS, "*", "!!! Duplicate botnet bot entry!!");
     ptr = &((*ptr)->next);
   }
   ptr2 = nmalloc(sizeof(tand_t));
@@ -138,7 +138,7 @@ int partysock(char *bot, char *nick)
 
 /* Set the botnetnick and truncate as necessary */
 void set_botnetnick(const char *newnick) {
-  strncpyz(botnetnick, newnick, sizeof botnetnick);
+  strlcpy(botnetnick, newnick, sizeof botnetnick);
 }
 
 /* New botnet member
@@ -304,7 +304,7 @@ void rembot(char *whoin)
   /* Need to save the nick for later as it MAY be a pointer to ptr->bot, and we free(ptr) in here. */
   len = strlen(whoin);
   who = nmalloc(len + 1);
-  strncpyz(who, whoin, len + 1);
+  strlcpy(who, whoin, len + 1);
 
   while (*ptr) {
     if (!egg_strcasecmp((*ptr)->bot, who))
@@ -434,7 +434,7 @@ char *lastbot(char *who)
 void answer_local_whom(int idx, int chan)
 {
   char format[81];
-  char c, idle[52];
+  char c, idle[64];
   int i, t, nicklen, botnicklen, total = 0;
 
   if (chan == -1)
@@ -481,7 +481,7 @@ void answer_local_whom(int idx, int chan)
   egg_snprintf(format, sizeof format, "%%-%us   %%-%us  %%s\n",
                nicklen, botnicklen);
   dprintf(idx, format, " Nick", " Bot", " Host");
-  dprintf(idx, format, "\002----------", "---------", "--------------------\002");
+  dprintf(idx, format, "\002----------\002", "\002---------\002", "\002--------------------\002");
   egg_snprintf(format, sizeof format, "%%c%%-%us %%c %%-%us  %%s%%s\n",
                nicklen, botnicklen);
   for (i = 0; i < dcc_total; i++)
@@ -737,7 +737,7 @@ void tell_bottree(int idx, int showver)
  */
 void dump_links(int z)
 {
-  register int i, l;
+  int i, l;
   char x[1024];
   tand_t *bot;
 
@@ -766,7 +766,7 @@ void dump_links(int z)
             (dcc[i].u.chat->channel < GLOBAL_CHANS)) {
 #ifndef NO_OLD_BOTNET
           if (b_numver(z) < NEAT_BOTNET)
-             l =simple_sprintf(x, "join %s %s %d %c%d %s\n",
+            l = simple_sprintf(x, "join %s %s %d %c%d %s\n",
                                botnetnick, dcc[i].nick,
                                dcc[i].u.chat->channel, geticon(i),
                                dcc[i].sock, dcc[i].host);
@@ -876,7 +876,7 @@ int users_in_subtree(tand_t *bot)
 int botunlink(int idx, char *nick, char *reason, char *from)
 {
   char s[20];
-  register int i;
+  int i;
   int bots, users;
   tand_t *bot;
 
@@ -985,7 +985,7 @@ int botlink(char *linker, int idx, char *nick)
 {
   struct bot_addr *bi;
   struct userrec *u;
-  register int i;
+  int i;
 
   u = get_user_by_handle(userlist, nick);
   if (!u || !(u->flags & USER_BOT)) {
@@ -1076,28 +1076,29 @@ static void botlink_resolve_failure(int i)
 
 static void botlink_resolve_success(int i)
 {
-  int ret;
   int idx = dcc[i].u.dns->ibuf;
   char *linker = dcc[i].u.dns->cptr;
 
   changeover_dcc(i, &DCC_FORK_BOT, sizeof(struct bot_info));
   dcc[i].timeval = now;
-  strncpyz(dcc[i].u.bot->linker, linker, sizeof dcc[i].u.bot->linker);
+  strlcpy(dcc[i].u.bot->linker, linker, sizeof dcc[i].u.bot->linker);
   strcpy(dcc[i].u.bot->version, "(primitive bot)");
   dcc[i].u.bot->numver = idx;
   dcc[i].u.bot->port = dcc[i].port;     /* Remember where i started */
+#ifdef TLS
+  dcc[i].u.bot->ssl = dcc[i].ssl;       /* Remember where I started */
+#endif
   nfree(linker);
   setsnport(dcc[i].sockname, dcc[i].port);
   dcc[i].sock = getsock(dcc[i].sockname.family, SOCK_STRONGCONN);
-  if (dcc[i].sock < 0)
+  if (dcc[i].sock < 0 || open_telnet_raw(dcc[i].sock, &dcc[i].sockname) < 0) {
     failed_link(i);
-  ret = open_telnet_raw(dcc[i].sock, &dcc[i].sockname);
-  if (ret < 0)
-    failed_link(i);
+  }
 #ifdef TLS
   else if (dcc[i].ssl && ssl_handshake(dcc[i].sock, TLS_CONNECT,
-           tls_vfybots, LOG_BOTS, dcc[i].host, NULL))
+           tls_vfybots, LOG_BOTS, dcc[i].host, NULL)) {
     failed_link(i);
+  }
 #endif
 }
 
@@ -1151,7 +1152,7 @@ static void tandem_relay_resolve_success(int);
 
 /* Relay to another tandembot
  */
-void tandem_relay(int idx, char *nick, register int i)
+void tandem_relay(int idx, char *nick, int i)
 {
   struct userrec *u;
   struct bot_addr *bi;
@@ -1224,7 +1225,7 @@ void tandem_relay(int idx, char *nick, register int i)
 static void tandem_relay_resolve_failure(int idx)
 {
   struct chat_info *ci;
-  register int uidx = -1, i;
+  int uidx = -1, i;
 
   for (i = 0; i < dcc_total; i++)
     if ((dcc[i].type == &DCC_PRE_RELAY) &&
@@ -1286,9 +1287,9 @@ static void tandem_relay_resolve_success(int i)
 
 /* Input from user before connect is ready
  */
-static void pre_relay(int idx, char *buf, register int i)
+static void pre_relay(int idx, char *buf, int i)
 {
-  register int tidx = -1;
+  int tidx = -1;
 
   for (i = 0; i < dcc_total; i++)
     if ((dcc[i].type == &DCC_FORK_RELAY) &&
@@ -1334,7 +1335,7 @@ static void pre_relay(int idx, char *buf, register int i)
  */
 static void failed_pre_relay(int idx)
 {
-  register int tidx = -1, i;
+  int tidx = -1, i;
 
   for (i = 0; i < dcc_total; i++)
     if ((dcc[i].type == &DCC_FORK_RELAY) &&
@@ -1376,9 +1377,9 @@ static void failed_pre_relay(int idx)
   lostdcc(idx);
 }
 
-static void cont_tandem_relay(int idx, char *buf, register int i)
+static void cont_tandem_relay(int idx, char *buf, int i)
 {
-  register int uidx = -1;
+  int uidx = -1;
   struct relay_info *ri;
 
   for (i = 0; i < dcc_total; i++)
@@ -1417,7 +1418,7 @@ static void cont_tandem_relay(int idx, char *buf, register int i)
 
 static void eof_dcc_relay(int idx)
 {
-  register int j;
+  int j;
   struct chat_info *ci;
 
   for (j = 0; j < dcc_total; j++)
@@ -1454,7 +1455,7 @@ static void eof_dcc_relay(int idx)
 
 static void eof_dcc_relaying(int idx)
 {
-  register int j, x = dcc[idx].u.relay->sock;
+  int j, x = dcc[idx].u.relay->sock;
 
   putlog(LOG_MISC, "*", "%s [%s]%s/%d", BOT_LOSTDCCUSER, dcc[idx].nick,
          dcc[idx].host, dcc[idx].port);
@@ -1468,36 +1469,44 @@ static void eof_dcc_relaying(int idx)
 
 static void dcc_relay(int idx, char *buf, int j)
 {
-  unsigned char *p = (unsigned char *) buf;
-  int mark;
+  unsigned char *src, *dst;
 
   for (j = 0; dcc[j].sock != dcc[idx].u.relay->sock ||
        dcc[j].type != &DCC_RELAYING; j++);
-  /* If redirecting to a non-telnet user, swallow telnet codes and
-   * escape sequences. */
+  /* If redirecting to a non-telnet user, swallow telnet IAC, escape sequences
+   * and CR. */
   if (!(dcc[j].status & STAT_TELNET)) {
-    while (*p != 0) {
-      while (*p != 255 && (*p != '\033' || *(p + 1) != '[') && *p != '\r' && *p)
-        p++;                    /* Search for IAC, escape sequences and CR. */
-      if (*p == 255) {
-        mark = 2;
-        if (!*(p + 1))
-          mark = 1;             /* Bogus */
-        if ((*(p + 1) >= 251) || (*(p + 1) <= 254)) {
-          mark = 3;
-          if (!*(p + 2))
-            mark = 2;           /* Bogus */
+    src = (unsigned char *) buf;
+    dst = (unsigned char *) buf;
+    while (*src) {
+      /* Search for IAC, escape sequences and CR. */
+      if (*src == TLN_IAC) {
+        src++;
+        if ((*src >= TLN_WILL) && (*src <= TLN_DONT)) {
+          src++;
+          if (*src)
+            src++;
         }
-        strcpy((char *) p, (char *) (p + mark));
-      } else if (*p == '\033') {
-        unsigned char *e;
-
-        /* Search for the end of the escape sequence. */
-        for (e = p + 2; *e != 'm' && *e; e++);
-        strcpy((char *) p, (char *) (e + 1));
-      } else if (*p == '\r')
-        memmove(p, p + 1, strlen((char *)p + 1) + 1);
+        else if (*src)
+          src++;
+      } else if (*src == ESC) {
+        src++;
+        if (*src == '[') { /* CSI */
+          src++;
+          /* Search for the end of the escape sequence. */
+          while (*src && *src++ != 'm');
+        }
+      } else if (*src == '\r') /* CR */
+        src++;
+      else {
+        if (src > dst)
+          *dst = *src;
+        src++;
+        dst++;
+      }
     }
+    if (src > dst)
+      *dst = 0;
     if (!buf[0])
       dprintf(-dcc[idx].u.relay->sock, " \n");
     else
@@ -1569,7 +1578,7 @@ static void display_pre_relay(int i, char *other)
 
 static int expmem_relay(void *x)
 {
-  register struct relay_info *p = (struct relay_info *) x;
+  struct relay_info *p = (struct relay_info *) x;
   int tot = sizeof(struct relay_info);
 
   if (p->chat)
@@ -1579,7 +1588,7 @@ static int expmem_relay(void *x)
 
 static void kill_relay(int idx, void *x)
 {
-  register struct relay_info *p = (struct relay_info *) x;
+  struct relay_info *p = (struct relay_info *) x;
 
   if (p->chat)
     DCC_CHAT.kill(idx, p->chat);
@@ -1601,7 +1610,7 @@ struct dcc_table DCC_RELAY = {
 
 static void out_relay(int idx, char *buf, void *x)
 {
-  register struct relay_info *p = (struct relay_info *) x;
+  struct relay_info *p = (struct relay_info *) x;
 
   if (p && p->chat)
     DCC_CHAT.output(idx, buf, p->chat);

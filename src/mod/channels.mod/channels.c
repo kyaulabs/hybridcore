@@ -28,10 +28,9 @@
 #include "src/mod/module.h"
 #include "src/hybridcore.h"
 
-
 static Function *global = NULL;
 
-static char glob_chanmode[65], chanfile[121];
+static char chanfile[121], glob_chanmode[65];
 static char *lastdeletedmask;
 
 static struct udef_struct *udef;
@@ -218,7 +217,7 @@ static void set_mode_protect(struct chanset_t *chan, char *set)
       if (pos) {
         s1 = newsplit(&set);
         if (s1[0])
-          strncpyz(chan->key_prot, s1, sizeof chan->key_prot);
+          strlcpy(chan->key_prot, s1, sizeof chan->key_prot);
       }
       break;
     }
@@ -330,7 +329,7 @@ static int ismasked(masklist *m, char *user)
 
 /* Unlink chanset element from chanset list.
  */
-static inline int chanset_unlink(struct chanset_t *chan)
+static int chanset_unlink(struct chanset_t *chan)
 {
   struct chanset_t *c, *c_old = NULL;
 
@@ -356,7 +355,7 @@ static void remove_channel(struct chanset_t *chan)
   int i;
   module_entry *me;
 
-  /* Remove the channel from the list, so that noone can pull it
+  /* Remove the channel from the list, so that no one can pull it
    * away from under our feet during the check_tcl_part() call. */
   (void) chanset_unlink(chan);
 
@@ -447,19 +446,19 @@ static char *convert_element(char *src, char *dst)
  * Note:
  *  - We write chanmode "" too, so that the bot won't use default-chanmode
  *    instead of ""
- *  - We will write empty need-xxxx too, why not? (less code + lazyness)
+ *  - We will write empty need-xxxx too, why not? (less code + laziness)
  */
 static void write_channels()
 {
   FILE *f;
-  char s[121], w[1024], w2[1024], name[163];
+  char s[sizeof chanfile + 4], w[1024], w2[1024], name[163];
   char need1[242], need2[242], need3[242], need4[242], need5[242];
   struct chanset_t *chan;
   struct udef_struct *ul;
 
   if (!chanfile[0])
     return;
-  sprintf(s, "%s~new", chanfile);
+  egg_snprintf(s, sizeof s, "%s~new", chanfile);
   f = fopen(s, "w");
   chmod(s, userfile_perm);
   if (f == NULL) {
@@ -552,13 +551,10 @@ static void write_channels()
   }
   fclose(f);
   unlink(chanfile);
-  //putlog(LOG_MISC, "*", "-- write_channels(): encrypting '%s'", s);
   encrypt_file(s);
   movefile(".tmp1", chanfile);
   /* purge decrypted files */
-  //putlog(LOG_MISC, "*", "-- write_channels(): removing '.tmp1'");
   unlink(".tmp1");
-  //putlog(LOG_MISC, "*", "-- write_channels(): removing '%s'", s);
   unlink(s);
 }
 
@@ -575,7 +571,6 @@ static void read_channels(int create, int reload)
       chan->status |= CHAN_FLAGGED;
 
   chan_hack = 1;
-
   /* decrypt chanfile */
   struct stat buffer;
   int dec_status = 0;
@@ -613,7 +608,7 @@ static void read_channels(int create, int reload)
 
 static void backup_chanfile()
 {
-  char s[125];
+  char s[sizeof chanfile + 4];
 
   if (quiet_save < 2)
     putlog(LOG_MISC, "*", "\00309□\003 backup: \00314channel file\003");
@@ -676,9 +671,8 @@ static void channels_report(int idx, int details)
       get_mode_protect(chan, s2);
 
       if (s2[0]) {
-        s1[0] = 0;
-        sprintf(s1, ", enforcing \"%s\"", s2);
-        strcat(s, s1);
+        int len = strlen(s);
+        egg_snprintf(s + len, (sizeof s) - len, ", enforcing \"%s\"", s2); /* Concatenation */
       }
 
       s2[0] = 0;
@@ -691,18 +685,15 @@ static void channels_report(int idx, int details)
         strcat(s2, "bitch, ");
 
       if (s2[0]) {
+        int len = strlen(s);
         s2[strlen(s2) - 2] = 0;
-
-        s1[0] = 0;
-        sprintf(s1, " (%s)", s2);
-        strcat(s, s1);
+        egg_snprintf(s + len, (sizeof s) - len, " (%s)", s2); /* Concatenation */
       }
 
       /* If it's a !chan, we want to display it's unique name too <cybah> */
       if (chan->dname[0] == '!') {
-        s1[0] = 0;
-        sprintf(s1, ", unique name %s", chan->name);
-        strcat(s, s1);
+        int len = strlen(s);
+        egg_snprintf(s + len, (sizeof s) - len, ", unique name %s", chan->name); /* Concatenation */
       }
     }
 
@@ -763,7 +754,7 @@ static void channels_report(int idx, int details)
       if (channel_inactive(chan))
         i += my_strcpy(s + i, "inactive ");
       if (channel_nodesynch(chan))
-        i += my_strcpy(s + i, "nodesynch ");
+        my_strcpy(s + i, "nodesynch ");
 
       dprintf(idx, "      Options: %s\n", s);
 
@@ -913,7 +904,7 @@ static tcl_ints my_tcl_ints[] = {
   {"global-exempt-time",      &global_exempt_time,      0},
   {"global-invite-time",      &global_invite_time,      0},
   {"global-ban-type",         &global_ban_type,         0},
-  /* keeping [ban|exempt|invite]-time for compatability <Wcc[07/20/02]> */
+  /* keeping [ban|exempt|invite]-time for compatibility <Wcc[07/20/02]> */
   {"ban-time",                &global_ban_time,         0},
   {"exempt-time",             &global_exempt_time,      0},
   {"invite-time",             &global_invite_time,      0},

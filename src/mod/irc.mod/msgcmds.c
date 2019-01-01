@@ -41,7 +41,7 @@ static int msg_hello(char *nick, char *h, struct userrec *u, char *p)
       return 1;
     }
   }
-  strncpyz(handle, nick, sizeof(handle));
+  strlcpy(handle, nick, sizeof(handle));
   if (get_user_by_handle(userlist, handle)) {
     dprintf(DP_HELP, IRC_BADHOST1, nick);
     dprintf(DP_HELP, IRC_BADHOST2, nick, botname);
@@ -100,11 +100,10 @@ static int msg_hello(char *nick, char *h, struct userrec *u, char *p)
         rmspace(p1);
       }
       rmspace(s1);
-      //add_note(s1, botnetnick, s, -1, 0);
       if (p1 == NULL)
         s1[0] = 0;
       else
-        strncpyz(s1, p1, sizeof s1);
+        strlcpy(s1, p1, sizeof s1);
     }
   }
   return 1;
@@ -159,11 +158,6 @@ static int msg_pass(char *nick, char *host, struct userrec *u, char *par)
   putlog(LOG_CMDS, "*", "(%s!%s) !%s! (SECURE PASS)", nick, host, u->handle);
   if (strlen(new) > 15)
     new[15] = 0;
-  /*
-  if (strlen(new) < 7) {
-    dprintf(DP_HELP, "NOTICE %s :%s\n", nick, IRC_PASSFORMAT);
-    return 0;
-  } */
   /* secpass function */
   if (secpass(new) == 0) {
     dprintf(DP_HELP, "NOTICE %s :(%s) is not secure try again\n", nick, new);
@@ -191,11 +185,9 @@ static int msg_addhost(char *nick, char *host, struct userrec *u, char *par)
   }
   pass = newsplit(&par);
   if (!par[0])
-    strncpyz(who, nick, sizeof who);
-  else {
-    strncpy(who, par, NICKMAX);
-    who[NICKMAX] = 0;
-  }
+    strlcpy(who, nick, sizeof who);
+  else
+    strlcpy(who, par, sizeof who);
   u2 = get_user_by_handle(userlist, who);
   if (!u2) {
     if (u && !quiet_reject)

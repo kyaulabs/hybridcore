@@ -15,11 +15,10 @@ DOCS = CONTENTS
 #SCRIPTS = action.fix.tcl alltools.tcl compat.tcl dccwhois.tcl getops.tcl \
 #klined.tcl notes2.tcl ques5.tcl sentinel.tcl userinfo.tcl cmd_resolve.tcl \
 #quotepass.tcl quotepong.tcl
-#SCRIPTS = alltools.tcl action.fix.tcl quotepass.tcl quotepong.tcl
-SCRIPTS =
 
-EXESCRIPTS =
 #EXESCRIPTS = autobotchk botchk weed
+SCRIPTS = 
+EXESCRIPTS = 
 
 doofus:
 	@echo ""
@@ -39,7 +38,7 @@ install:
 		chmod 0700 $(DEST)/autocron ; \
 		if test ! "x`echo $(srcdir)/help/*.help`" = "x$(srcdir)/help/*.help"; then \
 			if test ! -d $(DEST)/help; then \
-				echo "\x1b[38;5;32m□\x1b[0m create: \x1b[38;5;245m'help' subdirectory\x1b[38;5;235m"; \
+				echo -e "\x1b[38;5;32m□\x1b[0m create: \x1b[38;5;245m'help' subdirectory\x1b[38;5;235m"; \
 				$(top_srcdir)/misc/mkinstalldirs $(DEST)/help >/dev/null; \
 			fi; \
 			for i in $(srcdir)/help/*.help; do \
@@ -48,7 +47,7 @@ install:
 		fi; \
 		if test ! "x`echo $(srcdir)/help/msg/*.help`" = "x$(srcdir)/help/msg/*.help"; then \
 			if test ! -d $(DEST)/help/msg; then \
-				echo "\x1b[38;5;32m□\x1b[0m create: \x1b[38;5;245m'help/msg' subdirectory\x1b[38;5;235m"; \
+				echo -e "\x1b[38;5;32m□\x1b[0m create: \x1b[38;5;245m'help/msg' subdirectory\x1b[38;5;235m"; \
 				$(top_srcdir)/misc/mkinstalldirs $(DEST)/help/msg >/dev/null; \
 			fi; \
 			for i in $(srcdir)/help/msg/*.help; do \
@@ -57,7 +56,7 @@ install:
 		fi; \
 		if test ! "x`echo $(srcdir)/help/set/*.help`" = "x$(srcdir)/help/set/*.help"; then \
 			if test ! -d $(DEST)/help/set; then \
-				echo "\x1b[38;5;32m□\x1b[0m create: \x1b[38;5;245m'help/set' subdirectory\x1b[38;5;235m"; \
+				echo -e "\x1b[38;5;32m□\x1b[0m create: \x1b[38;5;245m'help/set' subdirectory\x1b[38;5;235m"; \
 				$(top_srcdir)/misc/mkinstalldirs $(DEST)/help/set >/dev/null; \
 			fi; \
 			for i in $(srcdir)/help/set/*.help; do \

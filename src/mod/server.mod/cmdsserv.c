@@ -105,9 +105,9 @@ server, but hybrid(core) was not compiled with SSL libraries. Skipping...\003");
     putlog(LOG_CMDS, "*", "\00307#jump#\003 \00306%s %d %s\003 %s", other,
            port, par, dcc[idx].nick);
 #endif
-    strncpyz(newserver, other, sizeof newserver);
+    strlcpy(newserver, other, sizeof newserver);
     newserverport = port;
-    strncpyz(newserverpass, par, sizeof newserverpass);
+    strlcpy(newserverpass, par, sizeof newserverpass);
   } else
     putlog(LOG_CMDS, "*", "\00307#jump#\003 %s", dcc[idx].nick);
   dprintf(idx, "%s...\n", IRC_JUMP);

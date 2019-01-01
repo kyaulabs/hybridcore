@@ -1,5 +1,5 @@
 /*
- * $Arch: hybridcore.h,v 1.004 2018/12/14 01:01:39 kyau Exp $
+ * $Arch: hybridcore.h,v 1.005 2018/12/31 02:52:45 kyau Exp $
  *
  * ▄▄ ▄ ▄▄ ▄ ▄▄▄▄ ▄▄▄▄ ▄▄ ▄▄▄   ▄▄ ▄▄▄▄ ▄▄▄▄ ▄▄▄▄ ▄▄▄▄ ▄▄
  * ██ █ ██ █ ██ █ ██ █ ██ ██ █ ██  ██ █ ██ █ ██ █ ██ ▀  ██
@@ -8,7 +8,7 @@
  * ▀▀ ▀ ▀▀▀▀ ▀▀▀▀ ▀▀ ▀ ▀▀ ▀▀▀▀ ▀▀▀ ▀▀▀▀ ▀▀▀▀ ▀▀ ▀ ▀▀▀▀ ▀▀▀
  *
  * src/hybridcore.h - hybrid(core)
- * Copyright (C) 2018 KYAU Labs (https://kyaulabs.com)
+ * Copyright (C) 2019 KYAU Labs (https://kyaulabs.com)
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as

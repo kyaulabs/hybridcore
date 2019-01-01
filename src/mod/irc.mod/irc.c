@@ -73,7 +73,7 @@ static char opchars[8];         /* the chars in a /who reply meaning op */
 #include "msgcmds.c"
 #include "tclirc.c"
 
-/* Contains the logic to decide wether we want to punish someone. Returns
+/* Contains the logic to decide whether we want to punish someone. Returns
  * true (1) if we want to, false (0) if not.
  */
 static int want_to_revenge(struct chanset_t *chan, struct userrec *u,
@@ -107,7 +107,7 @@ static int want_to_revenge(struct chanset_t *chan, struct userrec *u,
   return 0;
 }
 
-/* Dependant on revenge_mode, punish the offender.
+/* Dependent on revenge_mode, punish the offender.
  */
 static void punish_badguy(struct chanset_t *chan, char *whobad,
                           struct userrec *u, char *badnick, char *victim,
@@ -170,7 +170,7 @@ static void punish_badguy(struct chanset_t *chan, char *whobad,
     else {
       strcpy(s1, whobad);
       maskaddr(s1, s, chan->ban_type);
-      strncpyz(s1, badnick, sizeof s1);
+      strlcpy(s1, badnick, sizeof s1);
       /* If that handle exists use "badX" (where X is an increasing number)
        * instead.
        */
@@ -266,7 +266,7 @@ static void set_key(struct chanset_t *chan, char *k)
 
 static int hand_on_chan(struct chanset_t *chan, struct userrec *u)
 {
-  char s[UHOSTLEN];
+  char s[NICKMAX+UHOSTLEN+1];
   memberlist *m;
 
   for (m = chan->channel.member; m && m->nick[0]; m = m->next) {
@@ -525,7 +525,7 @@ static void status_log()
 static void check_lonely_channel(struct chanset_t *chan)
 {
   memberlist *m;
-  char s[UHOSTLEN];
+  char s[NICKMAX+UHOSTLEN+1];
   int i = 0;
 
   if (channel_pending(chan) || !channel_active(chan) || me_op(chan) ||
@@ -595,7 +595,7 @@ static void check_expired_chanstuff()
 {
   masklist *b, *e;
   memberlist *m, *n;
-  char *key, s[UHOSTLEN];
+  char *key, s[NICKMAX+UHOSTLEN+1];
   struct chanset_t *chan;
   struct flag_record fr = { FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0 };
 
@@ -687,7 +687,6 @@ static void check_expired_chanstuff()
                  "%s (%s) got lost in the net-split.", m->nick, m->userhost);
           killmember(chan, m->nick);
         }
-        m = n;
       }
       check_lonely_channel(chan);
     } else if (!channel_inactive(chan) && !channel_pending(chan)) {
@@ -850,7 +849,7 @@ static int check_tcl_pub(char *nick, char *from, char *chname, char *msg)
   char buf[512], *args = buf, *cmd, host[161], *hand;
   struct userrec *u;
 
-  strncpyz(buf, msg, sizeof buf);
+  strlcpy(buf, msg, sizeof buf);
   cmd = newsplit(&args);
   simple_sprintf(host, "%s!%s", nick, from);
   u = get_user_by_host(host);

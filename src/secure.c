@@ -1,5 +1,5 @@
 /*
- * $Arch: secure.c,v 1.002 2018/12/14 00:55:49 kyau Exp $
+ * $Arch: secure.c,v 1.003 2018/12/31 02:52:23 kyau Exp $
  *
  * ▄▄ ▄ ▄▄ ▄ ▄▄▄▄ ▄▄▄▄ ▄▄ ▄▄▄   ▄▄ ▄▄▄▄ ▄▄▄▄ ▄▄▄▄ ▄▄▄▄ ▄▄
  * ██ █ ██ █ ██ █ ██ █ ██ ██ █ ██  ██ █ ██ █ ██ █ ██ ▀  ██
@@ -8,7 +8,7 @@
  * ▀▀ ▀ ▀▀▀▀ ▀▀▀▀ ▀▀ ▀ ▀▀ ▀▀▀▀ ▀▀▀ ▀▀▀▀ ▀▀▀▀ ▀▀ ▀ ▀▀▀▀ ▀▀▀
  *
  * src/secure.c - hybrid(core)
- * Copyright (C) 2018 KYAU Labs (https://kyaulabs.com)
+ * Copyright (C) 2019 KYAU Labs (https://kyaulabs.com)
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as

@@ -84,11 +84,11 @@ MODULE_XLIBS = @MODULE_XLIBS@
 modconf = $(top_srcdir)/misc/modconfig --top_srcdir=$(top_srcdir)
 
 hc_test_run = if [ '$(EGG_CROSS_COMPILING)' = 'no' ]; \
-               	then EGG_LANGDIR=$(top_srcdir)/language ./$(EGGEXEC) -v; \
+               	then ./$(EGGEXEC) -v; \
                	else echo 'This build is a cross-compilation, skipping test run...'; \
                fi
 
-post_config  =  echo -e "" && \
+post_config  =  echo "" && \
 		echo -e "\x1b[38;5;32m□\x1b[0m run: \x1b[38;5;245mmake\x1b[0m" && \
 		echo -e ""
 
@@ -96,6 +96,14 @@ post_iconfig =  $(modconf) update-depends && \
 		$(modconf) Makefile && \
 		(cd src/mod && $(MAKE_CONFIG) config) && \
 		$(modconf) Makefile
+
+run_config   =  $(modconf) modules-still-exist && \
+		$(modconf) detect-modules && \
+		$(modconf) update-depends && \
+		$(modconf) Makefile && \
+		cd src/mod && $(MAKE_CONFIG) config && cd ../../ && \
+		$(modconf) Makefile && \
+		$(post_config)
 
 hc_install_msg =  echo -e "" && \
 		   echo -e "\x1b[38;5;32m□\x1b[0m run: \x1b[38;5;245mmake install\x1b[0m" && \
@@ -180,29 +188,23 @@ distrib:
 
 depend:
 	@cat /dev/null > lush.h
-	@cd src && $(MAKE_DEPEND) depend
-	@cd src/md5 && $(MAKE_DEPEND) depend
-	@cd src/mod && $(MAKE_DEPEND) depend
-	@cd src/compat && $(MAKE_DEPEND) depend
+	+@cd src && $(MAKE_DEPEND) depend
+	+@cd src/md5 && $(MAKE_DEPEND) depend
+	+@cd src/mod && $(MAKE_DEPEND) depend
+	+@cd src/compat && $(MAKE_DEPEND) depend
 
 config:
-	@$(modconf) modules-still-exist && \
-	$(modconf) detect-modules && \
-	$(modconf) update-depends && \
-	$(modconf) Makefile && \
-	cd src/mod && $(MAKE_CONFIG) config && cd ../../ && \
-	$(modconf) Makefile && \
-	$(post_config)
+	+@$(run_config)
 
 new-iconfig:
-	@$(modconf) modules-still-exist && \
+	+@$(modconf) modules-still-exist && \
 	$(modconf) update-depends && \
 	$(modconf) -n configure && \
 	$(post_iconfig) && \
 	$(post_config)
 
 iconfig:
-	@$(modconf) modules-still-exist && \
+	+@$(modconf) modules-still-exist && \
 	$(modconf) detect-modules && \
 	$(modconf) update-depends && \
 	$(modconf) configure && \
@@ -214,28 +216,29 @@ clean-modconfig:
 
 conftest:
 	@if test ! -f .modules; then \
-		echo -e ""; \
-		echo -e "You have NOT configured modules yet. This has to be done before you"; \
-		echo -e "can start compiling."; \
-		echo -e ""; \
-		echo -e "   Run \"make config\" or \"make iconfig\" now."; \
-		echo -e ""; \
+		echo ""; \
+		echo "You have NOT configured modules yet. This has to be done before you"; \
+		echo "can start compiling."; \
+		echo ""; \
+		echo "   Run \"make config\" or \"make iconfig\" now."; \
+		echo ""; \
 		exit 1; \
 	fi
 
-reconfig: clean-modconfig config
+reconfig: clean-modconfig
+	+@$(run_config)
 
 # Modular builds
 
 modtest: conftest
 	@if [ -f TEST.stamp ]; then \
-		echo -e "You're trying to do a MODULE build of hybrid(core) when you've";\
-		echo -e "already run 'make' for a static build.";\
-		echo -e "You must first type \"make clean\" before you can build";\
-		echo -e "a module version.";\
+		echo "You're trying to do a MODULE build of hybrid(core) when you've";\
+		echo "already run 'make' for a static build.";\
+		echo "You must first type \"make clean\" before you can build";\
+		echo "a module version.";\
 		exit 1;\
 	fi && \
-	echo -e "stamp" >MOD.stamp
+	echo "stamp" >MOD.stamp
 
 hybridcore: modtest
 	@echo -e "" && echo -e "\x1b[38;5;32m□\x1b[0m make: \x1b[38;5;245mhybrid(core)\x1b[38;5;235m" && echo -e "" && \
@@ -255,41 +258,49 @@ debug: modtest
 
 # Static builds
 
-hctest: conftest
+eggtest: conftest
 	@if test -f MOD.stamp; then \
-		echo -e "You're trying to do a STATIC build of hybrid(core) when you've";\
-		echo -e "already run 'make' for a module build.";\
-		echo -e "You must first type \"make clean\" before you can build";\
-		echo -e "a static version.";\
+		echo "You're trying to do a STATIC build of hybrid(core) when you've";\
+		echo "already run 'make' for a module build.";\
+		echo "You must first type \"make clean\" before you can build";\
+		echo "a static version.";\
 		exit 1;\
 	fi && \
-	echo -e "stamp" >TEST.stamp
+	echo "stamp" >TEST.stamp
 
 static: hctest
 	@echo -e "" && echo -e "\x1b[38;5;32m□\x1b[0m make: \x1b[38;5;245mmodule objects for static linking\x1b[38;5;235m" && \
-	echo -e "" && rm -f src/mod/mod.xlibs && \
+	echo "" && rm -f src/mod/mod.xlibs && \
 	(cd src/mod && $(MAKE) $(MAKE_STATIC_ARGS) static) && \
 	echo -e "" && echo -e "\x1b[38;5;32m□\x1b[0m make: \x1b[38;5;245mhybrid(core) for static linking\x1b[38;5;235m" && \
-	echo -e "" && \
+	echo "" && \
 	(cd src && $(MAKE) $(MAKE_STATIC_ARGS) $(EGGEXEC)) && \
 	$(show_test_run) && $(ls_exe) && $(hc_install_msg)
 
 sdebug: hctest
 	@echo -e "" && echo -e "\x1b[38;5;32m□\x1b[0m make: \x1b[38;5;245mmodule objects for static linking\x1b[38;5;235m" && \
-	echo -e "" && rm -f src/mod/mod.xlibs && \
+	echo "" && rm -f src/mod/mod.xlibs && \
 	(cd src/mod && $(MAKE) $(MAKE_SDEBUG_ARGS) static) && \
 	echo -e "" && echo -e "\x1b[38;5;32m□\x1b[0m make: \x1b[38;5;245mhybrid(core) for static linking\x1b[38;5;235m" && \
-	echo -e "" && \
+	echo "" && \
 	(cd src && $(MAKE) $(MAKE_SDEBUG_ARGS) $(EGGEXEC)) && \
 	$(show_test_run) && $(ls_exe) && $(hc_install_msg)
 
 # Install
 
+install-end =	chmod -R go-rwx $(DEST) && \
+	echo -e "" && echo -e "\x1b[38;5;32m□\x1b[0m install complete" && \
+	echo -e "\x1b[38;5;32m□\x1b[0m run: \x1b[38;5;245mmake sslcert" && \
+	echo -e "" && \
+	echo -e "\x1b[0minstalled: \x1b[38;5;245m$(DEST)" && \
+	echo -e "\x1b[0mconfig: \x1b[38;5;245mhybrid.cf" && \
+	echo -e "\x1b[0m"
+
 sslcert:
 	@if test ! -d $(DEST); then \
-		echo -e "You haven't installed hybrid(core) yet, or you installed using the DEST= flag.";\
-		echo -e "Please run \"make install\" first.";\
-		echo -e "If you have already run \"make install\" and used the DEST= option, please use it again here";\
+		echo "You haven't installed hybrid(core) yet, or you installed using the DEST= flag.";\
+		echo "Please run \"make install\" first.";\
+		echo "If you have already run \"make install\" and used the DEST= option, please use it again here";\
 		exit 1;\
 	fi && \
 	if test -f $(DEST)/.ssl-key; then \
@@ -302,53 +313,56 @@ sslcert:
 
 install: ainstall
 
-dinstall: hybridcore ainstall
+dinstall: hybridcore
+	@$(MAKE) ainstall
 
-sinstall: static ainstall
+sinstall: static
+	@$(MAKE) ainstall
 
-ainstall: install-start install-bin install-modules install-data \
-install-help install-language install-scripts install-dh1080 install-end
+ainstall: install-bin install-modules install-data \
+install-help install-language install-scripts install-dh1080
+	@$(install-end)
 
 install-start:
 	@if test ! -f $(EGGEXEC); then \
-		echo -e ""; \
-		echo -e "You haven't compiled hybrid(core) yet."; \
-		echo -e "To compile hybrid(core), use:"; \
-		echo -e ""; \
-		echo -e "  make [target]"; \
-		echo -e ""; \
-		echo -e "Valid targets: 'hybridcore', 'static', 'debug', 'sdebug'."; \
-		echo -e "Default target: '@DEFAULT_MAKE@'."; \
-		echo -e ""; \
+		echo ""; \
+		echo "You haven't compiled hybrid(core) yet."; \
+		echo "To compile hybrid(core), use:"; \
+		echo ""; \
+		echo "  make [target]"; \
+		echo ""; \
+		echo "Valid targets: 'hybridcore', 'static', 'debug', 'sdebug'."; \
+		echo "Default target: '@DEFAULT_MAKE@'."; \
+		echo ""; \
 		exit 1; \
 	fi && \
 	if test "x$(DEST)" = "x"; then \
-		echo -e "You must specify a destination directory."; \
-		echo -e "Example:"; \
-		echo -e ""; \
-		echo -e "  make install DEST=\"/home/wcc/mybot\""; \
-		echo -e ""; \
+		echo "You must specify a destination directory."; \
+		echo "Example:"; \
+		echo ""; \
+		echo "  make install DEST=\"/home/wcc/mybot\""; \
+		echo ""; \
 		exit 1; \
 	fi && \
 	if test "$(DEST)" -ef .; then \
-		echo -e "You are trying to install into the source directory."; \
-		echo -e "That will not work. Please specify a different"; \
-		echo -e "install directory with:"; \
-		echo -e ""; \
-		echo -e "make install DEST=\"/home/wcc/mybot\""; \
-		echo -e ""; \
+		echo "You are trying to install into the source directory."; \
+		echo "That will not work. Please specify a different"; \
+		echo "install directory with:"; \
+		echo ""; \
+		echo "make install DEST=\"/home/wcc/mybot\""; \
+		echo ""; \
 		exit 1; \
 	fi && \
-	echo -e "" && \
+	echo "" && \
 	$(hc_test_run) && \
 	echo -e "" && echo -e "\x1b[38;5;32m□\x1b[0m install destination: \x1b[38;5;245m'$(ABSDEST)'\x1b[38;5;235m" && \
-	echo -e "" && \
+	echo "" && \
 	if test ! -d $(DEST); then \
 		echo -e "\x1b[38;5;32m□\x1b[0m create: \x1b[38;5;245m'$(DEST)' directory\x1b[38;5;235m"; \
 		$(top_srcdir)/misc/mkinstalldirs $(DEST) >/dev/null; \
 	fi
 
-install-bin:
+install-bin: install-start
 	@if test -f $(DEST)/o$(EGGEXEC); then \
 		rm -f $(DEST)/o$(EGGEXEC); \
 	fi && \
@@ -364,7 +378,7 @@ install-bin:
 	$(INSTALL_PROGRAM) $(EGGEXEC) $(DEST)/$(EGGEXEC) ; \
 	chmod 0700 $(DEST)/$(EGGEXEC)
 
-install-modules:
+install-modules: install-start
 	@if test -h $(DEST)/modules; then \
 		echo -e "\x1b[38;5;32m□\x1b[0m remove: \x1b[38;5;245msymlink to archival modules subdirectory\x1b[38;5;235m"; \
 		rm -f $(DEST)/modules; \
@@ -385,12 +399,12 @@ install-modules:
 		done; \
 	fi
 
-install-data:
+install-data: install-start
 	@if test ! -f $(DEST)/hybrid.cf; then \
 		$(INSTALL_DATA) $(srcdir)/hybrid.cf $(DEST)/; \
 	fi
 
-install-help:
+install-help: install-start
 	@echo -e "\x1b[38;5;32m□\x1b[0m copy: \x1b[38;5;245mhelp files\x1b[38;5;235m" && \
 	if test ! "x`echo $(srcdir)/help/*.help`" = "x$(srcdir)/help/*.help"; then \
 		if test ! -d $(DEST)/help; then \
@@ -421,8 +435,8 @@ install-help:
 	fi && \
 	cd src/mod/ && $(MAKE_INSTALL) install-help
 
-install-language:
-	@echo -e "\x1b[38;5;32m□\x1b[0m copy: \x1b[38;5;245mlanguage files\x1b[38;5;235m" && \
+install-language: install-start
+	+@echo -e "\x1b[38;5;32m□\x1b[0m copy: \x1b[38;5;245mlanguage files\x1b[38;5;235m" && \
 	if test ! "x`echo $(srcdir)/language/*.lang`" = "x$(srcdir)/language/*.lang"; then \
 		if test ! -d $(DEST)/language; then \
 			echo -e "\x1b[38;5;32m□\x1b[0m create: \x1b[38;5;245m'language' subdirectory\x1b[38;5;235m"; \
@@ -434,15 +448,15 @@ install-language:
 	fi && \
 	cd src/mod && $(MAKE_INSTALL) install-language
 
-install-doc:
-	@$(INSTALL_DATA) $(srcdir)/README $(DEST) && \
+install-doc: install-start
+	+@$(INSTALL_DATA) $(srcdir)/README $(DEST) && \
 	cd doc/ && $(MAKE_INSTALL) install
 
-install-scripts:
-	@cd scripts/ && $(MAKE_INSTALL) install
+install-scripts: install-start
+	+@cd scripts/ && $(MAKE_INSTALL) install
 
-install-dh1080:
-	@echo -e "\x1b[38;5;32m□\x1b[0m compile: \x1b[38;5;245mdh1080_tcl\x1b[38;5;235m" ; \
+install-dh1080: install-start
+	+@echo -e "\x1b[38;5;32m□\x1b[0m compile: \x1b[38;5;245mdh1080_tcl\x1b[38;5;235m" ; \
 	cd dh1080_tcl/ && \
 	gcc -fPIC -c -static base64.c && \
 	gcc -fPIC -c -static DH1080.c && \
@@ -451,14 +465,5 @@ install-dh1080:
 	gcc -fPIC -shared DH1080_tcl.o DH1080.o base64.o -lssl -lcrypto -o dh1080.so && \
 	$(INSTALL_DATA) $(srcdir)/dh1080.so $(DEST)/modules/dh1080.so ; \
 	chmod 0700 $(DEST)/modules/dh1080.so
-
-install-end:
-	@chmod -R go-rwx $(DEST) && \
-	echo -e "" && echo -e "\x1b[38;5;32m□\x1b[0m install complete" && \
-	echo -e "\x1b[38;5;32m□\x1b[0m run: \x1b[38;5;245mmake sslcert" && \
-	echo -e "" && \
-	echo -e "\x1b[0minstalled: \x1b[38;5;245m$(DEST)" && \
-	echo -e "\x1b[0mconfig: \x1b[38;5;245mhybrid.cf" && \
-	echo -e "\x1b[0m"
 
 #safety hash

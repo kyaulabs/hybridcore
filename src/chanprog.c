@@ -55,7 +55,6 @@ extern int backgrd, term_z, con_chan, cache_hit, cache_miss, firewallport,
 extern int encrypt_file(char *cfgfile);
 extern int decrypt_file(char *cfgfile);
 extern void secure_tcl_load();
-
 #ifdef TLS
 extern SSL_CTX *ssl_ctx;
 #endif
@@ -75,7 +74,7 @@ char owner[121] = HYBRID_OWNER;    /* Permanent botowner(s)        */
  */
 void rmspace(char *s)
 {
-  register char *p = NULL, *q = NULL;
+  char *p = NULL, *q = NULL;
 
   if (!s || !*s)
     return;
@@ -96,7 +95,7 @@ void rmspace(char *s)
  */
 memberlist *ismember(struct chanset_t *chan, char *nick)
 {
-  register memberlist *x;
+  memberlist *x;
 
   for (x = chan->channel.member; x && x->nick[0]; x = x->next)
     if (!rfc_casecmp(x->nick, nick))
@@ -108,7 +107,7 @@ memberlist *ismember(struct chanset_t *chan, char *nick)
  */
 struct chanset_t *findchan(const char *name)
 {
-  register struct chanset_t *chan;
+  struct chanset_t *chan;
 
   for (chan = chanset; chan; chan = chan->next)
     if (!rfc_casecmp(chan->name, name))
@@ -120,7 +119,7 @@ struct chanset_t *findchan(const char *name)
  */
 struct chanset_t *findchan_by_dname(const char *name)
 {
-  register struct chanset_t *chan;
+  struct chanset_t *chan;
 
   for (chan = chanset; chan; chan = chan->next)
     if (!rfc_casecmp(chan->dname, name))
@@ -139,10 +138,10 @@ struct chanset_t *findchan_by_dname(const char *name)
 struct userrec *check_chanlist(const char *host)
 {
   char *nick, *uhost, buf[UHOSTLEN];
-  register memberlist *m;
-  register struct chanset_t *chan;
+  memberlist *m;
+  struct chanset_t *chan;
 
-  strncpyz(buf, host, sizeof buf);
+  strlcpy(buf, host, sizeof buf);
   uhost = buf;
   nick = splitnick(&uhost);
   for (chan = chanset; chan; chan = chan->next)
@@ -156,8 +155,8 @@ struct userrec *check_chanlist(const char *host)
  */
 struct userrec *check_chanlist_hand(const char *hand)
 {
-  register struct chanset_t *chan;
-  register memberlist *m;
+  struct chanset_t *chan;
+  memberlist *m;
 
   for (chan = chanset; chan; chan = chan->next)
     for (m = chan->channel.member; m && m->nick[0]; m = m->next)
@@ -173,8 +172,8 @@ struct userrec *check_chanlist_hand(const char *hand)
  */
 void clear_chanlist(void)
 {
-  register memberlist *m;
-  register struct chanset_t *chan;
+  memberlist *m;
+  struct chanset_t *chan;
 
   for (chan = chanset; chan; chan = chan->next)
     for (m = chan->channel.member; m && m->nick[0]; m = m->next) {
@@ -190,8 +189,8 @@ void clear_chanlist(void)
  */
 void clear_chanlist_member(const char *nick)
 {
-  register memberlist *m;
-  register struct chanset_t *chan;
+  memberlist *m;
+  struct chanset_t *chan;
 
   for (chan = chanset; chan; chan = chan->next)
     for (m = chan->channel.member; m && m->nick[0]; m = m->next)
@@ -207,10 +206,10 @@ void clear_chanlist_member(const char *nick)
 void set_chanlist(const char *host, struct userrec *rec)
 {
   char *nick, *uhost, buf[UHOSTLEN];
-  register memberlist *m;
-  register struct chanset_t *chan;
+  memberlist *m;
+  struct chanset_t *chan;
 
-  strncpyz(buf, host, sizeof buf);
+  strlcpy(buf, host, sizeof buf);
   uhost = buf;
   nick = splitnick(&uhost);
   for (chan = chanset; chan; chan = chan->next)
@@ -223,8 +222,8 @@ void set_chanlist(const char *host, struct userrec *rec)
  */
 int expmem_chanprog()
 {
-  register int tot = 0;
-  register tcl_timer_t *t;
+  int tot = 0;
+  tcl_timer_t *t;
 
   for (t = timer; t; t = t->next)
     tot += sizeof(tcl_timer_t) + strlen(t->cmd) + 1;
@@ -277,7 +276,7 @@ void tell_verbose_uptime(int idx)
   if (backgrd)
     strcpy(s1, MISC_BACKGROUND);
   else {
-    if (term_z)
+    if (term_z >= 0)
       strcpy(s1, MISC_TERMMODE);
     else if (con_chan)
       strcpy(s1, MISC_STATMODE);
@@ -330,14 +329,14 @@ void tell_verbose_status(int idx)
   sprintf(&s[strlen(s)], "%02d:%02d", (int) hr, (int) min);
   s1[0] = 0;
   if (backgrd)
-    strncpyz(s1, MISC_BACKGROUND, sizeof s1);
+    strlcpy(s1, MISC_BACKGROUND, sizeof s1);
   else {
-    if (term_z)
-      strncpyz(s1, MISC_TERMMODE, sizeof s1);
+    if (term_z >= 0)
+      strlcpy(s1, MISC_TERMMODE, sizeof s1);
     else if (con_chan)
-      strncpyz(s1, MISC_STATMODE, sizeof s1);
+      strlcpy(s1, MISC_STATMODE, sizeof s1);
     else
-      strncpyz(s1, MISC_LOGMODE, sizeof s1);
+      strlcpy(s1, MISC_LOGMODE, sizeof s1);
   }
   cputime = getcputime();
   if (cputime < 0)
@@ -345,7 +344,7 @@ void tell_verbose_status(int idx)
   else {
     hr = cputime / 60;
     cputime -= hr * 60;
-    sprintf(s2, "CPU: %02d:%05.2f", (int) hr, cputime); /* Actally min/sec */
+    sprintf(s2, "CPU: %02d:%05.2f", (int) hr, cputime); /* Actually min/sec */
   }
   dprintf(idx, "%s %s (%s) - %s - %s: %4.1f%%\n", MISC_ONLINEFOR,
           s, s1, s2, MISC_CACHEHIT,
@@ -433,7 +432,7 @@ void reaffirm_owners()
     q = owner;
     p = strchr(q, ',');
     while (p) {
-      strncpyz(s, q, (p - q) + 1);
+      strlcpy(s, q, (p - q) + 1);
       rmspace(s);
       u = get_user_by_handle(userlist, s);
       if (u)
@@ -513,10 +512,6 @@ void chanprog()
       fatal(tmp, 0);
     }
     putlog(LOG_MISC, "*", "\x1b[36m! WARNING:\x1b[0m userfile creation mode active");
-    //printf("\n\n%s\n", MISC_NOUSERFILE2);
-    //if (module_find("server", 0, 0))
-      //printf(MISC_USERFCREATE1, origbotname);
-    //printf("%s\n\n", MISC_USERFCREATE2);
   } else if (make_userfile) {
     make_userfile = 0;
     printf("%s\n", MISC_USERFEXISTS);
@@ -681,33 +676,17 @@ void list_timers(Tcl_Interp *irp, tcl_timer_t *stack)
   }
 }
 
-/* Oddly enough, written by Sup (former(?) Eggdrop coder)
- */
-int isowner(char *name)
-{
-  register char *ptr = NULL, *s = NULL, *n = NULL;
+int isowner(char *name) {
+  char s[sizeof owner];
+  char *sep = ", \t\n\v\f\r";
+  char *word;
 
-  if (!name)
-    return 0;
-
-  ptr = owner - 1;
-
-  do {
-    ptr++;
-    if (*ptr && !egg_isspace(*ptr) && *ptr != ',') {
-      if (!s)
-        s = ptr;
-    } else if (s) {
-      for (n = name; *n && *s && s < ptr &&
-           tolower((unsigned) *n) == tolower((unsigned) *s); n++, s++);
-
-      if (s == ptr && !*n)
-        return 1;
-
-      s = NULL;
+  strcpy(s, owner);
+  for (word = strtok(s, sep); word; word = strtok(NULL, sep)) {
+    if (!strcasecmp(name, word)) {
+      return 1;
     }
-  } while (*ptr);
-
+  }
   return 0;
 }
 
@@ -716,7 +695,7 @@ int isowner(char *name)
  */
 void add_hq_user()
 {
-  if (!backgrd && term_z > 0 && userlist) {
+  if (!backgrd && term_z >= 0) {
     /* HACK: Workaround using dcc[].nick not to pass literal "-HQ" as a non-const arg */
     dcc[term_z].user = get_user_by_handle(userlist, dcc[term_z].nick);
     /* Make sure there's an innocuous -HQ user if needed */
