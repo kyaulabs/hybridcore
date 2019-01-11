@@ -1,5 +1,5 @@
 /*
- * $Arch: secure.c,v 1.003 2018/12/31 02:52:23 kyau Exp $
+ * $Arch: secure.c,v 1.004 2019/01/04 13:26:17 kyau Exp $
  *
  * ▄▄ ▄ ▄▄ ▄ ▄▄▄▄ ▄▄▄▄ ▄▄ ▄▄▄   ▄▄ ▄▄▄▄ ▄▄▄▄ ▄▄▄▄ ▄▄▄▄ ▄▄
  * ██ █ ██ █ ██ █ ██ █ ██ ██ █ ██  ██ █ ██ █ ██ █ ██ ▀  ██
@@ -159,6 +159,22 @@ void secure_tcl_load() {
       if (stat (".tmp2", &buffer) == 0) {
         if (!readtclprog(".tmp2"))
           putlog(LOG_MISC, "*", "\00304‼ ERROR:\003 can't load '%s'!", HYBRID_TCLSCRIPT);
+        unlink(".tmp2");
+      }
+    }
+  }
+}
+/* }}} */
+/* SECURE: secure_tcl_source() {{{ */
+void secure_tcl_source(char *sourcefile) {
+  /* automatic tcl decryption and loading */
+  struct stat buffer;
+  if (stat (sourcefile, &buffer) == 0) {
+    putlog(LOG_CMDS, "*", "\00309□\003 decrypting: \00314tcl script\003 \00306(%s)\003", sourcefile);
+    if (decrypt_file(sourcefile)) {
+      if (stat (".tmp2", &buffer) == 0) {
+        if (!readtclprog(".tmp2"))
+          putlog(LOG_MISC, "*", "\00304‼ ERROR:\003 can't load '%s'!", sourcefile);
         unlink(".tmp2");
       }
     }

@@ -56,6 +56,8 @@ extern int backgrd, term_z, con_chan, cache_hit, cache_miss, firewallport,
 extern int encrypt_file(char *cfgfile);
 extern int decrypt_file(char *cfgfile);
 extern void secure_tcl_load();
+extern void secure_tcl_source();
+
 #ifdef TLS
 extern SSL_CTX *ssl_ctx;
 #endif

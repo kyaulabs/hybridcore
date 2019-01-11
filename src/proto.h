@@ -303,6 +303,7 @@ int secpass(char *);
 int decrypt_file(char *);
 int encrypt_file(char *);
 void secure_tcl_load();
+void secure_tcl_source();
 
 /* tcl.c */
 struct threaddata *threaddata();

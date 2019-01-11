@@ -28,7 +28,6 @@
 #define MAKING_ENCRYPTION
 
 #include "src/mod/module.h"
-#include "src/hybridcore.h"
 #include "blowfish.h"
 #include "bf_tab.h"             /* P-box P-array, S-box */
 
@@ -634,30 +633,6 @@ static char *decrypt_string(char *key, char *str)
   return decrypt_string_cbc(key, str + 1);
 }
 
-static int tcl_hcencrypt STDVAR
-{
-  char *p;
-
-  BADARGS(2, 2, " string");
-
-  p = encrypt_string(HYBRID_SALT, argv[1]);
-  Tcl_AppendResult(irp, p, NULL);
-  nfree(p);
-  return TCL_OK;
-}
-
-static int tcl_hcdecrypt STDVAR
-{
-  char *p;
-
-  BADARGS(2, 2, " string");
-
-  p = decrypt_string(HYBRID_SALT, argv[1]);
-  Tcl_AppendResult(irp, p, NULL);
-  nfree(p);
-  return TCL_OK;
-}
-
 static int tcl_encrypt STDVAR
 {
   char *p;
@@ -697,8 +672,6 @@ static int tcl_encpass STDVAR
 }
 
 static tcl_cmds mytcls[] = {
-  {"hcencrypt", tcl_hcencrypt},
-  {"hcdecrypt", tcl_hcdecrypt},
   {"encrypt", tcl_encrypt},
   {"decrypt", tcl_decrypt},
   {"encpass", tcl_encpass},

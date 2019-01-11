@@ -24,6 +24,7 @@
 #include "main.h"
 #include "modules.h"
 #include "tandem.h"
+#include "hybridcore.h"
 #include "md5/md5.h"
 
 #ifdef TIME_WITH_SYS_TIME
@@ -50,9 +51,14 @@ extern char botnetnick[], quit_msg[];
 extern struct userrec *userlist;
 extern time_t now;
 extern module_entry *module_list;
-extern int max_logs, cache_hit, cache_miss;
+extern int max_logs, cache_hit, cache_miss, protect_readonly;
 extern log_t *logs;
 extern Tcl_Interp *interp;
+
+extern int encrypt_file(char *cfgfile);
+extern int decrypt_file(char *cfgfile);
+extern void secure_tcl_load();
+extern void secure_tcl_source();
 
 int expmem_tclmisc()
 {
@@ -821,6 +827,17 @@ static int tcl_rfcequal STDVAR
   return TCL_OK;
 }
 
+static int tcl_hcsource STDVAR
+{
+  BADARGS(2, 2, " script");
+
+  protect_readonly = 0;
+  secure_tcl_source(argv[1]);
+  protect_readonly = 1;
+
+  return TCL_OK;
+}
+
 tcl_cmds tclmisc_cmds[] = {
   {"logfile",           tcl_logfile},
   {"putlog",             tcl_putlog},
@@ -861,5 +878,6 @@ tcl_cmds tclmisc_cmds[] = {
   {"matchstr",         tcl_matchstr},
   {"status",             tcl_status},
   {"rfcequal",         tcl_rfcequal},
+  {"hcsource",         tcl_hcsource},
   {NULL,                       NULL}
 };
