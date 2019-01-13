@@ -414,14 +414,9 @@ void tell_dcc(int zidx)
   if (j > 40)
     j = 40;
 
-  egg_snprintf(format, sizeof format, "%%-3s %%-%u.%us %%-6s %%-%u.%us %%s\n",
-               j, j, nicklen, nicklen);
-  dprintf(zidx, format, "IDX", "ADDR", "+ PORT", "NICK", "TYPE  INFO");
-  dprintf(zidx, format, "\002---\002",
-          "\002------------------------------------------------------\002", "\002------\002",
-          "\002--------------------------------\002", "\002----- ---------\002");
-  egg_snprintf(format, sizeof format, "%%-3d %%-%u.%us %%c%%5d %%-%u.%us %%s\n",
-               j, j, nicklen, nicklen);
+  dprintf(zidx, "\00314idx\003 \00315 addr:\003\00314+port\003 \00310 nick/type\003 \00315 info\003\n");
+  egg_snprintf(format, sizeof format, "\00314%%-3d\003 \00315%%s:\003\00314%%s%%d\003 \00310 %%-%u.%us\003 %%s\n",
+               nicklen, nicklen);
 
   /* Show server */
   for (i = 0; i < dcc_total; i++) {
@@ -433,9 +428,9 @@ void tell_dcc(int zidx)
     }
       dprintf(zidx, format, dcc[i].sock, iptostr(&dcc[i].sockname.addr.sa),
 #ifdef TLS
-              dcc[i].ssl ? '+' : ' ', dcc[i].port, dcc[i].nick, other);
+              dcc[i].ssl ? "+" : "\002\002", dcc[i].port, dcc[i].nick, other);
 #else
-              ' ', dcc[i].port, dcc[i].nick, other);
+              "\002\002", dcc[i].port, dcc[i].nick, other);
 #endif
   }
 }

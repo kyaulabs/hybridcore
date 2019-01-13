@@ -103,14 +103,15 @@ void tell_mem_status_dcc(int idx)
 
   exp = expected_memory();      /* in main.c ? */
   per = ((lastused * 1.0) / (MEMTBLSIZE * 1.0)) * 100.0;
-  dprintf(idx, "Memory table: %d/%d (%.1f%% full)\n", lastused, MEMTBLSIZE,
+  dprintf(idx, "\00309□\003 memory table: \00314%dk \003\00306<static>\003\n",
+          (int) (sizeof(memtbl) / 1024));
+  dprintf(idx, "\00309□\003 memory table: \00314%d/%d \003\00306<%.1f%% full>\003\n", lastused, MEMTBLSIZE,
           per);
   per = ((exp * 1.0) / (memused * 1.0)) * 100.0;
   if (per != 100.0)
-    dprintf(idx, "Memory fault: only accounting for %d/%ld (%.1f%%)\n",
+    dprintf(idx, "\00309□\003 memory fault: \00314only accounting for %d/%ld \003\00306<%.1f%%>\003\n",
             exp, memused, per);
-  dprintf(idx, "Memory table itself occupies an additional %dk static\n",
-          (int) (sizeof(memtbl) / 1024));
+
 #endif
 }
 

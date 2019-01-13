@@ -1148,8 +1148,8 @@ void do_module_report(int idx, int details, char *which)
 {
   module_entry *p = module_list;
 
-  if (p && !which)
-    dprintf(idx, "Loaded module information:\n");
+  //if (p && !which)
+    //dprintf(idx, "Loaded module information:\n");
   for (; p; p = p->next) {
     if (!which || !egg_strcasecmp(which, p->name)) {
       dependancy *d;

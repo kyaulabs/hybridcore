@@ -29,6 +29,7 @@
 #include <sys/stat.h>
 #include "main.h"
 #include "hybridcore.h"
+#include "version.h"
 
 #ifdef HAVE_GETRUSAGE
 #  include <sys/resource.h>
@@ -313,8 +314,20 @@ void tell_verbose_status(int idx)
 #endif
 
   i = count_users(userlist);
-  dprintf(idx, "I am %s, running %s: %d user%s (mem: %uk).\n",
-          botnetnick, ver, i, i == 1 ? "" : "s",
+#ifdef TLS
+#ifdef IPV6
+  dprintf(idx, "\00309□\003 hybrid(core): \00314v%s+ipv6+tls\003\n", EGG_STRINGVER);
+#endif
+#else
+#ifdef IPV6
+  dprintf(idx, "\00309□\003 hybrid(core): \00314v%s+ipv6\003\n", EGG_STRINGVER);
+#else
+  dprintf(idx, "\00309□\003 hybrid(core): \00314v%s\003\n", EGG_STRINGVER);
+#endif
+#endif
+
+  dprintf(idx, "\00309□\003 %s: \00314%d user%s \003\00306<mem: %uk>\003\n",
+          botnetnick, i, i == 1 ? "" : "s",
           (int) (expected_memory() / 1024));
 
   s[0] = 0;
@@ -343,49 +356,30 @@ void tell_verbose_status(int idx)
   }
   cputime = getcputime();
   if (cputime < 0)
-    sprintf(s2, "CPU: unknown");
+    sprintf(s2, "cpu: \00314unknown\003");
   else {
     hr = cputime / 60;
     cputime -= hr * 60;
-    sprintf(s2, "CPU: %02d:%05.2f", (int) hr, cputime); /* Actually min/sec */
+    sprintf(s2, "cpu: \00314%02d:%05.2f\003", (int) hr, cputime); /* Actually min/sec */
   }
-  dprintf(idx, "%s %s (%s) - %s - %s: %4.1f%%\n", MISC_ONLINEFOR,
-          s, s1, s2, MISC_CACHEHIT,
-          100.0 * ((float) cache_hit) / ((float) (cache_hit + cache_miss)));
+  dprintf(idx, "\00309□\003 uptime: \00314%s \003\00306<%s>\003 - %s - cache: \00314%4.1f%%\003\n",
+          s, s1, s2, 100.0 * ((float) cache_hit) / ((float) (cache_hit + cache_miss)));
 
-  dprintf(idx, "Configured with: " EGG_AC_ARGS "\n");
   if (admin[0])
-    dprintf(idx, "Admin: %s\n", admin);
+    dprintf(idx, "\00309□\003 admin: \00314%s\003\n", admin);
 
-  dprintf(idx, "Config file: %s\n", configfile);
-  dprintf(idx, "OS: %s %s\n", uni_t, vers_t);
-  dprintf(idx, "Process ID: %d (parent %d)\n", getpid(), getppid());
-
-  /* info library */
-  dprintf(idx, "%s %s\n", MISC_TCLLIBRARY,
-          ((interp) && (Tcl_Eval(interp, "info library") == TCL_OK)) ?
-          tcl_resultstring() : "*unknown*");
+  dprintf(idx, "\00309□\003 configfile: \00314%s\003\n", configfile);
+  dprintf(idx, "\00309□\003 os: \00314%s %s\003\n", uni_t, vers_t);
+  dprintf(idx, "\00309□\003 pid: \00314%d \003\00306<parent %d>\003\n", getpid(), getppid());
 
   /* info tclversion/patchlevel */
-  dprintf(idx, "%s %s (%s %s)\n", MISC_TCLVERSION,
-          ((interp) && (Tcl_Eval(interp, "info patchlevel") == TCL_OK)) ?
-          tcl_resultstring() : (Tcl_Eval(interp, "info tclversion") == TCL_OK) ?
-          tcl_resultstring() : "*unknown*", MISC_TCLHVERSION, TCL_PATCH_LEVEL);
+  if (tcl_threaded()) {
+    dprintf(idx, "\00309□\003 tcl: \00314%s+threads\003\n", TCL_PATCH_LEVEL);
+  } else {
+    dprintf(idx, "\00309□\003 tcl: \00314%s\003\n", TCL_PATCH_LEVEL);
+  }
 
-  if (tcl_threaded())
-    dprintf(idx, "Tcl is threaded.\n");
-#ifdef TLS
-  dprintf(idx, "TLS support is enabled.\n");
-  dprintf(idx, "TLS library: %s\n", SSLeay_version(SSLEAY_VERSION));
-#else
-  dprintf(idx, "TLS support is not available.\n");
-#endif
-#ifdef IPV6
-  dprintf(idx, "IPv6 support is enabled.\n");
-#else
-  dprintf(idx, "IPv6 support is not available.\n");
-#endif
-  dprintf(idx, "Socket table: %d/%d\n", threaddata()->MAXSOCKS, max_socks);
+  dprintf(idx, "\00309□\003 socket table: \00314%d/%d\003\n", threaddata()->MAXSOCKS, max_socks);
 }
 
 /* Show all internal state variables

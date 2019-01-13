@@ -1778,18 +1778,18 @@ static void server_report(int idx, int details)
   int servidx;
 
   if (server_online) {
-    dprintf(idx, "    Online as: %s%s%s (%s)\n", botname, botuserhost[0] ?
+    dprintf(idx, "\00309□\003 connected: \00314%s%s%s\003 \00306<%s>\003\n", botname, botuserhost[0] ?
             "!" : "", botuserhost[0] ? botuserhost : "", botrealname);
     if (nick_juped)
-      dprintf(idx, "    NICK IS JUPED: %s%s\n", origbotname,
-              keepnick ? " (trying)" : "");
+      dprintf(idx, "\00309□\003 NICK JUPED: \00314%s%s\003\n", origbotname,
+              keepnick ? " \00306<trying>\003" : "");
     daysdur(now, server_online, s1);
-    egg_snprintf(s, sizeof s, "(connected %s)", s1);
+    egg_snprintf(s, sizeof s, "\00306<connected %s>\003", s1);
     if (server_lag && !lastpingcheck) {
       if (server_lag == -1)
-        egg_snprintf(s1, sizeof s1, " (bad pong replies)");
+        egg_snprintf(s1, sizeof s1, " \00306<bad pong replies>\003");
       else
-        egg_snprintf(s1, sizeof s1, " (lag: %ds)", server_lag);
+        egg_snprintf(s1, sizeof s1, " \00306<lag: %ds>\003", server_lag);
       strcat(s, s1);
     }
   }
@@ -1797,12 +1797,12 @@ static void server_report(int idx, int details)
   if ((trying_server || server_online) &&
       ((servidx = findanyidx(serv)) != -1)) {
 #ifdef TLS
-    dprintf(idx, "    Server [%s]:%s%d %s\n", dcc[servidx].host,
+    dprintf(idx, "\00309□\003 server: \00314%s:%s%d\003 %s\n", dcc[servidx].host,
             dcc[servidx].ssl ? "+" : "", dcc[servidx].port, trying_server ?
-            "(trying)" : s);
+            "\00306<trying>\003" : s);
 #else
-    dprintf(idx, "    Server [%s]:%d %s\n", dcc[servidx].host,
-            dcc[servidx].port, trying_server ? "(trying)" : s);
+    dprintf(idx, "\00309□\003 server: \00314%s:%d\003 %s\n", dcc[servidx].host,
+            dcc[servidx].port, trying_server ? "\00306<trying>\003" : s);
 #endif
   } else
     dprintf(idx, "    %s\n", IRC_NOSERVER);

@@ -517,14 +517,12 @@ static void cmd_status(struct userrec *u, int idx, char *par)
       dprintf(idx, "You do not have bot master privileges.\n");
       return;
     }
-    putlog(LOG_CMDS, "*", "\00307#status#\003 \00306all\003 %s", dcc[idx].nick);
     tell_verbose_status(idx);
     tell_mem_status_dcc(idx);
     dprintf(idx, "\n");
     tell_settings(idx);
     do_module_report(idx, 1, NULL);
   } else {
-    putlog(LOG_CMDS, "*", "\00307#status#\003 %s", dcc[idx].nick);
     tell_verbose_status(idx);
     tell_mem_status_dcc(idx);
     do_module_report(idx, 0, NULL);
@@ -2962,65 +2960,45 @@ static void cmd_traffic(struct userrec *u, int idx, char *par)
 {
   unsigned long itmp, itmp2;
 
-  dprintf(idx, "Traffic since last restart\n");
-  dprintf(idx, "==========================\n");
+  putlog(LOG_CMDS, "*", "\00307#traffic#\003 %s", dcc[idx].nick);
+  dprintf(idx, "\00309□\003 traffic: \00314since last restart\003\n");
   if (otraffic_irc > 0 || itraffic_irc > 0 || otraffic_irc_today > 0 ||
       itraffic_irc_today > 0) {
-    dprintf(idx, "IRC:\n");
-    dprintf(idx, "  out: %s", btos(otraffic_irc + otraffic_irc_today));
-    dprintf(idx, " (%s today)\n", btos(otraffic_irc_today));
-    dprintf(idx, "   in: %s", btos(itraffic_irc + itraffic_irc_today));
-    dprintf(idx, " (%s today)\n", btos(itraffic_irc_today));
+    dprintf(idx, "\00309□\003 irc: \00309↑\003 \00314%s\003 \00306<%s total>\003\n", btos(otraffic_irc_today), btos(otraffic_irc + otraffic_irc_today));
+    dprintf(idx, "\00301,01......\003 \00304↓\003 \00314%s\003 \00306<%s total>\003\n", btos(itraffic_irc_today), btos(itraffic_irc + itraffic_irc_today));
   }
   if (otraffic_bn > 0 || itraffic_bn > 0 || otraffic_bn_today > 0 ||
       itraffic_bn_today > 0) {
-    dprintf(idx, "Botnet:\n");
-    dprintf(idx, "  out: %s", btos(otraffic_bn + otraffic_bn_today));
-    dprintf(idx, " (%s today)\n", btos(otraffic_bn_today));
-    dprintf(idx, "   in: %s", btos(itraffic_bn + itraffic_bn_today));
-    dprintf(idx, " (%s today)\n", btos(itraffic_bn_today));
+    dprintf(idx, "\00309□\003 botnet: \00309↑\003 \00314%s\003 \00306<%s total>\003\n", btos(otraffic_bn_today), btos(otraffic_bn + otraffic_bn_today));
+    dprintf(idx, "\00301,01.........\003 \00304↓\003 \00314%s\003 \00306<%s total>\003\n", btos(itraffic_bn_today), btos(itraffic_bn + itraffic_bn_today));
   }
   if (otraffic_dcc > 0 || itraffic_dcc > 0 || otraffic_dcc_today > 0 ||
       itraffic_dcc_today > 0) {
-    dprintf(idx, "Partyline:\n");
     itmp = otraffic_dcc + otraffic_dcc_today;
     itmp2 = otraffic_dcc_today;
-    dprintf(idx, "  out: %s", btos(itmp));
-    dprintf(idx, " (%s today)\n", btos(itmp2));
-    dprintf(idx, "   in: %s", btos(itraffic_dcc + itraffic_dcc_today));
-    dprintf(idx, " (%s today)\n", btos(itraffic_dcc_today));
+    dprintf(idx, "\00309□\003 partyline: \00309↑\003 \00314%s\003 \00306<%s total>\003\n", btos(itmp2), btos(itmp));
+    dprintf(idx, "\00301,01............\003 \00304↓\003 \00314%s\003 \00306<%s total>\003\n", btos(itraffic_dcc_today), btos(itraffic_dcc + itraffic_dcc_today));
   }
   if (otraffic_trans > 0 || itraffic_trans > 0 || otraffic_trans_today > 0 ||
       itraffic_trans_today > 0) {
-    dprintf(idx, "Transfer.mod:\n");
-    dprintf(idx, "  out: %s", btos(otraffic_trans + otraffic_trans_today));
-    dprintf(idx, " (%s today)\n", btos(otraffic_trans_today));
-    dprintf(idx, "   in: %s", btos(itraffic_trans + itraffic_trans_today));
-    dprintf(idx, " (%s today)\n", btos(itraffic_trans_today));
+    dprintf(idx, "\00309□\003 transfer.mod: \00309↑\003 \00314%s\003 \00306<%s total>\003\n", btos(otraffic_trans_today), btos(otraffic_trans + otraffic_trans_today));
+    dprintf(idx, "\00301,01...............\003 \00304↓\003 \00314%s\003 \00306<%s total>\003\n", btos(itraffic_trans_today), btos(itraffic_trans + itraffic_trans_today));
   }
   if (otraffic_unknown > 0 || otraffic_unknown_today > 0) {
-    dprintf(idx, "Misc:\n");
-    dprintf(idx, "  out: %s", btos(otraffic_unknown + otraffic_unknown_today));
-    dprintf(idx, " (%s today)\n", btos(otraffic_unknown_today));
-    dprintf(idx, "   in: %s", btos(itraffic_unknown + itraffic_unknown_today));
-    dprintf(idx, " (%s today)\n", btos(itraffic_unknown_today));
+    dprintf(idx, "\00309□\003 misc: \00309↑\003 \00314%s\003 \00306<%s total>\003\n", btos(otraffic_unknown_today), btos(otraffic_unknown + otraffic_unknown_today));
+    dprintf(idx, "\00301,01.......\003 \00304↓\003 \00314%s\003 \00306<%s total>\003\n", btos(itraffic_unknown_today), btos(itraffic_unknown + itraffic_unknown_today));
   }
-  dprintf(idx, "---\n");
-  dprintf(idx, "Total:\n");
   itmp = otraffic_irc + otraffic_bn + otraffic_dcc + otraffic_trans +
          otraffic_unknown + otraffic_irc_today + otraffic_bn_today +
          otraffic_dcc_today + otraffic_trans_today + otraffic_unknown_today;
   itmp2 = otraffic_irc_today + otraffic_bn_today + otraffic_dcc_today +
           otraffic_trans_today + otraffic_unknown_today;
-  dprintf(idx, "  out: %s", btos(itmp));
-  dprintf(idx, " (%s today)\n", btos(itmp2));
-  dprintf(idx, "   in: %s", btos(itraffic_irc + itraffic_bn + itraffic_dcc +
+  dprintf(idx, "\00309□\003 \002total:\002 \00309↑\003 \00314%s\003 \00306<%s total>\003\n", btos(itmp2), btos(itmp));
+  dprintf(idx, "\00301,01.........\003 \00304↓\003 \00314%s\003 \00306<%s total>\003\n", btos(itraffic_irc_today + itraffic_bn_today +
+          itraffic_dcc_today + itraffic_trans_today + itraffic_unknown_today), btos(itraffic_irc + itraffic_bn + itraffic_dcc +
           itraffic_trans + itraffic_unknown + itraffic_irc_today +
           itraffic_bn_today + itraffic_dcc_today + itraffic_trans_today +
           itraffic_unknown_today));
-  dprintf(idx, " (%s today)\n", btos(itraffic_irc_today + itraffic_bn_today +
-          itraffic_dcc_today + itraffic_trans_today + itraffic_unknown_today));
-  putlog(LOG_CMDS, "*", "\00307#traffic#\003 %s", dcc[idx].nick);
 }
 
 static char traffictxt[20];
