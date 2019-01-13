@@ -39,7 +39,7 @@ set timezone "PST"					;# timezone
 set offset "8"						;# timezone offset
 set vhost4 ""						;# vhost (ipv4)
 #set vhost6 ""						;# vhost (ipv6)
-set listenaddr ""					;# ip addr for incoming connections
+set listen-addr ""					;# ip addr for incoming connections
 set prefer-ipv6 0					;# prefer ipv6 over ipv4?
 set reserved-portrange 5000:5050	;# dcc data port range
 set main_config [info script]		;# main config file

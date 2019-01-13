@@ -963,7 +963,7 @@ int readuserfile(char *file, struct userrec **ret)
   if (ignored[0]) {
     putlog(LOG_MISC, "*", "%s %s", USERF_IGNBANS, ignored);
   }
-  putlog(LOG_MISC, "*", "\00309□\003 userfile loaded: \00314unpacking\003");
+  putlog(LOG_MISC, "*", "\00309□\003 hybrid(core): \00314userfile loaded\003 \00306<unpacking>\003");
   for (u = bu; u; u = u->next) {
     struct user_entry *e;
 

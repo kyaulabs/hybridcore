@@ -625,7 +625,7 @@ void backup_userfile(void)
   char s[sizeof userfile + 4];
 
   if (quiet_save < 2)
-    putlog(LOG_MISC, "*", "\00309□\003 backup: \00314user file\003");
+    putlog(LOG_MISC, "*", "\00309□\003 hybrid(core): \00314backup\003 \00306<userfile>\003");
   egg_snprintf(s, sizeof s, "%s~bak", userfile);
   copyfile(userfile, s);
 }
@@ -712,7 +712,7 @@ static void core_secondly()
       call_hook(HOOK_DAILY);
       if (!keep_all_logs) {
         if (quiet_save < 3)
-          putlog(LOG_MISC, "*", "\00309□\003 switching logfiles");
+          putlog(LOG_MISC, "*", "\00309□\003 hybrid(core): \00314switching logfiles\003");
         for (i = 0; i < max_logs; i++)
           if (logs[i].filename) {
             char s[1024];
@@ -1177,7 +1177,7 @@ int main(int arg_c, char **arg_v)
   printf("[0;1m██▄█ ██▄█ ██▄▀ ██▄▀ ██ ██ █ [35m██  [36m██   ██ █ ██▄▀ ██▀   [35m██\n");
   printf("[1;30m█[0;1m█ █ [30m▄[0;1m▄ █ [0;1;30m█[0;1;40m█ █ [47m▀[40m█ █ [47m▀[40m█ [47m [40m█ █ [45m [35;40m█  [46m [36;40m█ █ [46m [40m█ █ [46m▀[40m█ █ [46m [40m█ █  [35m█[45m [40m\n");
   printf("[1;30m▀▀ ▀ ▀▀▀▀ ▀▀▀▀ ▀▀ ▀ ▀▀ ▀▀▀▀ [0;35m▀▀▀ [36m▀▀▀▀ ▀▀▀▀ ▀▀ ▀ ▀▀▀▀ [35m▀▀▀[0m\n");
-  putlog(LOG_ALL, "*", "\00309□\003 loading %s \00314(%s)\003", ver, s);
+  putlog(LOG_ALL, "*", "\00309□\003 hybrid(core): \00314loading %s\003 \00306<%s>\003", ver, s);
   chanprog();
   if (!encrypt_pass) {
     printf("%s", MOD_NOCRYPT);
@@ -1187,7 +1187,7 @@ int main(int arg_c, char **arg_v)
   i = 0;
   for (chan = chanset; chan; chan = chan->next)
     i++;
-  putlog(LOG_MISC, "*", "\00309□\003 %s: \00314%d channels, %d users\003",
+  putlog(LOG_MISC, "*", "\00309□\003 hybrid(core): \00314%s\003 \00306<%d chans, %d users>\003",
          botnetnick, i, count_users(userlist));
 #ifdef TLS
   ssl_init();

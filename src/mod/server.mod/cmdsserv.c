@@ -161,9 +161,9 @@ static void cmd_clearqueue(struct userrec *u, int idx, char *par)
 }
 
 static cmd_t C_dcc_serv[] = {
-  {"dump",       "m",  (IntFunc) cmd_dump,       NULL},
-  {"jump",       "m",  (IntFunc) cmd_jump,       NULL},
-  {"servers",    "o",  (IntFunc) cmd_servers,    NULL},
-  {"clearqueue", "m",  (IntFunc) cmd_clearqueue, NULL},
+  {"dump",       "n",  (IntFunc) cmd_dump,       NULL},
+  {"jump",       "n",  (IntFunc) cmd_jump,       NULL},
+  {"servers",    "m",  (IntFunc) cmd_servers,    NULL},
+  {"clearqueue", "n",  (IntFunc) cmd_clearqueue, NULL},
   {NULL,         NULL, NULL,                      NULL}
 };

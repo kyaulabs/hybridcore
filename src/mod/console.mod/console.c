@@ -294,7 +294,7 @@ static int console_chon(char *handle, int idx)
           char x[1024];
 
           chanout_but(-1, dcc[idx].u.chat->channel,
-                      "*** [%s] %s\n", dcc[idx].nick, p);
+                      "\00309□\003 [%s] %s\n", dcc[idx].nick, p);
           simple_sprintf(x, "[%s] %s", dcc[idx].nick, p);
           botnet_send_chan(-1, botnetnick, NULL, dcc[idx].u.chat->channel, x);
         }

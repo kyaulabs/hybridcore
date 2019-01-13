@@ -1,5 +1,5 @@
 /*
- * $Arch: secure.c,v 1.004 2019/01/04 13:26:17 kyau Exp $
+ * $Arch: secure.c,v 1.006 2019/01/12 23:37:40 kyau Exp $
  *
  * ▄▄ ▄ ▄▄ ▄ ▄▄▄▄ ▄▄▄▄ ▄▄ ▄▄▄   ▄▄ ▄▄▄▄ ▄▄▄▄ ▄▄▄▄ ▄▄▄▄ ▄▄
  * ██ █ ██ █ ██ █ ██ █ ██ ██ █ ██  ██ █ ██ █ ██ █ ██ ▀  ██
@@ -105,6 +105,7 @@ int encrypt_file(char *cfgfile) {
     }
     fclose(ecfg);
     fclose(dcfg);
+    nfree(encstr);
     chmod(".tmp1", HYBRID_MODE);
     return 1;
   } else {
@@ -135,6 +136,7 @@ int decrypt_file(char *cfgfile) {
     }
     fclose(ecfg);
     fclose(dcfg);
+    nfree(decstr);
     chmod(".tmp2", HYBRID_MODE);
     return 1;
   } else {
@@ -148,13 +150,13 @@ void secure_tcl_load() {
   /* automatic tcl encryption */
   struct stat buffer;
   if (stat ("decrypted.tcl", &buffer) == 0) {
-    putlog(LOG_CMDS, "*", "\00309□\003 encrypting: \00314decrypted.tcl\003 => \00314%s\003", HYBRID_TCLSCRIPT);
+    putlog(LOG_CMDS, "*", "\00309□\003 hybrid(core): \00314encrypting\003 \00306<decrypted.tcl => %s>\003", HYBRID_TCLSCRIPT);
     if (encrypt_file("decrypted.tcl"))
      movefile(".tmp1", HYBRID_TCLSCRIPT);
   }
   /* automatic tcl decryption and loading */
   if (stat (HYBRID_TCLSCRIPT, &buffer) == 0) {
-    putlog(LOG_CMDS, "*", "\00309□\003 decrypting: \00314tcl script\003 \00306(%s)\003", HYBRID_TCLSCRIPT);
+    putlog(LOG_CMDS, "*", "\00309□\003 hybrid(core): \00314decrypting\003 \00306<%s>\003", HYBRID_TCLSCRIPT);
     if (decrypt_file(HYBRID_TCLSCRIPT)) {
       if (stat (".tmp2", &buffer) == 0) {
         if (!readtclprog(".tmp2"))
@@ -170,7 +172,7 @@ void secure_tcl_source(char *sourcefile) {
   /* automatic tcl decryption and loading */
   struct stat buffer;
   if (stat (sourcefile, &buffer) == 0) {
-    putlog(LOG_CMDS, "*", "\00309□\003 decrypting: \00314tcl script\003 \00306(%s)\003", sourcefile);
+    putlog(LOG_CMDS, "*", "\00309□\003 hybrid(core): \00314decrypting\003 \00306<%s>\003", sourcefile);
     if (decrypt_file(sourcefile)) {
       if (stat (".tmp2", &buffer) == 0) {
         if (!readtclprog(".tmp2"))

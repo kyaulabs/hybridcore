@@ -594,8 +594,7 @@ char* str_replace(char* search, char* replace, char* subject) {
   return ret;
 }
 
-char* irccodes_toecho(char *subject) {
-  char *ret = strdup(subject);
+char* irccodes_toecho(char *ret) {
   ret = str_replace("\00300", "\[1;37m", ret);
   ret = str_replace("\00301", "\[30m", ret);
   ret = str_replace("\00302", "\[34m", ret);

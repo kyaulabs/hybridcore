@@ -385,7 +385,7 @@ static void cmd_vbottree(struct userrec *u, int idx, char *par)
 static void cmd_rehelp(struct userrec *u, int idx, char *par)
 {
   putlog(LOG_CMDS, "*", "\00307#rehelp#\003 %s", dcc[idx].nick);
-  putlog(LOG_CMDS, "*", "\00309□\003 reload: \00314help cache\003");
+  putlog(LOG_CMDS, "*", "\00309□\003 hybrid(core): \00314reload\003 \00306<help cache>\003");
   reload_help_data();
 }
 
@@ -1266,7 +1266,7 @@ static void cmd_restart(struct userrec *u, int idx, char *par)
     make_userfile = 0;
   }
   write_userfile(-1);
-  putlog(LOG_MISC, "*", "\00309□\003 restarting");
+  putlog(LOG_MISC, "*", "\00309□\003 hybrid(core): \00314restarting\003");
   wipe_timers(interp, &utimer);
   wipe_timers(interp, &timer);
   do_restart = idx;
@@ -1280,14 +1280,14 @@ static void cmd_rehash(struct userrec *u, int idx, char *par)
     make_userfile = 0;
   }
   write_userfile(-1);
-  putlog(LOG_MISC, "*", "\00309□\003 rehashing");
+  putlog(LOG_MISC, "*", "\00309□\003 hybrid(core): \00314rehashing\003");
   do_restart = -2;
 }
 
 static void cmd_reload(struct userrec *u, int idx, char *par)
 {
   putlog(LOG_CMDS, "*", "\00307#reload#\003 %s", dcc[idx].nick);
-  putlog(LOG_CMDS, "*", "\00309□\003 reload: \00314user file\003");
+  putlog(LOG_CMDS, "*", "\00309□\003 hybrid(core): \00314reload\003 \00306<userfile>\003");
   reload();
   check_tcl_event("reload");
 }
@@ -1391,14 +1391,14 @@ static void cmd_relay(struct userrec *u, int idx, char *par)
 static void cmd_save(struct userrec *u, int idx, char *par)
 {
   putlog(LOG_CMDS, "*", "\00307#save#\003 %s", dcc[idx].nick);
-  putlog(LOG_CMDS, "*", "\00309□\003 save: \00314user file\003");
+  putlog(LOG_CMDS, "*", "\00309□\003 hybrid(core): \00314save\003 \00306<user file>\003");
   write_userfile(-1);
 }
 
 static void cmd_backup(struct userrec *u, int idx, char *par)
 {
   putlog(LOG_CMDS, "*", "\00307#backup#\003 %s", dcc[idx].nick);
-  putlog(LOG_CMDS, "*",  "\00309□\003 backup: \00314channel & user file\003");
+  putlog(LOG_CMDS, "*",  "\00309□\003 hybrid(core): \00314backup\003 \00306<chan/userfile>\003");
   call_hook(HOOK_BACKUP);
 }
 
@@ -2069,10 +2069,10 @@ static void cmd_echo(struct userrec *u, int idx, char *par)
     return;
   }
   if (!egg_strcasecmp(par, "on")) {
-    dprintf(idx, "\00309□\003 echo: \00314on\003\n");
+    dprintf(idx, "\00309□\003 hybrid(core): \00314echo\003 \00306<on>\003\n");
     dcc[idx].status |= STAT_ECHO;
   } else if (!egg_strcasecmp(par, "off")) {
-    dprintf(idx, "\00309□\003 echo: \00314off\003\n");
+    dprintf(idx, "\00309□\003 hybrid(core): \00314echo\003 \00306<off>\003\n");
     dcc[idx].status &= ~STAT_ECHO;
   } else {
     dprintf(idx, "Usage: echo <on/off>\n");
@@ -2404,7 +2404,7 @@ static void cmd_loadmod(struct userrec *u, int idx, char *par)
       dprintf(idx, "%s: %s %s\n", par, MOD_LOADERROR, p);
     else {
       putlog(LOG_CMDS, "*", "\00307#loadmod#\003 \00306%s\003 %s", MOD_LOADED, dcc[idx].nick);
-      dprintf(idx, "\00309□\003 module: \00314%-16s\003", MOD_LOADED);
+      dprintf(idx, "\00309□\003 hybrid(core): \00314loaded module\003 \00306<%-16s>\003", MOD_LOADED);
       dprintf(idx, "\n");
     }
   }
@@ -3067,41 +3067,41 @@ static void cmd_whoami(struct userrec *u, int idx, char *par)
  * As with msg commands, function is responsible for any logging.
  */
 cmd_t C_dcc[] = {
-  {"+bot",      "t",    (IntFunc) cmd_pls_bot,    NULL},
-  {"+host",     "t|m",  (IntFunc) cmd_pls_host,   NULL},
+  {"+bot",      "n",    (IntFunc) cmd_pls_bot,    NULL},
+  {"+host",     "m|m",  (IntFunc) cmd_pls_host,   NULL},
   {"+ignore",   "m",    (IntFunc) cmd_pls_ignore, NULL},
   {"+telnet",   "n",    (IntFunc) cmd_pls_telnethost, NULL},
   {"+user",     "n",    (IntFunc) cmd_pls_user,   NULL},
-  {"-bot",      "t",    (IntFunc) cmd_mns_user,   NULL},
-  {"-host",     "",     (IntFunc) cmd_mns_host,   NULL},
+  {"-bot",      "n",    (IntFunc) cmd_mns_user,   NULL},
+  {"-host",     "m|m",  (IntFunc) cmd_mns_host,   NULL},
   {"-ignore",   "m",    (IntFunc) cmd_mns_ignore, NULL},
   {"-telnet",   "n",    (IntFunc) cmd_mns_telnethost, NULL},
   {"-user",     "n",    (IntFunc) cmd_mns_user,   NULL},
   {"addlog",    "to|o", (IntFunc) cmd_addlog,     NULL},
   {"away",      "",     (IntFunc) cmd_away,       NULL},
   {"back",      "",     (IntFunc) cmd_back,       NULL},
-  {"backup",    "m|m",  (IntFunc) cmd_backup,     NULL},
+  {"backup",    "n",    (IntFunc) cmd_backup,     NULL},
   {"banner",    "t",    (IntFunc) cmd_banner,     NULL},
   {"binds",     "n",    (IntFunc) cmd_binds,      NULL},
   {"boot",      "n",    (IntFunc) cmd_boot,       NULL},
-  {"botattr",   "t",    (IntFunc) cmd_botattr,    NULL},
-  {"botinfo",   "",     (IntFunc) cmd_botinfo,    NULL},
-  {"bots",      "",     (IntFunc) cmd_bots,       NULL},
-  {"bottree",   "",     (IntFunc) cmd_bottree,    NULL},
+  {"botattr",   "n",    (IntFunc) cmd_botattr,    NULL},
+  {"botinfo",   "m",    (IntFunc) cmd_botinfo,    NULL},
+  {"bots",      "m",    (IntFunc) cmd_bots,       NULL},
+  {"bottree",   "m",    (IntFunc) cmd_bottree,    NULL},
   {"chaddr",    "t",    (IntFunc) cmd_chaddr,     NULL},
   {"chat",      "",     (IntFunc) cmd_chat,       NULL},
   {"chattr",    "m|m",  (IntFunc) cmd_chattr,     NULL},
 #ifdef TLS
-  {"chfinger",  "t",    (IntFunc) cmd_chfinger,   NULL},
+  {"chfinger",  "n",    (IntFunc) cmd_chfinger,   NULL},
 #endif
-  {"chhandle",  "t",    (IntFunc) cmd_chhandle,   NULL},
+  {"chhandle",  "m|m",  (IntFunc) cmd_chhandle,   NULL},
   {"chnick",    "n",    (IntFunc) cmd_chhandle,   NULL},
   {"chpass",    "n",    (IntFunc) cmd_chpass,     NULL},
   {"comment",   "m",    (IntFunc) cmd_comment,    NULL},
   {"console",   "to|o", (IntFunc) cmd_console,    NULL},
   {"resetconsole", "to|o", (IntFunc) cmd_resetconsole, NULL},
-  {"dccstat",   "t",    (IntFunc) cmd_dccstat,    NULL},
-  {"debug",     "m",    (IntFunc) cmd_debug,      NULL},
+  {"dccstat",   "n",    (IntFunc) cmd_dccstat,    NULL},
+  {"debug",     "n",    (IntFunc) cmd_debug,      NULL},
   {"die",       "n",    (IntFunc) cmd_die,        NULL},
   {"echo",      "",     (IntFunc) cmd_echo,       NULL},
 #ifdef TLS
@@ -3110,33 +3110,33 @@ cmd_t C_dcc[] = {
   {"fixcodes",  "",     (IntFunc) cmd_fixcodes,   NULL},
   {"help",      "",     (IntFunc) cmd_help,       NULL},
   {"ignores",   "m",    (IntFunc) cmd_ignores,    NULL},
-  {"link",      "t",    (IntFunc) cmd_link,       NULL},
+  {"link",      "n",    (IntFunc) cmd_link,       NULL},
   {"loadmod",   "n",    (IntFunc) cmd_loadmod,    NULL},
-  {"match",     "to|o", (IntFunc) cmd_match,      NULL},
-  {"module",    "m",    (IntFunc) cmd_module,     NULL},
+  {"match",     "m|m",  (IntFunc) cmd_match,      NULL},
+  {"module",    "n",    (IntFunc) cmd_module,     NULL},
   {"modules",   "n",    (IntFunc) cmd_modules,    NULL},
   {"newpass",   "",     (IntFunc) cmd_newpass,    NULL},
   {"handle",    "",     (IntFunc) cmd_handle,     NULL},
   {"nick",      "",     (IntFunc) cmd_handle,     NULL},
   {"page",      "",     (IntFunc) cmd_page,       NULL},
   {"quit",      "",     (IntFunc) CMD_LEAVE,      NULL},
-  {"rehash",    "m",    (IntFunc) cmd_rehash,     NULL},
+  {"rehash",    "n",    (IntFunc) cmd_rehash,     NULL},
   {"rehelp",    "n",    (IntFunc) cmd_rehelp,     NULL},
-  {"relay",     "o",    (IntFunc) cmd_relay,      NULL},
+  {"relay",     "m",    (IntFunc) cmd_relay,      NULL},
   {"reload",    "m|m",  (IntFunc) cmd_reload,     NULL},
-  {"restart",   "m",    (IntFunc) cmd_restart,    NULL},
-  {"save",      "m|m",  (IntFunc) cmd_save,       NULL},
+  {"restart",   "n",    (IntFunc) cmd_restart,    NULL},
+  {"save",      "m",    (IntFunc) cmd_save,       NULL},
   {"set",       "n",    (IntFunc) cmd_set,        NULL},
-  {"status",    "m|m",  (IntFunc) cmd_status,     NULL},
+  {"status",    "n",    (IntFunc) cmd_status,     NULL},
   {"strip",     "",     (IntFunc) cmd_strip,      NULL},
   {"tcl",       "n",    (IntFunc) cmd_tcl,        NULL},
   {"telnet",    "n",    (IntFunc) cmd_show_telnethost, NULL},
-  {"trace",     "t",    (IntFunc) cmd_trace,      NULL},
-  {"unlink",    "t",    (IntFunc) cmd_unlink,     NULL},
+  {"trace",     "m",    (IntFunc) cmd_trace,      NULL},
+  {"unlink",    "n",    (IntFunc) cmd_unlink,     NULL},
   {"unloadmod", "n",    (IntFunc) cmd_unloadmod,  NULL},
   {"uptime",    "m|m",  (IntFunc) cmd_uptime,     NULL},
-  {"vbottree",  "",     (IntFunc) cmd_vbottree,   NULL},
-  {"who",       "",     (IntFunc) cmd_who,        NULL},
+  {"vbottree",  "m",    (IntFunc) cmd_vbottree,   NULL},
+  {"who",       "m",    (IntFunc) cmd_who,        NULL},
   {"whois",     "to|o", (IntFunc) cmd_whois,      NULL},
   {"whom",      "",     (IntFunc) cmd_whom,       NULL},
   {"traffic",   "m|m",  (IntFunc) cmd_traffic,    NULL},

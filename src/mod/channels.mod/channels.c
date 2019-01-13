@@ -584,7 +584,7 @@ static void read_channels(int create, int reload)
       f = fopen(chanfile, "wt");
       fprintf(f, "\n");
       fclose(f);
-      putlog(LOG_MISC, "*", "\00309□\003 created new: \00314%s\003", chanfile);
+      putlog(LOG_MISC, "*", "\00309□\003 hybrid(core): \00314created\003 \00306<%s>\003", chanfile);
     }
   }
   chan_hack = 0;
@@ -611,7 +611,7 @@ static void backup_chanfile()
   char s[sizeof chanfile + 4];
 
   if (quiet_save < 2)
-    putlog(LOG_MISC, "*", "\00309□\003 backup: \00314channel file\003");
+    putlog(LOG_MISC, "*", "\00309□\003 hybrid(core): \00314backup\003 \00306<chanfile>\003");
   egg_snprintf(s, sizeof s, "%s~bak", chanfile);
   copyfile(chanfile, s);
 }

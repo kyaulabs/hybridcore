@@ -1831,10 +1831,10 @@ static int gotjoin(char *from, char *chname)
            * logs with the unique name.
            */
           if (chname[0] == '!')
-            putlog(LOG_JOIN | LOG_MISC, chan->dname, "\00309□\003 joined: \00314%s (%s)\003",
+            putlog(LOG_JOIN | LOG_MISC, chan->dname, "\00309□\003 hybrid(core): \00314joined\003 \00306<%s (%s)>\003",
                    chan->dname, chname);
           else
-            putlog(LOG_JOIN | LOG_MISC, chan->dname, "\00309□\003 joined: \00314%s\003", chname);
+            putlog(LOG_JOIN | LOG_MISC, chan->dname, "\00309□\003 hybrid(core): \00314joined\003 \00306<%s>\003", chname);
           reset_chan_info(chan, (CHAN_RESETALL & ~CHAN_RESETTOPIC));
         } else {
           struct chanuserrec *cr;

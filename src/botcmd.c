@@ -522,13 +522,13 @@ static void bot_infoq(int idx, char *par)
     if (s[0]) {
       s[strlen(s) - 2] = 0;
       botnet_send_priv(idx, botnetnick, par, NULL,
-                       "%s <%s> (%s) [UP %s]", ver, network, s, s2);
+                       "%s \00306<%s>\003 (%s) \00314[UP %s]\003", ver, network, s, s2);
     } else
-      botnet_send_priv(idx, botnetnick, par, NULL, "%s <%s> (%s) [UP %s]", ver,
+      botnet_send_priv(idx, botnetnick, par, NULL, "%s \00306<%s>\003 (%s) \00314[UP %s]\003", ver,
                        network, BOT_NOCHANNELS, s2);
   } else
     botnet_send_priv(idx, botnetnick, par, NULL,
-                     "%s <NO_IRC> [UP %s]", ver, s2);
+                     "%s \00306<NO_IRC>\003 \00314[UP %s]\003", ver, s2);
   botnet_send_infoq(idx, par);
 }
 

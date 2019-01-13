@@ -1061,7 +1061,7 @@ static int tcl_listen STDVAR
   pmap->realport = realport;
   pmap->mappedto = port;
 
-  putlog(LOG_MISC, "*", "\00309□\003 listening: \00314%s:%d (%s)\003", iptostr(&dcc[idx].sockname.addr.sa), port, argv[2]);
+  putlog(LOG_MISC, "*", "\00309□\003 hybrid(core): \00314listening\003 \00306<%s:%d (%s)>\003", iptostr(&dcc[idx].sockname.addr.sa), port, argv[2]);
 
   return TCL_OK;
 }
@@ -1110,7 +1110,7 @@ static int tcl_rehash STDVAR
   }
   write_userfile(-1);
 
-  putlog(LOG_MISC, "*", "\00309□\003 rehashing");
+  putlog(LOG_MISC, "*", "\00309□\003 hybrid(core): \00314rehashing\003");
   do_restart = -2;
   return TCL_OK;
 }
@@ -1128,7 +1128,7 @@ static int tcl_restart STDVAR
     make_userfile = 0;
   }
   write_userfile(-1);
-  putlog(LOG_MISC, "*", "\00309□\003 restarting");
+  putlog(LOG_MISC, "*", "\00309□\003 hybrid(core): \00314restarting\003");
   wipe_timers(interp, &utimer);
   wipe_timers(interp, &timer);
   do_restart = -1;

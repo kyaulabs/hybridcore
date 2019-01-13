@@ -117,7 +117,7 @@ static void bg_do_detach(pid_t p)
     fclose(fp);
   } else
     printf(EGG_NOWRITE, pid_file);
-  putlog(LOG_MISC, "*", "\x1b[1;32m□\x1b[0m launched: \x1b[1;30mbackground\x1b[0m  \x1b[35m(pid: %li)\x1b[0m\n", (long) p);
+  putlog(LOG_MISC, "*", "\x1b[1;32m□\x1b[0m hybrid(core): \x1b[1;30mlaunched into background\x1b[0m \x1b[35m<pid: %li>\x1b[0m\n", (long) p);
 #ifdef HAVE_SETPGID
   setpgid(p, p);
 #endif
