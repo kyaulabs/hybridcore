@@ -138,6 +138,8 @@ int increase_socks_max();
 int findidx(int);
 int findanyidx(int);
 char *add_cr(char *);
+void hcprint(int, char *, int);
+void hcprintf EGG_VARARGS(int, arg1);
 void dprint(int, char *, int);
 void dprintf EGG_VARARGS(int, arg1);
 void chatout EGG_VARARGS(char *, arg1);

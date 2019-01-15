@@ -34,7 +34,7 @@
 
 extern struct dcc_t *dcc;
 extern int dcc_total, dcc_flood_thr, backgrd, copy_to_tmp, max_socks;
-extern char botnetnick[], version[];
+extern char botnetnick[], version[], log_ts[];
 extern time_t now;
 extern sock_list *socklist;
 
@@ -178,6 +178,87 @@ void dprintf EGG_VARARGS_DEF(int, arg1)
 
 void dprint(int idx, char *buf, int len)
 {
+  char s[LOGLINELEN], *buf2, stamp[34];
+  int tsl = 0;
+  egg_strftime(stamp, sizeof(stamp) - 1, log_ts, localtime(&now));
+  tsl = strlen(stamp);
+  strcat(stamp, " ");
+  buf2 = s + tsl;
+  if (idx < 0) {
+    tputs(-idx, buf, len);
+  } else if (idx > 0x7FF0) {
+    switch (idx) {
+    case DP_LOG:
+      putlog(LOG_MISC, "*", "%s", buf);
+      break;
+    case DP_STDOUT:
+      tputs(STDOUT, buf, len);
+      break;
+    case DP_STDERR:
+      tputs(STDERR, buf, len);
+      break;
+    case DP_SERVER:
+    case DP_HELP:
+    case DP_MODE:
+    case DP_MODE_NEXT:
+    case DP_SERVER_NEXT:
+    case DP_HELP_NEXT:
+      qserver(idx, buf, len);
+      break;
+    }
+    return;
+  } else {
+    if (len > 500) {            /* Truncate to fit */
+      buf[500] = 0;
+      len = 500;
+    }
+    /* Add a timestamp */
+    egg_snprintf(buf2, LOGLINEMAX - tsl, " %s", buf);
+    buf2[LOGLINEMAX - tsl] = 0;
+    if (buf[0]) {
+      memcpy(s, stamp, tsl);
+      buf2 = s;
+    }
+    if (dcc[idx].type && ((long) (dcc[idx].type->output) == 1)) {
+      char *p = add_cr(buf);
+
+      tputs(dcc[idx].sock, p, strlen(p));
+    } else if (dcc[idx].type && dcc[idx].type->output)
+        dcc[idx].type->output(idx, buf2, dcc[idx].u.other);
+    else
+        tputs(dcc[idx].sock, buf2, len);
+  }
+}
+
+void hcprintf EGG_VARARGS_DEF(int, arg1)
+{
+  char buf[1024];
+  char *format;
+  int idx, len;
+  va_list va;
+
+  idx = EGG_VARARGS_START(int, arg1, va);
+  format = va_arg(va, char *);
+
+  egg_vsnprintf(buf, 1023, format, va);
+  va_end(va);
+  /* We can not use the return value vsnprintf() to determine where
+   * to null terminate. The C99 standard specifies that vsnprintf()
+   * shall return the number of bytes that would be written if the
+   * buffer had been large enough, rather then -1.
+   */
+  /* We actually can, since if it's < 0 or >= sizeof(buf), we know it wrote
+   * sizeof(buf) bytes. But we're not doing that anyway.
+   */
+  buf[sizeof(buf) - 1] = 0;
+  len = strlen(buf);
+
+  /* Send it out */
+  hcprint(idx, buf, len);
+}
+
+void hcprint(int idx, char *buf, int len)
+{
   if (idx < 0) {
     tputs(-idx, buf, len);
   } else if (idx > 0x7FF0) {
@@ -212,9 +293,9 @@ void dprint(int idx, char *buf, int len)
 
       tputs(dcc[idx].sock, p, strlen(p));
     } else if (dcc[idx].type && dcc[idx].type->output)
-      dcc[idx].type->output(idx, buf, dcc[idx].u.other);
+        dcc[idx].type->output(idx, buf, dcc[idx].u.other);
     else
-      tputs(dcc[idx].sock, buf, len);
+        tputs(dcc[idx].sock, buf, len);
   }
 }
 

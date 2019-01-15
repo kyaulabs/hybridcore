@@ -725,7 +725,7 @@ void putlog EGG_VARARGS_DEF(int, arg1)
     if ((dcc[i].type == &DCC_CHAT) && (dcc[i].u.chat->con_flags & type)) {
       if ((chname[0] == '*') || (dcc[i].u.chat->con_chan[0] == '*') ||
           !rfc_casecmp(chname, dcc[i].u.chat->con_chan)) {
-        dprintf(i, "%s", out);
+        hcprintf(i, "%s", out);
       }
     }
   }
