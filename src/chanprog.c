@@ -316,19 +316,22 @@ void tell_verbose_status(int idx)
   i = count_users(userlist);
 #ifdef TLS
 #ifdef IPV6
-  dprintf(idx, "\00309□\003 hybrid(core): \00314v%s+ipv6+tls\003\n", EGG_STRINGVER);
+  dprintf(idx, "\00309□\003 hybrid(core): \00314v%s+ipv6+tls\003 \00306<tcl%s%s>\003\n", EGG_STRINGVER, TCL_PATCH_LEVEL, tcl_threaded() ? "+threads" : "");
 #endif
 #else
 #ifdef IPV6
-  dprintf(idx, "\00309□\003 hybrid(core): \00314v%s+ipv6\003\n", EGG_STRINGVER);
+  dprintf(idx, "\00309□\003 hybrid(core): \00314v%s+ipv6\003 \00306<tcl%s%s>\003\n", EGG_STRINGVER, TCL_PATCH_LEVEL, tcl_threaded() ? "+threads" : "");
 #else
-  dprintf(idx, "\00309□\003 hybrid(core): \00314v%s\003\n", EGG_STRINGVER);
+  dprintf(idx, "\00309□\003 hybrid(core): \00314v%s\003 \00306<tcl%s%s>\003\n", EGG_STRINGVER, TCL_PATCH_LEVEL, tcl_threaded() ? "+threads" : "");
 #endif
 #endif
 
   dprintf(idx, "\00309□\003 %s: \00314%d user%s \003\00306<mem: %uk>\003\n",
           botnetnick, i, i == 1 ? "" : "s",
           (int) (expected_memory() / 1024));
+  dprintf(idx, "\00309□\003 configfile: \00314%s\003 \00301,01.\003pid: \00314%d \003\00306<parent %d>\003\n", configfile, getpid(), getppid());
+  if (admin[0])
+    dprintf(idx, "\00309□\003 admin: \00314%s\003\n", admin);
 
   s[0] = 0;
   if (now2 > 86400) {
@@ -362,23 +365,10 @@ void tell_verbose_status(int idx)
     cputime -= hr * 60;
     sprintf(s2, "cpu: \00314%02d:%05.2f\003", (int) hr, cputime); /* Actually min/sec */
   }
-  dprintf(idx, "\00309□\003 uptime: \00314%s \003\00306<%s>\003 - %s - cache: \00314%4.1f%%\003\n",
+  dprintf(idx, "\00309□\003 uptime: \00314%s \003\00306<%s>\003 \00301,01.\003%s \00301,01.\003cache: \00314%4.1f%%\003\n",
           s, s1, s2, 100.0 * ((float) cache_hit) / ((float) (cache_hit + cache_miss)));
 
-  if (admin[0])
-    dprintf(idx, "\00309□\003 admin: \00314%s\003\n", admin);
-
-  dprintf(idx, "\00309□\003 configfile: \00314%s\003\n", configfile);
   dprintf(idx, "\00309□\003 os: \00314%s %s\003\n", uni_t, vers_t);
-  dprintf(idx, "\00309□\003 pid: \00314%d \003\00306<parent %d>\003\n", getpid(), getppid());
-
-  /* info tclversion/patchlevel */
-  if (tcl_threaded()) {
-    dprintf(idx, "\00309□\003 tcl: \00314%s+threads\003\n", TCL_PATCH_LEVEL);
-  } else {
-    dprintf(idx, "\00309□\003 tcl: \00314%s\003\n", TCL_PATCH_LEVEL);
-  }
-
   dprintf(idx, "\00309□\003 socket table: \00314%d/%d\003\n", threaddata()->MAXSOCKS, max_socks);
 }
 
