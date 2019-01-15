@@ -630,15 +630,15 @@ void tell_bottree(int idx, int showver)
       imark = 0;
       for (i = 0; i < lev; i++) {
         if (mark[i])
-          strcpy(work + imark, "  |  ");
+          strcpy(work + imark, "\00301,01.\003 \00314|\003\00301,01.\003 ");
         else
-          strcpy(work + imark, "     ");
+          strcpy(work + imark, "\00301,01....\003 ");
         imark += 5;
       }
       if (cnt > 1)
-        strcpy(work + imark, "  |-");
+        strcpy(work + imark, "\00301,01.\003 \00314|-\003");
       else
-        strcpy(work + imark, "  `-");
+        strcpy(work + imark, "\00301,01.\003 \00314`-\003");
       s[0] = 0;
       bot = tandbot;
       while (!s[0]) {
@@ -646,12 +646,12 @@ void tell_bottree(int idx, int showver)
           if (bot->ver) {
             i = sprintf(s, "%c%s", bot->share, bot->bot);
             if (showver)
-              sprintf(s + i, " (%d.%d.%d.%d)",
+              sprintf(s + i, " \00306<hybrid(core) v%d.%d.%d.%d>\003",
                       bot->ver / 1000000,
                       bot->ver % 1000000 / 10000,
                       bot->ver % 10000 / 100, bot->ver % 100);
           } else
-            sprintf(s, "-%s", bot->bot);
+            sprintf(s, "\00314-\003%s", bot->bot);
         } else
           bot = bot->next;
       }
@@ -689,7 +689,7 @@ void tell_bottree(int idx, int showver)
                             bot->ver % 1000000 / 10000,
                             bot->ver % 10000 / 100, bot->ver % 100);
                 } else
-                  sprintf(s, "-%s", bot->bot);
+                  sprintf(s, "\00314-\003%s", bot->bot);
               }
             }
           }
@@ -698,9 +698,9 @@ void tell_bottree(int idx, int showver)
           imark = 0;
           for (i = 1; i < lev; i++) {
             if (mark[i - 1])
-              strcpy(work + imark, "  |  ");
+              strcpy(work + imark, "\00301,01.\003 \00314|\003\00301,01.\003 ");
             else
-              strcpy(work + imark, "     ");
+              strcpy(work + imark, "\00301,01....\003 ");
             imark += 5;
           }
           more = 1;
