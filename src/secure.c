@@ -105,7 +105,8 @@ int encrypt_file(char *cfgfile) {
     }
     fclose(ecfg);
     fclose(dcfg);
-    nfree(encstr);
+    if (encstr != NULL)
+      nfree(encstr);
     chmod(".tmp1", HYBRID_MODE);
     return 1;
   } else {
@@ -136,7 +137,8 @@ int decrypt_file(char *cfgfile) {
     }
     fclose(ecfg);
     fclose(dcfg);
-    nfree(decstr);
+    if (decstr != NULL)
+      nfree(decstr);
     chmod(".tmp2", HYBRID_MODE);
     return 1;
   } else {

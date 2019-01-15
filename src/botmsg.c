@@ -59,7 +59,7 @@ void tandout_but EGG_VARARGS_DEF(int, arg1)
 
   for (i = 0; i < dcc_total; i++)
     if ((dcc[i].type == &DCC_BOT) && (i != x) && (b_numver(i) < NEAT_BOTNET))
-      dprint(i, s, len);
+      hcprint(i, s, len);
 }
 #endif
 
@@ -207,7 +207,7 @@ void send_tand_but(int x, char *buf, int len)
     if ((dcc[i].type == &DCC_BOT) && (i != x) &&
         (b_numver(i) >= NEAT_BOTNET) &&
         (!iso || !(bot_flags(dcc[i].user) & BOT_ISOLATE)))
-      dprint(i, buf, len);
+      hcprint(i, buf, len);
 }
 
 void botnet_send_bye()
@@ -273,20 +273,20 @@ void botnet_send_ping(int idx)
 {
 #ifndef NO_OLD_BOTNET
   if (b_numver(idx) < NEAT_BOTNET)
-    dprintf(idx, "ping\n");
+    hcprintf(idx, "ping\n");
   else
 #endif
-    dprintf(idx, "pi\n");
+    hcprintf(idx, "pi\n");
 }
 
 void botnet_send_pong(int idx)
 {
 #ifndef NO_OLD_BOTNET
   if (b_numver(idx) < NEAT_BOTNET)
-    dprintf(idx, "pong\n");
+    hcprintf(idx, "pong\n");
   else
 #endif
-    dprintf(idx, "po\n");
+    hcprintf(idx, "po\n");
 }
 
 void botnet_send_priv EGG_VARARGS_DEF(int, arg1)
@@ -321,7 +321,7 @@ void botnet_send_priv EGG_VARARGS_DEF(int, arg1)
 #endif
       l = simple_sprintf(OBUF, "p %s %s %s\n", from, to, tbuf);
   }
-  dprint(idx, OBUF, l);
+  hcprint(idx, OBUF, l);
 }
 
 void botnet_send_who(int idx, char *from, char *to, int chan)
@@ -334,7 +334,7 @@ void botnet_send_who(int idx, char *from, char *to, int chan)
   else
 #endif
     l = simple_sprintf(OBUF, "w %s %s %D\n", from, to, chan);
-  dprint(idx, OBUF, l);
+  hcprint(idx, OBUF, l);
 }
 
 void botnet_send_infoq(int idx, char *par)
@@ -357,7 +357,7 @@ void botnet_send_unlink(int idx, char *who, char *via, char *bot, char *reason)
   else
 #endif
     l = simple_sprintf(OBUF, "ul %s %s %s %s\n", who, via, bot, reason);
-  dprint(idx, OBUF, l);
+  hcprint(idx, OBUF, l);
 }
 
 void botnet_send_link(int idx, char *who, char *via, char *bot)
@@ -369,7 +369,7 @@ void botnet_send_link(int idx, char *who, char *via, char *bot)
   else
 #endif
     l = simple_sprintf(OBUF, "l %s %s %s\n", who, via, bot);
-  dprint(idx, OBUF, l);
+  hcprint(idx, OBUF, l);
 }
 
 void botnet_send_unlinked(int idx, char *bot, char *args)
@@ -414,7 +414,7 @@ void botnet_send_traced(int idx, char *bot, char *buf)
   else
 #endif
     l = simple_sprintf(OBUF, "td %s %s\n", bot, buf);
-  dprint(idx, OBUF, l);
+  hcprint(idx, OBUF, l);
 }
 
 void botnet_send_trace(int idx, char *to, char *from, char *buf)
@@ -427,7 +427,7 @@ void botnet_send_trace(int idx, char *to, char *from, char *buf)
   else
 #endif
     l = simple_sprintf(OBUF, "t %s %s %s:%s\n", to, from, buf, botnetnick);
-  dprint(idx, OBUF, l);
+  hcprint(idx, OBUF, l);
 }
 
 void botnet_send_update(int idx, tand_t *ptr)
@@ -466,7 +466,7 @@ void botnet_send_reject(int idx, char *fromp, char *frombot, char *top,
     else
 #endif
       l = simple_sprintf(OBUF, "r %s %s %s\n", fromp, top, reason);
-    dprint(idx, OBUF, l);
+    hcprint(idx, OBUF, l);
   }
 }
 
@@ -480,7 +480,7 @@ void botnet_send_zapf(int idx, char *a, char *b, char *c)
   else
 #endif
     l = simple_sprintf(OBUF, "z %s %s %s\n", a, b, c);
-  dprint(idx, OBUF, l);
+  hcprint(idx, OBUF, l);
 }
 
 void botnet_send_zapf_broad(int idx, char *a, char *b, char *c)
@@ -506,7 +506,7 @@ void botnet_send_motd(int idx, char *from, char *to)
   else
 #endif
     l = simple_sprintf(OBUF, "m %s %s\n", from, to);
-  dprint(idx, OBUF, l);
+  hcprint(idx, OBUF, l);
 }
 
 void botnet_send_filereject(int idx, char *path, char *from, char *reason)
@@ -519,7 +519,7 @@ void botnet_send_filereject(int idx, char *path, char *from, char *reason)
   else
 #endif
     l = simple_sprintf(OBUF, "f! %s %s %s\n", path, from, reason);
-  dprint(idx, OBUF, l);
+  hcprint(idx, OBUF, l);
 }
 
 void botnet_send_filesend(int idx, char *path, char *from, char *data)
@@ -532,7 +532,7 @@ void botnet_send_filesend(int idx, char *path, char *from, char *data)
   else
 #endif
     l = simple_sprintf(OBUF, "fs %s %s %s\n", path, from, data);
-  dprint(idx, OBUF, l);
+  hcprint(idx, OBUF, l);
 }
 
 void botnet_send_filereq(int idx, char *from, char *bot, char *path)
@@ -545,7 +545,7 @@ void botnet_send_filereq(int idx, char *from, char *bot, char *path)
   else
 #endif
     l = simple_sprintf(OBUF, "fr %s %s:%s\n", from, bot, path);
-  dprint(idx, OBUF, l);
+  hcprint(idx, OBUF, l);
 }
 
 void botnet_send_idle(int idx, char *bot, int sock, int idle, char *away)
@@ -798,13 +798,13 @@ int add_note(char *to, char *from, char *msg, int idx, int echo)
     i = nextbot(p);
     if (i < 0) {
       if (idx >= 0)
-        dprintf(idx, BOT_NOTHERE);
+        hcprintf(idx, BOT_NOTHERE);
 
       return NOTE_ERROR;
     }
 
     if (idx >= 0 && echo)
-      dprintf(idx, "-> %s@%s: %s\n", x, p, msg);
+      hcprintf(idx, "-> %s@%s: %s\n", x, p, msg);
 
     if (idx >= 0) {
       sprintf(ssf, "%lu:%s", dcc[idx].sock, botf);
@@ -829,7 +829,7 @@ int add_note(char *to, char *from, char *msg, int idx, int echo)
   if (idx != -2) {            /* Notes from bots don't trigger it */
     if (check_tcl_note(from, to, msg)) {
       if (idx >= 0 && echo)
-        dprintf(idx, "-> %s: %s\n", to, msg);
+        hcprintf(idx, "-> %s: %s\n", to, msg);
 
       return NOTE_TCL;
     }
@@ -839,7 +839,7 @@ int add_note(char *to, char *from, char *msg, int idx, int echo)
   u = get_user_by_handle(userlist, to);
   if (!u) {
     if (idx >= 0)
-      dprintf(idx, USERF_UNKNOWN);
+      hcprintf(idx, USERF_UNKNOWN);
 
     return NOTE_ERROR;
   }
@@ -847,7 +847,7 @@ int add_note(char *to, char *from, char *msg, int idx, int echo)
   /* Is the note to a bot? */
   if (is_bot(u)) {
     if (idx >= 0)
-      dprintf(idx, BOT_NONOTES);
+      hcprintf(idx, BOT_NONOTES);
 
     return NOTE_ERROR;
   }
@@ -855,7 +855,7 @@ int add_note(char *to, char *from, char *msg, int idx, int echo)
   /* Is user rejecting notes from this source? */
   if (match_noterej(u, from)) {
     if (idx >= 0)
-      dprintf(idx, "%s rejected your note.\n", u->handle);
+      hcprintf(idx, "%s rejected your note.\n", u->handle);
 
     return NOTE_REJECT;
   }
@@ -877,7 +877,7 @@ int add_note(char *to, char *from, char *msg, int idx, int echo)
           aok = 0;
 
           if (idx >= 0)
-            dprintf(idx, "%s %s: %s\n", dcc[i].nick, BOT_USERAWAY,
+            hcprintf(idx, "%s %s: %s\n", dcc[i].nick, BOT_USERAWAY,
                     dcc[i].u.chat->away);
 
           if (!iaway)
@@ -900,12 +900,12 @@ int add_note(char *to, char *from, char *msg, int idx, int echo)
         }
 
         if (idx == -2 || !egg_strcasecmp(from, botnetnick))
-          dprintf(i, "*** [%s] %s%s\n", fr, l ? work : "", msg);
+          hcprintf(i, "*** [%s] %s%s\n", fr, l ? work : "", msg);
         else
-          dprintf(i, "%cNote [%s]: %s%s\n", 7, fr, l ? work : "", msg);
+          hcprintf(i, "%cNote [%s]: %s%s\n", 7, fr, l ? work : "", msg);
 
         if (idx >= 0 && echo)
-          dprintf(idx, "-> %s: %s\n", to, msg);
+          hcprintf(idx, "-> %s: %s\n", to, msg);
 
         return NOTE_OK;
       }
@@ -931,7 +931,7 @@ int add_note(char *to, char *from, char *msg, int idx, int echo)
      * message arrived and was stored (only oldest session is notified).
      */
     if (status == NOTE_AWAY)
-      dprintf(iaway, "*** %s.\n", BOT_NOTEARRIVED);
+      hcprintf(iaway, "*** %s.\n", BOT_NOTEARRIVED);
 
     return status;
   }

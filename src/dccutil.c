@@ -226,7 +226,7 @@ void dprint(int idx, char *buf, int len)
     } else if (dcc[idx].type && dcc[idx].type->output)
         dcc[idx].type->output(idx, buf2, dcc[idx].u.other);
     else
-        tputs(dcc[idx].sock, buf2, len);
+        tputs(dcc[idx].sock, buf, len);
   }
 }
 

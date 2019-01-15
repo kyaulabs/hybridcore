@@ -2636,12 +2636,14 @@ static void cmd_pls_telnethost(struct userrec *u, int idx, char *par)
   FILE *file;
   FILE *file2;
 
-  char host[512];
+  char *host;
+  //char host[512];
   if (!par[0]) {
     dprintf(idx, "Usage: +telnet <ipaddr>\n");
     return;
   }
-  split(host, par);
+  host = newsplit(&par);
+  //split(host, par);
   if (host != NULL)
     if (!host[0]) {
       strcpy(host, par);
