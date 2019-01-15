@@ -248,7 +248,7 @@ static void bot_version(int idx, char *par)
   }
 #endif
   strlcpy(dcc[idx].u.bot->version, par, 120);
-  putlog(LOG_BOTS, "*", "\00309□\003 hybrid(core): \00314linked to\003 \00310%s\003\n", dcc[idx].nick);
+  putlog(LOG_BOTS, "*", "\00309□\003 hybrid(core): \00314linked to\003 \00310%s\003", dcc[idx].nick);
   botnet_send_nlinked(idx, dcc[idx].nick, botnetnick, '!',
                       dcc[idx].u.bot->numver);
   touch_laston(dcc[idx].user, "linked", now);
