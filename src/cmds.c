@@ -887,7 +887,7 @@ static void cmd_pls_bot(struct userrec *u, int idx, char *par)
   if (host[0]) {
     addhost_by_handle(handle, host);
   } else if (!add_bot_hostmask(idx, handle)) {
-    dprintf(idx, "hostmask=\002(\002NULL\002)\002\n");
+    dprintf(idx, "\00310! WARNING:\003 %s has no \002hostmask\002 set\n", handle);
   }
 }
 

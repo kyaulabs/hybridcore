@@ -248,7 +248,7 @@ static void bot_version(int idx, char *par)
   }
 #endif
   strlcpy(dcc[idx].u.bot->version, par, 120);
-  putlog(LOG_BOTS, "*", "\002>>>\002 Linked to %s\n", dcc[idx].nick);
+  putlog(LOG_BOTS, "*", "\00309□\003 hybrid(core): \00314linked to\003 \00310%s\003\n", dcc[idx].nick);
   botnet_send_nlinked(idx, dcc[idx].nick, botnetnick, '!',
                       dcc[idx].u.bot->numver);
   touch_laston(dcc[idx].user, "linked", now);
@@ -1303,7 +1303,7 @@ static void dcc_telnet(int idx, char *buf, int i)
   while ((sock == -1) && (errno == EAGAIN))
     sock = answer(dcc[idx].sock, &dcc[i].sockname, &port, 0);
   if (sock < 0) {
-    putlog(LOG_MISC, "*", "telnet\002(\002%s\002)\002 rejected", strerror(errno));
+    putlog(LOG_MISC, "*", "\00304‼ ERROR:\003 telnet from \002%s\002 rejected", strerror(errno));
     return;
   }
   

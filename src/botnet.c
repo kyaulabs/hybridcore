@@ -590,7 +590,7 @@ void tell_bottree(int idx, int showver)
   int tothops = 0;
 
   if (tands == 0) {
-    dprintf(idx, "link me baby..\n");
+    dprintf(idx, "\00311≡\003 bots: \00314none linked\003\n");
     return;
   }
   s[0] = 0;
@@ -705,9 +705,9 @@ void tell_bottree(int idx, int showver)
           }
           more = 1;
           if (cnt > 1)
-            dprintf(idx, "%s  |-%s\n", work, s);
+            dprintf(idx, "%s\00301,01.\003 \00314|-\003%s\n", work, s);
           else
-            dprintf(idx, "%s  `-%s\n", work, s);
+            dprintf(idx, "%s\00301,01.\003 \00314`-\003%s\n", work, s);
           this = bot2;
           work[0] = 0;
           if (cnt > 1)
@@ -729,7 +729,7 @@ void tell_bottree(int idx, int showver)
     }
   }
   /* Hop information: (9d) */
-  dprintf(idx, "Average hops: %3.1f, total bots: %d\n",
+  dprintf(idx, "\00311≡\003 hops: \00314%3.1f\003 \00306<average>\003\00301,01.\003 total bots: \00314%d\003\n",
           ((float) tothops) / ((float) tands), tands + 1);
 }
 

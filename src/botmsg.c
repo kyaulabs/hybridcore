@@ -900,7 +900,7 @@ int add_note(char *to, char *from, char *msg, int idx, int echo)
         }
 
         if (idx == -2 || !egg_strcasecmp(from, botnetnick))
-          hcprintf(i, "*** [%s] %s%s\n", fr, l ? work : "", msg);
+          dprintf(i, "*** [%s] %s%s\n", fr, l ? work : "", msg);
         else
           hcprintf(i, "%cNote [%s]: %s%s\n", 7, fr, l ? work : "", msg);
 
