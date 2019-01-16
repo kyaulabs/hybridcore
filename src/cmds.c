@@ -1296,16 +1296,16 @@ void cmd_die(struct userrec *u, int idx, char *par)
   if (par[0]) {
     putlog(LOG_CMDS, "*", "\00307#die#\003 \00306%s\003 %s", par, dcc[idx].nick);
     egg_snprintf(s1, sizeof s1, "BOT SHUTDOWN (%s: %s)", dcc[idx].nick, par);
-    egg_snprintf(s2, sizeof s2, "\00304DIE\003 \00314by\003 %s!%s \00306(%s)\003", dcc[idx].nick,
+    egg_snprintf(s2, sizeof s2, "\00304DIE\003 \00314by\003 %s!%s \00306<%s>\003", dcc[idx].nick,
                  dcc[idx].host, par);
     strlcpy(quit_msg, par, 1024);
   } else {
     putlog(LOG_CMDS, "*", "\00307#die#\003 %s", dcc[idx].nick);
     egg_snprintf(s1, sizeof s1, "BOT SHUTDOWN (Authorized by %s)",
                  dcc[idx].nick);
-    egg_snprintf(s2, sizeof s2, "\00304DIE\003 \00314by\003 %s!%s \00306(2600)\003", dcc[idx].nick,
+    egg_snprintf(s2, sizeof s2, "\00304DIE\003 \00314by\003 %s!%s \00306<ak!ra>\003", dcc[idx].nick,
                  dcc[idx].host);
-    strlcpy(quit_msg, dcc[idx].nick, 1024);
+    strlcpy(quit_msg, "ak!ra", 1024);
   }
   kill_bot(s1, s2);
 }

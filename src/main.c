@@ -188,7 +188,10 @@ void fatal(const char *s, int recoverable)
 {
   int i;
 
-  putlog(LOG_MISC, "*", "\00304‼ ERROR:\003 %s", s);
+  if (recoverable == 2)
+    putlog(LOG_MISC, "*", "\00304‼\003 %s", s);
+  else
+    putlog(LOG_MISC, "*", "\00304‼ ERROR:\003 %s", s);
   flushlogs();
   for (i = 0; i < dcc_total; i++)
     if (dcc[i].sock >= 0)
@@ -678,7 +681,7 @@ static void core_secondly()
       call_hook(HOOK_MINUTELY);
     }
     if (i > 1)
-      putlog(LOG_MISC, "*", "(!) timer drift -- spun %d minutes", i);
+      putlog(LOG_MISC, "*", "\00310! WARNING:\003 timer drift -- spun %d minutes", i);
     miltime = (nowtm.tm_hour * 100) + (nowtm.tm_min);
     if (((int) (nowtm.tm_min / 5) * 5) == (nowtm.tm_min)) {     /* 5 min */
       call_hook(HOOK_5MINUTELY);
@@ -693,7 +696,7 @@ static void core_secondly()
 
         strlcpy(s, ctime(&now), sizeof s);
         if (quiet_save < 3)
-          putlog(LOG_ALL, "*", "--- %.11s%s", s, s + 20);
+          putlog(LOG_ALL, "*", "\00308‼\003 Date Change: \00314%.11s%s\003", s, s + 20);
         call_hook(HOOK_BACKUP);
         for (j = 0; j < max_logs; j++) {
           if (logs[j].filename != NULL && logs[j].f != NULL) {

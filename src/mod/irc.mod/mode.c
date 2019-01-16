@@ -1017,13 +1017,13 @@ static int gotmode(char *from, char *origmsg)
     reversing = 0;
     chan = findchan(ch);
     if (!chan) {
-      putlog(LOG_MISC, "*", CHAN_FORCEJOIN, ch);
+      putlog(LOG_MISC, "*", "\00304‼ ERROR:\003 leaving invalid channel: %s", ch);
       dprintf(DP_SERVER, "PART %s\n", ch);
     } else if (channel_active(chan) || channel_pending(chan)) {
       z = strlen(msg);
       if (msg[--z] == ' ')      /* I hate cosmetic bugs :P -poptix */
         msg[z] = 0;
-      putlog(LOG_MODES, chan->dname, "%s: mode change '%s %s' by %s", ch, chg,
+      putlog(LOG_MODES, chan->dname, "\00313■\003 %s: \00314%s %s\003 \00310<%s>\003", ch, chg,
              msg, from);
       u = get_user_by_host(from);
       get_user_flagrec(u, &user, ch);
