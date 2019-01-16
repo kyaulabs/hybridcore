@@ -482,10 +482,9 @@ static void tell_user(int idx, struct userrec *u)
     else
       egg_strftime(s1, 6, "%H:%M", localtime(&li->laston));
   }
-  egg_snprintf(format, sizeof format, "%%-%us %%-5s%%5d %%-15s %%s (%%s)\n",
-               HANDLEN);
-  dprintf(idx, format, u->handle,
-          get_user(&USERENTRY_PASS, u) ? "yes" : "no", n, s, s1,
+  egg_snprintf(format, sizeof format, "\00311%%s\003 \00310+%%s\003 %%s\00314%%d notes\003 laston: \00314%%s (%%s)\003\n");
+  dprintf(idx, format, u->handle, s,
+          get_user(&USERENTRY_PASS, u) ? "\00303<passwd>\003 " : "\00305<no passwd>\003 ", n, s1,
           (li && li->lastonplace) ? li->lastonplace : "nowhere");
   /* channel flags? */
   for (ch = u->chanrec; ch; ch = ch->next) {
@@ -533,7 +532,7 @@ void tell_user_ident(int idx, char *id)
   }
   egg_snprintf(format, sizeof format,
                "%%-%us PASS NOTES FLAGS           LAST\n", HANDLEN);
-  dprintf(idx, format, "HANDLE");
+  //dprintf(idx, format, "HANDLE");
   tell_user(idx, u);
 }
 
@@ -552,7 +551,7 @@ void tell_users_match(int idx, char *mtch, int start, int limit, char *chname)
   cnt = 0;
   egg_snprintf(format, sizeof format,
                "%%-%us PASS NOTES FLAGS           LAST\n", HANDLEN);
-  dprintf(idx, format, "HANDLE");
+  //dprintf(idx, format, "HANDLE");
   if (start > 1)
     dprintf(idx, "(%s %d)\n", MISC_SKIPPING, start - 1);
   if (strchr("+-&|", *mtch)) {

@@ -198,7 +198,7 @@ int def_dupuser(struct userrec *new, struct userrec *old, struct user_entry *e)
 static void comment_display(int idx, struct user_entry *e)
 {
   if (dcc[idx].user && (dcc[idx].user->flags & USER_MASTER))
-    dprintf(idx, "  COMMENT: %.70s\n", e->u.string);
+    dprintf(idx, "comment: \00314%.70s\003\n", e->u.string);
 }
 
 struct user_entry_type USERENTRY_COMMENT = {
@@ -730,12 +730,12 @@ static void botaddr_display(int idx, struct user_entry *e)
 {
   struct bot_addr *bi = (struct bot_addr *) e->u.extra;
 
-  dprintf(idx, "  ADDRESS: %.70s\n", bi->address);
+  dprintf(idx, "bot addr: \00314%.70s\003\n", bi->address);
 #ifdef TLS
-  dprintf(idx, "     users: %s%d, bots: %s%d\n", (bi->ssl & TLS_RELAY) ? "+" : "",
+  dprintf(idx, "user port: \00314%s%d\003 \00301,01.\003 bot port: \00314%s%d\003\n", (bi->ssl & TLS_RELAY) ? "+" : "",
           bi->relay_port, (bi->ssl & TLS_BOT) ? "+" : "", bi->telnet_port);
 #else
-  dprintf(idx, "     users: %d, bots: %d\n", bi->relay_port, bi->telnet_port);
+  dprintf(idx, "user port: \00314%d\003 \00301,01.\003 bot port: \00314%d\003\n", bi->relay_port, bi->telnet_port);
 #endif
 }
 
@@ -944,7 +944,7 @@ static void xtra_display(int idx, struct user_entry *e)
     /* Ok, it's a valid xtra field entry */
     for (j = 0; j < lc; j++) {
       if (!egg_strcasecmp(list[j], xk->key))
-        dprintf(idx, "  %s: %s\n", xk->key, xk->data);
+        dprintf(idx, "\00310‧\003 %s: \00314%s\003\n", xk->key, xk->data);
     }
   }
   Tcl_Free((char *) list);
@@ -1148,7 +1148,7 @@ static void hosts_display(int idx, struct user_entry *e)
   struct list_type *q;
 
   s[0] = 0;
-  strcpy(s, "  HOSTS: ");
+  strcpy(s, "hosts: \00314");
   for (q = e->u.list; q; q = q->next) {
     if (s[0] && !s[9])
       strncat(s, q->extra, (sizeof s - strlen(s) -1));
@@ -1165,7 +1165,7 @@ static void hosts_display(int idx, struct user_entry *e)
     }
   }
   if (s[0])
-    dprintf(idx, "%s\n", s);
+    dprintf(idx, "%s\003\n", s);
 }
 
 static int hosts_set(struct userrec *u, struct user_entry *e, void *buf)

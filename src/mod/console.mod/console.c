@@ -212,14 +212,13 @@ static void console_display(int idx, struct user_entry *e)
   struct console_info *i = e->u.extra;
 
   if (dcc[idx].user && (dcc[idx].user->flags & USER_MASTER)) {
-    dprintf(idx, "  %s\n", CONSOLE_SAVED_SETTINGS);
-    dprintf(idx, "    %s %s\n", CONSOLE_CHANNEL, i->channel);
-    dprintf(idx, "    %s %s, %s %s, %s %s\n", CONSOLE_FLAGS,
-            masktype(i->conflags), CONSOLE_STRIPFLAGS,
-            stripmasktype(i->stripflags), CONSOLE_ECHO,
+    //dprintf(idx, "  %s\n", CONSOLE_SAVED_SETTINGS);
+    dprintf(idx, "console: \00314%s\003\n", i->channel);
+    dprintf(idx, "console flags: \00314%s\003 \00301,01.\003 strip flags: \00314%s\003 \00301,01.\003 echo: \00314%s\003\n",
+            masktype(i->conflags), stripmasktype(i->stripflags),
             i->echoflags ? CONSOLE_YES : CONSOLE_NO);
-    dprintf(idx, "    %s %d, %s %s%d\n", CONSOLE_PAGE_SETTING, i->page,
-            CONSOLE_CHANNEL2, (i->conchan < GLOBAL_CHANS) ? "" : "*",
+    dprintf(idx, "page setting: \00314%d\003 \00301,01.\003 console channel: \00314%s%d\003\n", i->page,
+            (i->conchan < GLOBAL_CHANS) ? "" : "*",
             i->conchan % GLOBAL_CHANS);
   }
 }
@@ -325,14 +324,12 @@ static int console_store(struct userrec *u, int idx, char *par)
     i->page = 0;
   i->conchan = dcc[idx].u.chat->channel;
   if (par) {
-    dprintf(idx, "%s\n", CONSOLE_SAVED_SETTINGS2);
-    dprintf(idx, "  %s %s\n", CONSOLE_CHANNEL, i->channel);
-    dprintf(idx, "  %s %s, %s %s, %s %s\n", CONSOLE_FLAGS,
-            masktype(i->conflags), CONSOLE_STRIPFLAGS,
-            stripmasktype(i->stripflags), CONSOLE_ECHO,
+    //dprintf(idx, "%s\n", CONSOLE_SAVED_SETTINGS2);
+    dprintf(idx, "console: \00314%s\003\n", i->channel);
+    dprintf(idx, "console flags: \00314%s\003 \00301,01.\003 strip flags: \00314%s\003 \00301,01.\003 echo: \00314%s\003\n",
+            masktype(i->conflags), stripmasktype(i->stripflags),
             i->echoflags ? CONSOLE_YES : CONSOLE_NO);
-    dprintf(idx, "  %s %d, %s %d\n", CONSOLE_PAGE_SETTING, i->page,
-            CONSOLE_CHANNEL2, i->conchan);
+    dprintf(idx, "page setting: \00314%d\003 \00301,01.\003 console channel: \00314%d\003\n", i->page, i->conchan);
   }
   set_user(&USERENTRY_CONSOLE, u, i);
   return 0;

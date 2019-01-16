@@ -837,7 +837,7 @@ static void botfl_display(int idx, struct user_entry *e)
 
   fr.bot = e->u.ulong;
   build_flags(x, &fr, NULL);
-  dprintf(idx, "  BOT FLAGS: %s\n", x);
+  dprintf(idx, "bot flags: \00314+%s\003\n", x);
 }
 
 struct user_entry_type USERENTRY_BOTFL = {
