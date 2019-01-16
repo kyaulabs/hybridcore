@@ -69,7 +69,7 @@ static int msg_hello(char *nick, char *h, struct userrec *u, char *p)
     } else
       userlist = adduser(userlist, handle, host, "-",
                          sanity_check(default_flags));
-    putlog(LOG_MISC, "*", "%s %s (%s)", IRC_INTRODUCED, nick, host);
+    putlog(LOG_MISC, "*", "\00311=\003 !%s! \00314(%s)\003 \00310<SECURE +ADMIN>\003", nick, host);
   }
   for (chan = chanset; chan; chan = chan->next)
     if (ismember(chan, handle))
@@ -80,7 +80,7 @@ static int msg_hello(char *nick, char *h, struct userrec *u, char *p)
     dprintf(DP_HELP, "NOTICE %s :%s\n", nick, IRC_SALUT2B);
   }
   if (make_userfile) {
-    putlog(LOG_MISC, "*", IRC_INIT1, handle);
+    putlog(LOG_MISC, "*", "\00309□\003 hybrid(core): \00314install complete\003 \00306<%s>\003", handle);
     make_userfile = 0;
     write_userfile(-1);
   } else {
@@ -139,7 +139,7 @@ static int msg_pass(char *nick, char *host, struct userrec *u, char *par)
   if (!par[0]) {
     dprintf(DP_HELP, "NOTICE %s :%s\n", nick,
             u_pass_match(u, "-") ? IRC_NOPASS : IRC_PASS);
-    putlog(LOG_CMDS, "*", "(%s!%s) !%s! PASS?", nick, host, u->handle);
+    putlog(LOG_CMDS, "*", "\00311=\003 !%s! \00314(%s!%s)\003 \00310<?PASS?>\003", u->handle, nick, host);
     return 1;
   }
   old = newsplit(&par);
@@ -155,18 +155,18 @@ static int msg_pass(char *nick, char *host, struct userrec *u, char *par)
     new = newsplit(&par);
   } else
     new = old;
-  putlog(LOG_CMDS, "*", "(%s!%s) !%s! (SECURE PASS)", nick, host, u->handle);
+  putlog(LOG_CMDS, "*", "\00311=\003 !%s! \00314(%s!%s)\003 \00310<SECURE PASS>\003", u->handle, nick, host);
   if (strlen(new) > 15)
     new[15] = 0;
   /* secpass function */
   if (secpass(new) == 0) {
     dprintf(DP_HELP, "NOTICE %s :(%s) is not secure try again\n", nick, new);
-    putlog(LOG_CMDS, "*", "!%s! Insecure PASS accempt", u->handle);
+    putlog(LOG_CMDS, "*", "\00311=\003 !%s! \00314(%s!%s)\003 \00304<INSECURE PASS>\003", u->handle, nick, host);
     return 1;
   }
   set_user(&USERENTRY_PASS, u, new);
   dprintf(DP_HELP, "NOTICE %s :%s \002(\002%s\002)\002\n", nick,
-          new == old ? IRC_SETPASS : IRC_CHANGEPASS, new);
+          "password =", new);
   return 1;
 }
 
@@ -195,7 +195,7 @@ static int msg_addhost(char *nick, char *host, struct userrec *u, char *par)
   } else if (rfc_casecmp(who, origbotname) && !(u2->flags & USER_BOT)) {
     /* This could be used as detection... */
     if (u_pass_match(u2, "-")) {
-      putlog(LOG_CMDS, "*", "(%s!%s) !*! IDENT %s", nick, host, who);
+      putlog(LOG_CMDS, "*", "\00311=\003 !*! \00314(%s!%s)\003 \00310<SECURE IDENT %s>\003", nick, host, who);
       if (!quiet_reject)
         dprintf(DP_HELP, "NOTICE %s :%s\n", nick, IRC_NOPASS);
     } else if (!u_pass_match(u2, pass)) {
@@ -214,7 +214,7 @@ static int msg_addhost(char *nick, char *host, struct userrec *u, char *par)
       dprintf(DP_HELP, IRC_MISIDENT, nick, who, u->handle);
       return 1;
     } else {
-      putlog(LOG_CMDS, "*", "(%s!%s) !*! IDENT %s", nick, host, who);
+      putlog(LOG_CMDS, "*", "\00311=\003 !*! \00314(%s!%s)\003 \00310<SECURE IDENT %s>\003", nick, host, who);
       egg_snprintf(s, sizeof s, "%s!%s", nick, host);
       maskhost(s, s1);
       dprintf(DP_HELP, "NOTICE %s :%s: %s\n", nick, IRC_ADDHOSTMASK, s1);
@@ -223,7 +223,7 @@ static int msg_addhost(char *nick, char *host, struct userrec *u, char *par)
       return 1;
     }
   }
-  putlog(LOG_CMDS, "*", "(%s!%s) !*! failed IDENT %s", nick, host, who);
+  putlog(LOG_CMDS, "*", "\00311=\003 !*! \00314(%s!%s)\003 \00304<FAILED IDENT %s>\003", nick, host, who);
   return 1;
 }
 
@@ -245,7 +245,7 @@ static int msg_op(char *nick, char *host, struct userrec *u, char *par)
           get_user_flagrec(u, &fr, par);
           if (chan_op(fr) || (glob_op(fr) && !chan_deop(fr)))
             add_mode(chan, '+', 'o', nick);
-          putlog(LOG_CMDS, "*", "(%s!%s) !%s! OP %s", nick, host, u->handle,
+          putlog(LOG_CMDS, "*", "\00311=\003 !%s! \00314(%s!%s)\003 \00310<SECURE OP %s>\003", u->handle, nick, host,
                  par);
           return 1;
         }
@@ -255,12 +255,12 @@ static int msg_op(char *nick, char *host, struct userrec *u, char *par)
           if (chan_op(fr) || (glob_op(fr) && !chan_deop(fr)))
             add_mode(chan, '+', 'o', nick);
         }
-        putlog(LOG_CMDS, "*", "(%s!%s) !%s! OP", nick, host, u->handle);
+        putlog(LOG_CMDS, "*", "\00311=\003 !%s! \00314(%s!%s)\003 \00310<SECURE OP>\003", u->handle, nick, host);
         return 1;
       }
     }
   }
-  putlog(LOG_CMDS, "*", "(%s!%s) !*! failed OP", nick, host);
+  putlog(LOG_CMDS, "*", "\00311=\003 !*! \00314(%s!%s)\003 \00304<FAILED OP>\003", nick, host);
   return 1;
 }
 
@@ -283,8 +283,8 @@ static int msg_halfop(char *nick, char *host, struct userrec *u, char *par)
           if (chan_op(fr) || chan_halfop(fr) || (glob_op(fr) &&
               !chan_deop(fr)) || (glob_halfop(fr) && !chan_dehalfop(fr)))
             add_mode(chan, '+', 'h', nick);
-          putlog(LOG_CMDS, "*", "(%s!%s) !%s! HALFOP %s",
-                 nick, host, u->handle, par);
+          putlog(LOG_CMDS, "*", "\00311=\003 !%s! \00314(%s!%s)\003 \00310<SECURE HALFOP %s>\003",
+                 u->handle, nick, host, par);
           return 1;
         }
       } else {
@@ -294,12 +294,12 @@ static int msg_halfop(char *nick, char *host, struct userrec *u, char *par)
               !chan_deop(fr)) || (glob_halfop(fr) && !chan_dehalfop(fr)))
             add_mode(chan, '+', 'h', nick);
         }
-        putlog(LOG_CMDS, "*", "(%s!%s) !%s! HALFOP", nick, host, u->handle);
+        putlog(LOG_CMDS, "*", "\00311=\003 !%s! \00314(%s!%s)\003 \00310<SECURE HALFOP>\003", u->handle, nick, host);
         return 1;
       }
     }
   }
-  putlog(LOG_CMDS, "*", "(%s!%s) !*! failed HALFOP", nick, host);
+  putlog(LOG_CMDS, "*", "\00311=\003 !*! \00314(%s!%s)\003 \00304<FAILED HALFOP>\003", nick, host);
   return 1;
 }
 
@@ -324,10 +324,10 @@ static int msg_voice(char *nick, char *host, struct userrec *u, char *par)
           get_user_flagrec(u, &fr, par);
           if (chan_voice(fr) || glob_voice(fr) || chan_op(fr) || glob_op(fr)) {
             add_mode(chan, '+', 'v', nick);
-            putlog(LOG_CMDS, "*", "(%s!%s) !%s! VOICE %s", nick, host,
-                   u->handle, par);
+            putlog(LOG_CMDS, "*", "\00311=\003 !%s! \00314(%s!%s)\003 \00310<SECURE VOICE %s>\003", u->handle, nick, host,
+                   par);
           } else
-            putlog(LOG_CMDS, "*", "(%s!%s) !*! failed VOICE %s",
+            putlog(LOG_CMDS, "*", "\00311=\003 !*! \00314(%s!%s)\003 \00304<FAILED VOICE %s>\003",
                    nick, host, par);
           return 1;
         }
@@ -338,12 +338,12 @@ static int msg_voice(char *nick, char *host, struct userrec *u, char *par)
               chan_op(fr) || glob_op(fr) || chan_halfop(fr) || glob_halfop(fr))
             add_mode(chan, '+', 'v', nick);
         }
-        putlog(LOG_CMDS, "*", "(%s!%s) !%s! VOICE", nick, host, u->handle);
+        putlog(LOG_CMDS, "*", "\00311=\003 !%s! \00314(%s!%s)\003 \00310<SECURE VOICE>\003", u->handle, nick, host);
         return 1;
       }
     }
   }
-  putlog(LOG_CMDS, "*", "(%s!%s) !*! failed VOICE", nick, host);
+  putlog(LOG_CMDS, "*", "\00311=\003 !*! \00314(%s!%s)\003 \00304<FAILED VOICE>\003", nick, host);
   return 1;
 }
 

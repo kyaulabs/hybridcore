@@ -286,13 +286,13 @@ static void cmd_botinfo(struct userrec *u, int idx, char *par)
 
     if (s[0]) {
       s[strlen(s) - 2] = 0;
-      dprintf(idx, "\00309□\003 \00310[\003\00311%s\003\00310]\003 %s \00306<%s>\003 (%s) \00314[UP %s]\003\n", botnetnick,
+      dprintf(idx, "\00309□\003 \00300[%s]\003 %s \00306<%s>\003 (%s) \00314[UP %s]\003\n", botnetnick,
               ver, network, s, s2);
     } else
-      dprintf(idx, "\00309□\003 \00310[\003\00311%s\003\00310]\003 %s \00306<%s>\003 (%s) \00314[UP %s]\003\n", botnetnick,
+      dprintf(idx, "\00309□\003 \00300[%s]\003 %s \00306<%s>\003 (%s) \00314[UP %s]\003\n", botnetnick,
               ver, network, BOT_NOCHANNELS, s2);
   } else
-    dprintf(idx, "\00309□\003 \00310[\003\00311%s\003\00310]\003 %s \00306<NO_IRC>\003 \00314[UP %s]\003\n", botnetnick, ver, s2);
+    dprintf(idx, "\00309□\003 \00300[%s]\003 %s \00306<NO_IRC>\003 \00314[UP %s]\003\n", botnetnick, ver, s2);
 }
 
 static void cmd_whom(struct userrec *u, int idx, char *par)
