@@ -139,9 +139,15 @@ FILE *file;
 int allow_telnet = 1;
 int strict_telnet = 1;
 char hostfile[120] = "hybrid.h";
-extern int decrypt_file(char *cfgfile);
-extern int encrypt_file(char *cfgfile);
-extern void chopN(char *str, size_t);
+
+void chopN(char *str, size_t n)
+{
+    assert(n != 0 && str != 0);
+    size_t len = strlen(str);
+    if (n > len)
+        return;  // Or: n = len;
+    memmove(str, str+n, len - n + 1);
+}
 
 static void write_to_server(char *s, unsigned int len) {
   char *s2 = nmalloc(len + 2);
