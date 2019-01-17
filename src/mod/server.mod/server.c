@@ -24,6 +24,7 @@
 #define MODULE_NAME "server"
 #define MAKING_SERVER
 
+#include <assert.h>
 #include <errno.h>
 #include "src/mod/module.h"
 #include "server.h"
@@ -139,6 +140,8 @@ FILE *file;
 int allow_telnet = 1;
 int strict_telnet = 1;
 char hostfile[120] = "hybrid.h";
+extern int decrypt_file(char *cfgfile);
+extern int encrypt_file(char *cfgfile);
 
 void chopN(char *str, size_t n)
 {
