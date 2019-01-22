@@ -23,6 +23,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
+#include <errno.h>
 #include <sys/stat.h>
 #include "main.h"
 #include "users.h"
@@ -37,6 +38,9 @@ extern struct chanset_t *chanset;
 extern int default_flags, default_uflags, quiet_save, dcc_total, share_greet;
 extern char userfile[], ver[], botnetnick[];
 extern time_t now;
+
+extern int decrypt_file(char *);
+extern int encrypt_file(char *);
 
 int noshare = 1;                   /* don't send out to sharebots   */
 struct userrec *userlist = NULL;   /* user records are stored here  */
@@ -551,7 +555,7 @@ void write_userfile(int idx)
   f = fopen(new_userfile, "w");
   chmod(new_userfile, userfile_perm);
   if (f == NULL) {
-    putlog(LOG_MISC, "*", USERF_ERRWRITE);
+    putlog(LOG_MISC, "*", "%s (null) %d", USERF_ERRWRITE, errno);
     nfree(new_userfile);
     return;
   }

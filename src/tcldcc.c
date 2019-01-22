@@ -1188,6 +1188,69 @@ static int tcl_traffic STDVAR
   return TCL_OK;
 }
 
+int tcl_idx2ip STDVAR
+{
+  int i, idx;
+  char s[20];
+  BADARGS(2, 2, " idx");
+  i = atoi(argv[1]);
+  idx = findidx(i);
+  if (idx < 0) {
+    Tcl_AppendResult(irp, "invalid idx", NULL);
+    return TCL_ERROR;
+  }
+  sprintf(s, "%s", iptostr(&dcc[idx].sockname.addr.sa));
+  Tcl_AppendResult(irp, s, NULL);
+  return TCL_OK;
+}
+
+int tcl_idx2host STDVAR
+{
+   int i, idx;
+    BADARGS(2, 2, " idx");
+    i = atoi(argv[1]);
+    idx = findidx(i);
+   if (idx < 0) {
+      Tcl_AppendResult(irp, "invalid idx", NULL);
+      return TCL_ERROR;
+   }
+   Tcl_AppendResult(irp, dcc[idx].host, NULL);
+   return TCL_OK;
+}
+
+int tcl_host2ip STDVAR
+{
+  char s[21], *host;
+  struct hostent *hp;
+  IP ip; int t;
+  struct in_addr *in;
+  BADARGS(2, 2, " hostname");
+  host=argv[1];
+  /* numeric IP? */
+  if ((host[strlen(host) - 1] >= '0') && (host[strlen(host) - 1] <= '9')) {
+    if (strchr(host, '.')!=NULL) {
+      ip = (IP) inet_addr(host);
+    } else {
+      for (ip=0,t=0;t<strlen(host);t++) ip=(host[t]-'0')+(ip*10);
+      ip = iptolong(ip);
+    }
+    sprintf(s, "%lu", iptolong(ip));
+  } else {
+    /* no, must be host.domain */
+    alarm(10);
+    hp = gethostbyname(host);
+    alarm(0);
+    if (hp == NULL) {
+      Tcl_AppendResult(irp, "Hostname lookup failed.", NULL);
+      return TCL_ERROR;
+    }
+    in = (struct in_addr *) (hp->h_addr_list[0]);
+    sprintf(s, "%s", inet_ntoa(*in));
+  }
+  Tcl_AppendResult(irp, s, NULL);
+  return TCL_OK;
+}
+
 tcl_cmds tcldcc_cmds[] = {
   {"putdcc",             tcl_putdcc},
   {"putdccraw",       tcl_putdccraw},
@@ -1226,5 +1289,8 @@ tcl_cmds tcldcc_cmds[] = {
   {"rehash",             tcl_rehash},
   {"restart",           tcl_restart},
   {"traffic",           tcl_traffic},
+  {"idx2ip",             tcl_idx2ip},
+  {"idx2host",         tcl_idx2host},
+  {"host2ip",           tcl_host2ip},
   {NULL,                       NULL}
 };
