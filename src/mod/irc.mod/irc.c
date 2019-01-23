@@ -973,7 +973,7 @@ static void irc_report(int idx, int details)
   int k, l;
   struct chanset_t *chan;
 
-  strcpy(q, "Channels: ");
+  strcpy(q, "channels: ");
   k = 10;
   for (chan = chanset; chan; chan = chan->next) {
     if (idx != DP_STDOUT)
@@ -990,8 +990,8 @@ static void irc_report(int idx, int details)
         else if ((chan->dname[0] != '+') && !me_op(chan))
           p = MISC_WANTOPS;
       }
-      l = simple_sprintf(ch, "%s%s%s%s, ", chan->dname, p ? " (" : "",
-                         p ? p : "", p ? ")" : "");
+      l = simple_sprintf(ch, "\00314%s%s%s%s,\003 ", chan->dname, p ? " \00305(" : "",
+                         p ? p : "", p ? ")\003" : "");
       if ((k + l) > 70) {
         dprintf(idx, "    %s\n", q);
         strcpy(q, "          ");
@@ -1002,7 +1002,7 @@ static void irc_report(int idx, int details)
   }
   if (k > 10) {
     q[k - 2] = 0;
-    dprintf(idx, "    %s\n", q);
+    dprintf(idx, "\00309□\003 %s\n", q);
   }
 }
 

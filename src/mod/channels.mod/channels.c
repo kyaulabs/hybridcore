@@ -48,77 +48,11 @@ static int gfld_chan_thr, gfld_chan_time, gfld_deop_thr, gfld_deop_time,
            gfld_kick_thr, gfld_kick_time, gfld_join_thr, gfld_join_time,
            gfld_ctcp_thr, gfld_ctcp_time, gfld_nick_thr, gfld_nick_time;
 
-extern int encrypt_file(char *cfgfile);
-extern int decrypt_file(char *cfgfile);
-extern void secure_tcl_load();
-
 #include "channels.h"
 #include "cmdschan.c"
 #include "tclchan.c"
 #include "userchan.c"
 #include "udefchan.c"
-#include "blowfish.c"
-
-/* SECURE: encrypt_file() {{{ */
-int encrypt_file(char *cfgfile) {
-  struct stat buffer;
-  if (stat (cfgfile, &buffer) == 0) {
-    char *encstr = {0};
-    char stuff[8192] = {0};
-    FILE *ecfg, *dcfg;
-    ecfg = fopen(cfgfile, "r");
-    dcfg = fopen(".tmp1", "w");
-    while (fgets(stuff, sizeof stuff, ecfg) != NULL) {
-      size_t len = strlen (stuff);
-      if (len && stuff [len - 1] == '\n')
-        stuff[--len] = 0;
-      encstr = encrypt_string(HYBRID_SALT, stuff);
-      if (encstr == NULL)
-        continue;
-      int slen = strlen(encstr);
-      encstr[slen] = 0;
-      fprintf(dcfg, "%s\n", encstr);
-    }
-    fclose(ecfg);
-    fclose(dcfg);
-    chmod(".tmp1", HYBRID_MODE);
-    return 1;
-  } else {
-    return 0;
-  }
-  return 0;
-}
-/* }}} */
-/* SECURE: decrypt_file() {{{ */
-int decrypt_file(char *cfgfile) {
-  struct stat buffer;
-  if (stat (cfgfile, &buffer) == 0) {
-    char stuff[8192] = {0};
-    char *decstr = {0};
-    FILE *ecfg, *dcfg;
-    ecfg = fopen(cfgfile, "r");
-    dcfg = fopen(".tmp2", "w");
-    while (fgets(stuff, sizeof stuff, ecfg) != NULL) {
-      size_t len = strlen (stuff);
-      if (len && stuff [len - 1] == '\n')
-        stuff[--len] = 0;
-      decstr = decrypt_string(HYBRID_SALT, stuff);
-      if (decstr == NULL)
-        continue;
-      int slen = strlen(decstr);
-      decstr[slen] = 0;
-      fprintf(dcfg, "%s\n", decstr);
-    }
-    fclose(ecfg);
-    fclose(dcfg);
-    chmod(".tmp2", HYBRID_MODE);
-    return 1;
-  } else {
-    return 0;
-  }
-  return 0;
-}
-/* }}} */
 
 static void *channel_malloc(int size, char *file, int line)
 {
@@ -652,7 +586,7 @@ static void channels_report(int idx, int details)
 
     s[0] = 0;
 
-    sprintf(s, "    %-20s: ", chan->dname);
+    sprintf(s, "\00301,01..\003%s ", chan->dname);
 
     if (channel_inactive(chan))
       strcat(s, "(inactive)");
@@ -663,7 +597,7 @@ static void channels_report(int idx, int details)
     else {
 
       s1[0] = 0;
-      sprintf(s1, "%3d member%s", chan->channel.members,
+      sprintf(s1, "\00314(%d member%s)\003", chan->channel.members,
               (chan->channel.members == 1) ? "" : "s");
       strcat(s, s1);
 
@@ -672,7 +606,7 @@ static void channels_report(int idx, int details)
 
       if (s2[0]) {
         int len = strlen(s);
-        egg_snprintf(s + len, (sizeof s) - len, ", enforcing \"%s\"", s2); /* Concatenation */
+        egg_snprintf(s + len, (sizeof s) - len, " \00310<%s>\003", s2); /* Concatenation */
       }
 
       s2[0] = 0;

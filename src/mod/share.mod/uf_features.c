@@ -262,7 +262,7 @@ static void uf_features_parse(int idx, char *par)
 
   /* Send response string                                               */
   if (uff_sbuf[0])
-    dprintf(idx, "s feats %s\n", uff_sbuf);
+    hcprintf(idx, "s feats %s\n", uff_sbuf);
 }
 
 /* Return a list of features we are supporting.
@@ -310,7 +310,7 @@ static int uf_features_check(int idx, char *par)
        * In any case, we abort user file sharing.
        */
       putlog(LOG_BOTS, "*", "Bot %s tried unsupported feature!", dcc[idx].nick);
-      dprintf(idx, "s e Attempt to use an unsupported feature\n");
+      hcprintf(idx, "s e Attempt to use an unsupported feature\n");
       zapfbot(idx);
 
       nfree(buf);

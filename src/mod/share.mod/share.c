@@ -557,7 +557,7 @@ static void share_newchan(int idx, char *par)
           if (fr.chan) {
             /* send flags to bot requesting */
             build_flags(buffer, &fr, NULL);
-            dprintf(idx, "s a %s %s %s\n", u->handle, buffer, par);
+            hcprintf(idx, "s a %s %s %s\n", u->handle, buffer, par);
           }
         }
       }
@@ -1131,11 +1131,11 @@ static void share_userfileq(int idx, char *par)
 
   flush_tbuf(dcc[idx].nick);
   if (bfl & BOT_AGGRESSIVE)
-    dprintf(idx, "s un I have you marked for Aggressive sharing.\n");
+    hcprintf(idx, "s un I have you marked for Aggressive sharing.\n");
   else if (!(bfl & BOT_PASSIVE))
-    dprintf(idx, "s un You are not marked for sharing with me.\n");
+    hcprintf(idx, "s un You are not marked for sharing with me.\n");
   else if (min_share > dcc[idx].u.bot->numver)
-    dprintf(idx,
+    hcprintf(idx,
             "s un Your version is not high enough, need v%d.%d.%d\n",
             (min_share / 1000000), (min_share / 10000) % 100,
             (min_share / 100) % 100);
@@ -1149,12 +1149,12 @@ static void share_userfileq(int idx, char *par)
         }
       }
     if (!ok)
-      dprintf(idx, "s un Already sharing.\n");
+      hcprintf(idx, "s un Already sharing.\n");
     else {
       if (dcc[idx].u.bot->numver >= min_uffeature)
-        dprintf(idx, "s uy %s\n", uf_features_dump(idx));
+        hcprintf(idx, "s uy %s\n", uf_features_dump(idx));
       else
-        dprintf(idx, "s uy\n");
+        hcprintf(idx, "s uy\n");
       /* Set stat-getting to astatic void race condition (robey 23jun1996) */
       dcc[idx].status |= STAT_SHARE | STAT_GETTING | STAT_AGGRESSIVE;
       putlog(LOG_BOTS, "*", "Downloading user file from %s", dcc[idx].nick);
@@ -1173,12 +1173,12 @@ static void share_ufsend(int idx, char *par)
 
   egg_snprintf(s, sizeof s, ".share.%s.%li.users", botnetnick, now);
   if (!(b_status(idx) & STAT_SHARE)) {
-    dprintf(idx, "s e You didn't ask; you just started sending.\n");
-    dprintf(idx, "s e Ask before sending the userfile.\n");
+    hcprintf(idx, "s e You didn't ask; you just started sending.\n");
+    hcprintf(idx, "s e Ask before sending the userfile.\n");
     zapfbot(idx);
   } else if (dcc_total == max_dcc) {
     putlog(LOG_MISC, "*", "NO MORE DCC CONNECTIONS -- can't grab userfile");
-    dprintf(idx, "s e I can't open a DCC to you; I'm full.\n");
+    hcprintf(idx, "s e I can't open a DCC to you; I'm full.\n");
     zapfbot(idx);
   } else if (copy_to_tmp && !(f = tmpfile())) {
     putlog(LOG_MISC, "*", "CAN'T WRITE TEMPORARY USERFILE DOWNLOAD FILE!");
@@ -1207,7 +1207,7 @@ static void share_ufsend(int idx, char *par)
       lostdcc(i);
       killsock(sock);
       putlog(LOG_BOTS, "*", "Asynchronous connection failed!");
-      dprintf(idx, "s e Can't connect to you!\n");
+      hcprintf(idx, "s e Can't connect to you!\n");
       zapfbot(idx);
     } else {
       strcpy(dcc[i].nick, "*users");
@@ -1231,21 +1231,21 @@ static void share_ufsend(int idx, char *par)
 static void share_resyncq(int idx, char *par)
 {
   if (!allow_resync)
-    dprintf(idx, "s rn Not permitting resync.\n");
+    hcprintf(idx, "s rn Not permitting resync.\n");
   else {
     int bfl = bot_flags(dcc[idx].user);
 
     if (!(bfl & BOT_SHARE))
-      dprintf(idx, "s rn You are not marked for sharing with me.\n");
+      hcprintf(idx, "s rn You are not marked for sharing with me.\n");
     else if (can_resync(dcc[idx].nick)) {
-      dprintf(idx, "s r!\n");
+      hcprintf(idx, "s r!\n");
       dump_resync(idx);
       dcc[idx].status &= ~STAT_OFFERED;
       dcc[idx].status |= STAT_SHARE;
       putlog(LOG_BOTS, "*", "Resync'd user file with %s", dcc[idx].nick);
       updatebot(-1, dcc[idx].nick, '+', 0);
     } else
-      dprintf(idx, "s rn No resync buffer.\n");
+      hcprintf(idx, "s rn No resync buffer.\n");
   }
 }
 
@@ -1264,7 +1264,7 @@ static void share_resync_no(int idx, char *par)
 {
   putlog(LOG_BOTS, "*", "Resync refused by %s: %s", dcc[idx].nick, par);
   flush_tbuf(dcc[idx].nick);
-  dprintf(idx, "s u?\n");
+  hcprintf(idx, "s u?\n");
 }
 
 static void share_version(int idx, char *par)
@@ -1276,9 +1276,9 @@ static void share_version(int idx, char *par)
   if ((dcc[idx].u.bot->numver >= min_share) &&
       (bot_flags(dcc[idx].user) & BOT_AGGRESSIVE)) {
     if (can_resync(dcc[idx].nick))
-      dprintf(idx, "s r?\n");
+      hcprintf(idx, "s r?\n");
     else
-      dprintf(idx, "s u?\n");
+      hcprintf(idx, "s u?\n");
     dcc[idx].status |= STAT_OFFERED;
   }
 }
@@ -1294,7 +1294,7 @@ static void hook_read_userfile()
         /* Cancel any existing transfers */
         if (dcc[i].status & STAT_SENDING)
           cancel_user_xfer(-i, 0);
-        dprintf(i, "s u?\n");
+        hcprintf(i, "s u?\n");
         dcc[i].status |= STAT_OFFERED;
       }
   }
@@ -1530,13 +1530,13 @@ static void check_expired_tbufs()
       if (dcc[i].status & STAT_OFFERED) {
         if ((now - dcc[i].timeval > 120) && (dcc[i].user &&
             (bot_flags(dcc[i].user) & BOT_AGGRESSIVE)))
-          dprintf(i, "s u?\n");
+          hcprintf(i, "s u?\n");
           /* ^ send it again in case they missed it */
         /* If it's a share bot that hasnt been sharing, ask again */
       } else if (!(dcc[i].status & STAT_SHARE)) {
         /* Patched from original source by giusc@gbss.it <20040207> */
         if (dcc[i].user && (bot_flags(dcc[i].user) & BOT_AGGRESSIVE))  {
-          dprintf(i, "s u?\n");
+          hcprintf(i, "s u?\n");
           dcc[i].status |= STAT_OFFERED;
         }
       }
@@ -1633,7 +1633,7 @@ static void dump_resync(int idx)
   for (t = tbuf; t && t->bot[0]; t = t->next)
     if (!egg_strcasecmp(dcc[idx].nick, t->bot)) {
       for (q = t->q; q && q->msg[0]; q = q->next) {
-        dprintf(idx, "%s", q->msg);
+        hcprintf(idx, "%s", q->msg);
       }
       flush_tbuf(dcc[idx].nick);
       break;
@@ -1701,6 +1701,7 @@ static int write_tmp_userfile(char *fn, struct userrec *bu, int idx)
       putlog(LOG_BOTS, "*", "%s is too old: not sharing exempts and invites.",
              dcc[idx].nick);
     fclose(f);
+    encrypt_file(fn);
   }
   if (!ok)
     putlog(LOG_MISC, "*", USERF_ERRWRITE2);
@@ -1981,7 +1982,7 @@ static void start_sending_users(int idx)
 
   if (!uff_call_sending(idx, share_file)) {
     unlink(share_file);
-    dprintf(idx, "s e %s\n", "uff parsing failed");
+    hcprintf(idx, "s e %s\n", "uff parsing failed");
     putlog(LOG_BOTS, "*", "uff parsing failed");
     dcc[idx].status &= ~(STAT_SHARE | STAT_SENDING | STAT_AGGRESSIVE);
     return;
@@ -1989,7 +1990,7 @@ static void start_sending_users(int idx)
 
   if ((i = raw_dcc_send(share_file, "*users", "(users)")) > 0) {
     unlink(share_file);
-    dprintf(idx, "s e %s\n", USERF_CANTSEND);
+    hcprintf(idx, "s e %s\n", USERF_CANTSEND);
     putlog(LOG_BOTS, "*", "%s -- can't send userfile",
            i == DCCSEND_FULL ? "NO MORE DCC CONNECTIONS" :
            i == DCCSEND_NOSOCK ? "CAN'T OPEN A LISTENING SOCKET" :
@@ -2005,10 +2006,10 @@ static void start_sending_users(int idx)
 #ifdef TLS
     if (dcc[idx].ssl) {
       dcc[i].ssl = 1;
-      dprintf(idx, "s us %s +%d %lu\n", s, dcc[i].port, dcc[i].u.xfer->length);
+      hcprintf(idx, "s us %s +%d %lu\n", s, dcc[i].port, dcc[i].u.xfer->length);
     } else
 #endif
-    dprintf(idx, "s us %s %d %lu\n", s, dcc[i].port, dcc[i].u.xfer->length);
+    hcprintf(idx, "s us %s %d %lu\n", s, dcc[i].port, dcc[i].u.xfer->length);
     /* Start up a tbuf to queue outgoing changes for this bot until the
      * userlist is done transferring.
      */
@@ -2163,7 +2164,7 @@ static char *share_close()
   putlog(LOG_MISC | LOG_BOTS, "*", "Sending 'share end' to all sharebots...");
   for (i = 0; i < dcc_total; i++)
     if ((dcc[i].type->flags & DCT_BOT) && (dcc[i].status & STAT_SHARE)) {
-      dprintf(i, "s e Unload module\n");
+      hcprintf(i, "s e Unload module\n");
       cancel_user_xfer(-i, 0);
       updatebot(-1, dcc[i].nick, '-', 0);
       dcc[i].status &= ~(STAT_SHARE | STAT_GETTING | STAT_SENDING |

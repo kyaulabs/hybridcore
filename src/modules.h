@@ -47,16 +47,6 @@ void add_hook(int, Function);
 void del_hook(int, Function);
 void *get_next_hook(int, void *);
 
-/* cmds.c */
-void chopN(char *str, size_t);
-/* secure.c */
-void split(char *first, char *rest);
-int secpass(char *);
-int decrypt_file(char *);
-int encrypt_file(char *);
-void secure_tcl_load();
-void secure_tcl_source();
-
 extern struct hook_entry {
   struct hook_entry *next;
   Function func;

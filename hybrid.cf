@@ -26,6 +26,7 @@
 
 set admin "kyau"					;# administrator
 set hub "hc"						;# botnet-nick for hub bot
+set infobot "info"					;# botnet-nick for info bot
 set username "kyau"					;# ident
 set nick "hc"						;# irc nickname
 set altnick "hc-"					;# irc alternate nickname
@@ -45,7 +46,13 @@ set reserved-portrange 5000:5050	;# dcc data port range
 set main_config [info script]		;# main config file
 
 if { ${botnet-nick} != ${nick} } { set botnet-nick "$nick" }
-if { ${nick} == ${hub} } { set private-user 1 } else { set private-user 0 }
+if { ${nick} == ${hub} } {
+	set private-global [set private-user 1]
+	set override-bots 0
+} else {
+	set private-global [set private-user 0]
+	set override-bots 1
+}
 if { [catch { loadmodule blowfish } err] } { die "\00304‼ ERROR:\003 can't load blowfish module:\n$err" }
 
 # vim: ft=tcl sw=4 ts=4 noet:

@@ -508,7 +508,10 @@
 #endif
 /* 304 - 307 */
 #define strncpyz ((size_t (*) (char *, const char *, size_t))global[304])
-
+#define hcprintf (global[305])
+#define decrypt_file ((int (*) (char *))global[306])
+#define encrypt_file ((int (*) (char *))global[307])
+#define chopN ((void (*)(char *, size_t))global[308])
 
 /* hostmasking */
 #define maskhost(a,b) maskaddr((a),(b),3)

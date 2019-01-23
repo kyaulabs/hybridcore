@@ -606,7 +606,11 @@ Function global_table[] = {
   (Function) 0,
 #endif
   /* 304 - 307 */
-  (Function) strncpyz
+  (Function) strncpyz,
+  (Function) hcprintf,
+  (Function) decrypt_file,
+  (Function) encrypt_file,
+  (Function) chopN
 };
 
 void init_modules(void)
