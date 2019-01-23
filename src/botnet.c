@@ -756,7 +756,7 @@ void dump_links(int z)
 #endif
       l = simple_sprintf(x, "n %s %s %c%D\n", bot->bot, p,
                          bot->share, bot->ver);
-    dprint(z, x, l);
+    hcprint(z, x, l);
   }
   if (!(bot_flags(dcc[z].user) & BOT_ISOLATE)) {
     /* Dump party line members */
@@ -776,13 +776,13 @@ void dump_links(int z)
                                botnetnick, dcc[i].nick,
                                dcc[i].u.chat->channel, geticon(i),
                                dcc[i].sock, dcc[i].host);
-          dprint(z, x, l);
+          hcprint(z, x, l);
 #ifndef NO_OLD_BOTNET
           if (b_numver(z) < NEAT_BOTNET) {
             if (dcc[i].u.chat->away) {
               l = simple_sprintf(x, "away %s %d %s\n", botnetnick,
                                  dcc[i].sock, dcc[i].u.chat->away);
-              dprint(z, x, l);
+              hcprint(z, x, l);
             }
             l = simple_sprintf(x, "idle %s %d %d\n", botnetnick,
                                dcc[i].sock, now - dcc[i].timeval);
@@ -791,7 +791,7 @@ void dump_links(int z)
             l = simple_sprintf(x, "i %s %D %D %s\n", botnetnick,
                                dcc[i].sock, now - dcc[i].timeval,
                                dcc[i].u.chat->away ? dcc[i].u.chat->away : "");
-          dprint(z, x, l);
+          hcprint(z, x, l);
         }
       }
     }
@@ -808,14 +808,14 @@ void dump_links(int z)
                            party[i].bot, party[i].nick,
                            party[i].chan, party[i].flag,
                            party[i].sock, party[i].from);
-      dprint(z, x, l);
+      hcprint(z, x, l);
       if ((party[i].status & PLSTAT_AWAY) || (party[i].timer != 0)) {
 #ifndef NO_OLD_BOTNET
         if (b_numver(z) < NEAT_BOTNET) {
           if (party[i].status & PLSTAT_AWAY) {
             l = simple_sprintf(x, "away %s %d %s\n", party[i].bot,
                                party[i].sock, party[i].away);
-            dprint(z, x, l);
+            hcprint(z, x, l);
           }
           l = simple_sprintf(x, "idle %s %d %d\n", party[i].bot,
                              party[i].sock, now - party[i].timer);
@@ -824,7 +824,7 @@ void dump_links(int z)
           l = simple_sprintf(x, "i %s %D %D %s\n", party[i].bot,
                              party[i].sock, now - party[i].timer,
                              party[i].away ? party[i].away : "");
-        dprint(z, x, l);
+        hcprint(z, x, l);
       }
     }
   }
@@ -918,13 +918,13 @@ int botunlink(int idx, char *nick, char *reason, char *from)
                          BOT_UNLINKEDFROM, dcc[i].nick, reason, from, bots,
                          (bots != 1) ? "s" : "", users, (users != 1) ?
                          "s" : "");
-          dprintf(i, "bye %s\n", reason);
+          hcprintf(i, "bye %s\n", reason);
         } else {
           simple_sprintf(s, "%s %s (%s) (lost %d bot%s and %d user%s)",
                          BOT_UNLINKEDFROM, dcc[i].nick, from, bots,
                          (bots != 1) ? "s" : "", users,
                          (users != 1) ? "s" : "");
-          dprintf(i, "bye No reason\n");
+          hcprintf(i, "bye No reason\n");
         }
         putlog(LOG_BOTS, "*", "%s.", s);
         dprintf(idx, "%s.\n", s);
@@ -1696,7 +1696,7 @@ void check_botnet_pings()
           if (dcc[i].status & STAT_WARNED) {
             char s[1024];
 
-            dprintf(i, "bye %s\n", BOT_BOTNOTLEAFLIKE);
+            hcprintf(i, "bye %s\n", BOT_BOTNOTLEAFLIKE);
             bot = findbot(dcc[i].nick);
             bots = bots_in_subtree(bot);
             users = users_in_subtree(bot);
