@@ -1701,8 +1701,10 @@ static int write_tmp_userfile(char *fn, struct userrec *bu, int idx)
       putlog(LOG_BOTS, "*", "%s is too old: not sharing exempts and invites.",
              dcc[idx].nick);
     fclose(f);
-    encrypt_file(fn);
   }
+  if (encrypt_file(fn))
+    movefile(".tmp1", fn);
+
   if (!ok)
     putlog(LOG_MISC, "*", USERF_ERRWRITE2);
   return ok;

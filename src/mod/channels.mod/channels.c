@@ -589,11 +589,11 @@ static void channels_report(int idx, int details)
     sprintf(s, "\00301,01..\003%s ", chan->dname);
 
     if (channel_inactive(chan))
-      strcat(s, "(inactive)");
+      strcat(s, "\00314(inactive)\003");
     else if (channel_pending(chan))
-      strcat(s, "(pending)");
+      strcat(s, "\00314(pending)\003");
     else if (!channel_active(chan))
-      strcat(s, "(not on channel)");
+      strcat(s, "\00314(not on channel)\003");
     else {
 
       s1[0] = 0;

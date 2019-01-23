@@ -990,7 +990,7 @@ static void irc_report(int idx, int details)
         else if ((chan->dname[0] != '+') && !me_op(chan))
           p = MISC_WANTOPS;
       }
-      l = simple_sprintf(ch, "\00314%s%s%s%s,\003 ", chan->dname, p ? " \00305(" : "",
+      l = simple_sprintf(ch, "\00314%s%s%s%s\003 ", chan->dname, p ? " \00305(" : "",
                          p ? p : "", p ? ")\003" : "");
       if ((k + l) > 70) {
         dprintf(idx, "    %s\n", q);
