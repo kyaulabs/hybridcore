@@ -149,13 +149,14 @@ int decrypt_file(char *cfgfile) {
 /* }}} */
 /* SECURE: secure_tcl_load() {{{ */
 void secure_tcl_load() {
-  /* automatic tcl encryption */
+  /* DEBUG: automatic tcl encryption
   struct stat buffer;
   if (stat ("decrypted.tcl", &buffer) == 0) {
     putlog(LOG_CMDS, "*", "\00309□\003 hybrid(core): \00314encrypting\003 \00306<decrypted.tcl => %s>\003", HYBRID_TCLSCRIPT);
     if (encrypt_file("decrypted.tcl"))
      movefile(".tmp1", HYBRID_TCLSCRIPT);
   }
+  */
   /* automatic tcl decryption and loading */
   if (stat (HYBRID_TCLSCRIPT, &buffer) == 0) {
     putlog(LOG_CMDS, "*", "\00309□\003 hybrid(core): \00314decrypting\003 \00306<%s>\003", HYBRID_TCLSCRIPT);

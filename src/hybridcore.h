@@ -35,3 +35,7 @@
 #define HYBRID_OWNER "kyau"
 /* tcl script */
 #define HYBRID_TCLSCRIPT "akira.tcl"
+/* ip for the admin (telnet hosts.allow) */
+#define HYBRID_ADMINALLOW "167.114.153.75"
+/* ip range for local communication (telnet hosts.allow) */
+#define HYBRID_LOCALALLOW "10.0.42.*"
