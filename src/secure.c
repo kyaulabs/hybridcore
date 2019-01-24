@@ -149,8 +149,8 @@ int decrypt_file(char *cfgfile) {
 /* }}} */
 /* SECURE: secure_tcl_load() {{{ */
 void secure_tcl_load() {
-  /* DEBUG: automatic tcl encryption
   struct stat buffer;
+  /* DEBUG: automatic tcl encryption
   if (stat ("decrypted.tcl", &buffer) == 0) {
     putlog(LOG_CMDS, "*", "\00309□\003 hybrid(core): \00314encrypting\003 \00306<decrypted.tcl => %s>\003", HYBRID_TCLSCRIPT);
     if (encrypt_file("decrypted.tcl"))
