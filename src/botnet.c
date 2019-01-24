@@ -608,7 +608,7 @@ void tell_bottree(int idx, int showver)
   if (s[0])
     dprintf(idx, "(%s %s)\n", BOT_NOTRACEINFO, s);
   if (showver)
-    dprintf(idx, "%s (%d.%d.%d.%d)\n", botnetnick,
+    dprintf(idx, "%s \00314<\003\00300hybrid\003\00313(\003\00311core\003\00313)\003 v%d.%d.%d.%d\00314>\003\n", botnetnick,
             egg_numver / 1000000,
             egg_numver % 1000000 / 10000,
             egg_numver % 10000 / 100, egg_numver % 100);
@@ -644,9 +644,9 @@ void tell_bottree(int idx, int showver)
       while (!s[0]) {
         if (bot->uplink == this) {
           if (bot->ver) {
-            i = sprintf(s, "%c%s", bot->share, bot->bot);
+            i = sprintf(s, "\00310%c\003%s", bot->share, bot->bot);
             if (showver)
-              sprintf(s + i, " \00306<hybrid(core) v%d.%d.%d.%d>\003",
+              sprintf(s + i, " \00314<\003\00300hybrid\003\00313(\003\00311core\003\00313)\003 v%d.%d.%d.%d\00314>\003",
                       bot->ver / 1000000,
                       bot->ver % 1000000 / 10000,
                       bot->ver % 10000 / 100, bot->ver % 100);
@@ -682,9 +682,9 @@ void tell_bottree(int idx, int showver)
               if (cnt == 1) {
                 bot2 = bot;
                 if (bot->ver) {
-                  i = sprintf(s, "%c%s", bot->share, bot->bot);
+                  i = sprintf(s, "\00310%c\003%s", bot->share, bot->bot);
                   if (showver)
-                    sprintf(s + i, " (%d.%d.%d.%d)",
+                    sprintf(s + i, " \00314<\003\00300hybrid\003\00313(\003\00311core\003\00313)\003 v%d.%d.%d.%d\00314>\003",
                             bot->ver / 1000000,
                             bot->ver % 1000000 / 10000,
                             bot->ver % 10000 / 100, bot->ver % 100);
