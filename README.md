@@ -61,7 +61,7 @@ In order to install hybrid(core), run the following:
 
 If the bot is using IPv6 add `--enable-ipv6` to the configure line.
 
-### Attribution
+Attribution
 ------
 Everything that made it possible for me to port this to the newer version of
 eggdrop is listed here.
