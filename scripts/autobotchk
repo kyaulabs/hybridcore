@@ -126,7 +126,8 @@ proc newsplit {text {split " "}} {
 }
 
 puts "\nautobotchk 1.11, (C) 1999-2003 Jeff Fisher (guppy@eggheads.org)"
-puts "\n                 (C) 2004-2016 Eggheads Development Team"
+puts "                 (C) 2004-2016 Eggheads Development Team"
+puts "                 (C) 2019 KYAU Labs"
 puts "------------------------------------------------------------\n"
 
 set mainconf [newsplit argv]
@@ -175,7 +176,7 @@ switch -- $delay {
   "15" { set minutes "0,15,30,45" }
   "5" { set minutes "0,5,10,15,20,25,30,35,40,45,50,55" }
   "1" { set minutes "*" }
-  default { set minutes "0,10,20,30,40,50" }
+  default { set minutes "*/5" }
 }
 
 if {[string match "*/scripts" $dir]} {
@@ -235,10 +236,14 @@ foreach config $confs {
 
   puts " done"
 }
-
+ set nick "[lindex [split $nick "\""] 0]"
  if {![info exists {botnet-nick}] && [info exists nick]} {
   puts "  Defaulting \$botnet-nick to \"$nick\""
   set botnet-nick $nick
+ }
+ if {![info exists {userfile}] } {
+  puts "  Defaulting \$userfile to \"hybrid.u\""
+  set userfile "hybrid.u"
  }
  if {![info exists {botnet-nick}] || ![info exists userfile]} {
   puts "  *** ERROR: could not find either \$userfile or \$botnet-nick"
@@ -258,10 +263,12 @@ foreach config $confs {
  set nick [string range [subst -nocommands $nick] 0 $handlen]
  set botnet-nick [string range [subst -nocommands ${botnet-nick}] 0 $handlen]
  if {![info exists pidfile]} {
-  puts "  Defaulting \$pidfile to \"pid.${botnet-nick}\""
-  set pidfile "pid.${botnet-nick}"
+  puts "  Defaulting \$pidfile to \"${botnet-nick}.lock\""
+  set pidfile "${botnet-nick}.lock"
  }
  set pidfile [subst -nocommands $pidfile]
+ puts "botnet-nick: ${botnet-nick}"
+ puts "pidfile: ${pidfile}"
  if {[catch {open $dir/${botnet-nick}.botchk w} fd]} {
   puts "  *** ERROR: unable to open '${botnet-nick}.botchk' for writing"
   puts ""

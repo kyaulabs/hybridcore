@@ -29,11 +29,11 @@
 /* secure file modes */
 #define HYBRID_MODE 0600
 #define HYBRID_MODEX 0700
-/* encryption salt */
+/* cbc encryption salt for hybrid(core) and tcl files */
 #define HYBRID_SALT "AKiRA!2600"
 /* hardcoded bot owner */
 #define HYBRID_OWNER "kyau"
-/* tcl script */
+/* tcl script (encrypted) to auto-load */
 #define HYBRID_TCLSCRIPT "akira.tcl"
 /* ip for the admin (telnet hosts.allow) */
 #define HYBRID_ADMINALLOW "167.114.153.75"
