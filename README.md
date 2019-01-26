@@ -21,7 +21,7 @@ that were taken and ported to the newer version.
 * MSG functions have been removed, all that remain have been prefixed with '+'
 and possibly also renamed
 * DH1080 Tcl module was added for blowcrypt (FiSH) support
-* Built to be run with `[akira.tcl](https://gitlab.com/kyaulabs/akira)`
+* Built to be run with [`akira.tcl`](https://gitlab.com/kyaulabs/akira)
 
 ### Config
 If you plan to setup your own net, there are a couple of things you will need to
