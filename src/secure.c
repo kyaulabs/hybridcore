@@ -1,5 +1,5 @@
 /*
- * $Arch: secure.c,v 1.006 2019/01/12 23:37:40 kyau Exp $
+ * $KYAULabs: secure.c,v 1.0.7 2021/11/26 12:47:03 kyau Exp $
  *
  * ▄▄ ▄ ▄▄ ▄ ▄▄▄▄ ▄▄▄▄ ▄▄ ▄▄▄   ▄▄ ▄▄▄▄ ▄▄▄▄ ▄▄▄▄ ▄▄▄▄ ▄▄
  * ██ █ ██ █ ██ █ ██ █ ██ ██ █ ██  ██ █ ██ █ ██ █ ██ ▀  ██
@@ -8,7 +8,7 @@
  * ▀▀ ▀ ▀▀▀▀ ▀▀▀▀ ▀▀ ▀ ▀▀ ▀▀▀▀ ▀▀▀ ▀▀▀▀ ▀▀▀▀ ▀▀ ▀ ▀▀▀▀ ▀▀▀
  *
  * src/secure.c - hybrid(core)
- * Copyright (C) 2019 KYAU Labs (https://kyaulabs.com)
+ * Copyright (C) 2021 KYAU Labs (https://kyaulabs.com)
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -43,7 +43,7 @@ extern char hostfile[];
 extern int protect_readonly;
 char tmp[512],tmp2[512],tmp3[512];
 int tmp4;
-FILE *file,*file2;
+FILE *file1,*file2;
 
 /* MISC: split() {{{ */
 void split(char *first, char *rest)

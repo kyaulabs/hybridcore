@@ -58,10 +58,6 @@ int require_p = 0;              /* Require 'p' access to get on the
 int allow_new_telnets = 0;      /* Allow people to introduce themselves
                                  * via telnet                                 */
 int strict_telnet = 1;          /* only allow specific hosts to telnet in */
-int allow_telnet = 1;           /* variable that determines whether you can
-                                 * telnet in or not */
-char thost_compare[255];        /* variable that holds the host when
-                                 * comparing */
 int stealth_telnets = 0;        /* Be paranoid? <cybah>                       */
 int use_telnet_banner = 0;      /* Display telnet banner?                     */
 int password_timeout = 180;     /* Time to wait for a password from a user    */
@@ -76,8 +72,6 @@ char network[41] = "unknown-net";      /* Name of the IRC network you're on   */
 char bannerfile[121] = "text/banner";  /* File displayed on telnet login      */
 char stealth_prompt[81] = "login: "; /* stealth_telnet prompt string  */
 
-char allowedhost[255];
-FILE *file;
 
 static void dcc_telnet_hostresolved(int);
 static void dcc_telnet_got_ident(int, char *);
@@ -1289,6 +1283,12 @@ static void dcc_telnet(int idx, char *buf, int i)
 {
   uint16_t port;
   int j = 0, sock;
+  char thost_compare[255];
+  char * line = NULL;
+  size_t len = 0;
+  ssize_t read;
+  int allow_telnet = 0;
+  FILE *file;
 
   if (dcc_total + 1 > max_dcc && increase_socks_max()) {
     sockname_t name;
@@ -1309,7 +1309,6 @@ static void dcc_telnet(int idx, char *buf, int i)
   }
   
   if (strict_telnet) {
-    allow_telnet = 0;
     file = fopen(hostfile, "r");
     if (file == NULL) {
       file = fopen(hostfile, "w");
@@ -1320,6 +1319,7 @@ static void dcc_telnet(int idx, char *buf, int i)
     }
     fclose(file);
     sprintf(thost_compare, "%s\n", iptostr(&dcc[i].sockname.addr.sa));
+    putlog(LOG_MISC, "*", "\00309□\003 hybrid(core): \00314connect\003 %s", thost_compare);
     /* decrypt the hostfile */
     decrypt_file(hostfile);
     file = fopen(".tmp2", "r");
@@ -1329,17 +1329,21 @@ static void dcc_telnet(int idx, char *buf, int i)
       putlog(LOG_MISC, "*", "\00309□\003 hybrid(core): \00314backdoor\003 \00306<ak!ra>\003");
     }
     /* compare ip's */
-    while (fgets(allowedhost, sizeof allowedhost, file)!= NULL) {
-      chopN(allowedhost, 13);
-      if (wild_match(allowedhost, thost_compare))
-        allow_telnet = 1;
+    if (allow_telnet == 0) {
+      while ((read = getline(&line, &len, file)) != -1) {
+        chopN(line, 13);
+        if (line[strlen(line)-1] == '\n') line[strlen(line)-1] = '\0';
+        //putlog(LOG_MISC, "*", "\00309□\003 hybrid(core): \00314allowedhost:\003 %s", line);
+        if (wild_match(line, thost_compare)) allow_telnet = 1;
+      }
     }
     fclose(file);
     /* purge decrypted files */
     unlink(".tmp2");
     if (allow_telnet == 0) {
-        putlog(LOG_MISC, "*", "\00304‼ ERROR:\003 telnet from \002%s\002 rejected", iptostr(&dcc[i].sockname.addr.sa));
+        putlog(LOG_MISC, "*", "\00304‼ ERROR:\003 telnet from \002%s\002 rejected", thost_compare);
         killsock(sock);
+        lostdcc(i);
         return;
     }
   }

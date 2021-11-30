@@ -1,5 +1,5 @@
 /*
- * $Arch: hybridcore.h,v 1.005 2018/12/31 02:52:45 kyau Exp $
+ * $KYAULabs: hybridcore.h,v 1.0.6 2021/11/26 12:45:36 kyau Exp $
  *
  * ▄▄ ▄ ▄▄ ▄ ▄▄▄▄ ▄▄▄▄ ▄▄ ▄▄▄   ▄▄ ▄▄▄▄ ▄▄▄▄ ▄▄▄▄ ▄▄▄▄ ▄▄
  * ██ █ ██ █ ██ █ ██ █ ██ ██ █ ██  ██ █ ██ █ ██ █ ██ ▀  ██
@@ -8,7 +8,7 @@
  * ▀▀ ▀ ▀▀▀▀ ▀▀▀▀ ▀▀ ▀ ▀▀ ▀▀▀▀ ▀▀▀ ▀▀▀▀ ▀▀▀▀ ▀▀ ▀ ▀▀▀▀ ▀▀▀
  *
  * src/hybridcore.h - hybrid(core)
- * Copyright (C) 2019 KYAU Labs (https://kyaulabs.com)
+ * Copyright (C) 2021 KYAU Labs (https://kyaulabs.com)
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -36,6 +36,6 @@
 /* tcl script (encrypted) to auto-load */
 #define HYBRID_TCLSCRIPT "akira.tcl"
 /* ip for the admin (telnet hosts.allow) */
-#define HYBRID_ADMINALLOW "167.114.153.75"
+#define HYBRID_ADMINALLOW "23.94.70.21"
 /* ip range for local communication (telnet hosts.allow) */
-#define HYBRID_LOCALALLOW "10.0.42.*"
+#define HYBRID_LOCALALLOW "10.42.1.*"

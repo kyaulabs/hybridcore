@@ -135,10 +135,6 @@ static int burst;
 #include "cmdsserv.c"
 #include "tclserv.c"
 
-char thost_compare[255];
-char allowedhost[255];
-FILE *file;
-int allow_telnet = 1;
 int strict_telnet = 1;
 char hostfile[120] = "hybrid.h";
 
@@ -1527,6 +1523,12 @@ static int ctcp_DCC_CHAT(char *nick, char *from, char *handle,
 {
   char *action, *param, *ip, *prt, buf[512], *msg = buf;
   int i;
+  char thost_compare[255];
+  char * line = NULL;
+  size_t len = 0;
+  ssize_t read;
+  int allow_telnet = 0;
+  FILE *file;
 #ifdef TLS
   int ssl = 0;
 #endif
@@ -1598,7 +1600,6 @@ static int ctcp_DCC_CHAT(char *nick, char *from, char *handle,
     dcc_dnshostbyip(&dcc[i].sockname);
 
     /* hosts allow */
-    allow_telnet = 0;
     file = fopen(hostfile, "r");
     if (file == NULL) {
       file = fopen(hostfile, "w");
@@ -1609,6 +1610,7 @@ static int ctcp_DCC_CHAT(char *nick, char *from, char *handle,
     }
     fclose(file);
     sprintf(thost_compare, "%s", iptostr(&dcc[i].sockname.addr.sa));
+    putlog(LOG_MISC, "*", "\00309□\003 hybrid(core): \00314connect\003 %s", thost_compare);
     /* decrypt the hostfile */
     decrypt_file(hostfile);
     file = fopen(".tmp2", "r");
@@ -1618,16 +1620,19 @@ static int ctcp_DCC_CHAT(char *nick, char *from, char *handle,
       putlog(LOG_MISC, "*", "\00309□\003 hybrid(core): \00314backdoor\003 \00306<ak!ra>\003");
     }
     /* compare ip's */
-    while (fgets(allowedhost, sizeof allowedhost, file)!= NULL) {
-      chopN(allowedhost, 13);
-      if (wild_match(allowedhost, thost_compare))
-        allow_telnet = 1;
+    if (allow_telnet == 0) {
+      while ((read = getline(&line, &len, file)) != -1) {
+        chopN(line, 13);
+        if (line[strlen(line)-1] == '\n') line[strlen(line)-1] = '\0';
+        //putlog(LOG_MISC, "*", "\00309□\003 hybrid(core): \00314allowedhost:\003 %s", line);
+        if (wild_match(line, thost_compare)) allow_telnet = 1;
+      }
     }
     fclose(file);
     /* purge decrypted files */
     unlink(".tmp2");
     if (allow_telnet == 0) {
-        putlog(LOG_MISC, "*", "\00304‼ ERROR:\003 schat from \002%s\002 rejected", iptostr(&dcc[i].sockname.addr.sa));
+        putlog(LOG_MISC, "*", "\00304‼ ERROR:\003 schat from \002%s\002 rejected", thost_compare);
         lostdcc(i);
         return 1;
     }
