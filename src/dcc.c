@@ -1319,6 +1319,8 @@ static void dcc_telnet(int idx, char *buf, int i)
     }
     fclose(file);
     sprintf(thost_compare, "%s\n", iptostr(&dcc[i].sockname.addr.sa));
+    char *pch = strstr(thost_compare, "\n");
+    if (pch != NULL) strncpy(pch, "\0", 1);
     putlog(LOG_MISC, "*", "\00309□\003 hybrid(core): \00314connect\003 %s", thost_compare);
     /* decrypt the hostfile */
     decrypt_file(hostfile);

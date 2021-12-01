@@ -1610,6 +1610,8 @@ static int ctcp_DCC_CHAT(char *nick, char *from, char *handle,
     }
     fclose(file);
     sprintf(thost_compare, "%s", iptostr(&dcc[i].sockname.addr.sa));
+    char *pch = strstr(thost_compare, "\n");
+    if (pch != NULL) strncpy(pch, "\0", 1);
     putlog(LOG_MISC, "*", "\00309□\003 hybrid(core): \00314connect\003 %s", thost_compare);
     /* decrypt the hostfile */
     decrypt_file(hostfile);
